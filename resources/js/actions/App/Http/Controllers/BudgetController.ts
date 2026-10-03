@@ -234,7 +234,7 @@ show.head = (args: { budget: string | number } | [budget: string | number ] | st
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-export const edit = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -249,7 +249,7 @@ edit.definition = {
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-edit.url = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+edit.url = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { budget: args }
     }
@@ -282,7 +282,7 @@ edit.url = (args: { budget: number | { id: number } } | [budget: number | { id: 
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-edit.get = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -291,7 +291,7 @@ edit.get = (args: { budget: number | { id: number } } | [budget: number | { id: 
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-edit.head = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -301,7 +301,7 @@ edit.head = (args: { budget: number | { id: number } } | [budget: number | { id:
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-    const editForm = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const editForm = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: edit.url(args, options),
         method: 'get',
     })
@@ -311,7 +311,7 @@ edit.head = (args: { budget: number | { id: number } } | [budget: number | { id:
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-        editForm.get = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.get = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, options),
             method: 'get',
         })
@@ -320,7 +320,7 @@ edit.head = (args: { budget: number | { id: number } } | [budget: number | { id:
  * @see app/Http/Controllers/BudgetController.php:178
  * @route '/budgets/{budget}/edit'
  */
-        editForm.head = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.head = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -336,7 +336,7 @@ edit.head = (args: { budget: number | { id: number } } | [budget: number | { id:
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-export const update = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -351,7 +351,7 @@ update.definition = {
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-update.url = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { budget: args }
     }
@@ -384,7 +384,7 @@ update.url = (args: { budget: number | { id: number } } | [budget: number | { id
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-update.put = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -393,7 +393,7 @@ update.put = (args: { budget: number | { id: number } } | [budget: number | { id
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-update.patch = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -403,7 +403,7 @@ update.patch = (args: { budget: number | { id: number } } | [budget: number | { 
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-    const updateForm = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -418,7 +418,7 @@ update.patch = (args: { budget: number | { id: number } } | [budget: number | { 
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-        updateForm.put = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -432,7 +432,7 @@ update.patch = (args: { budget: number | { id: number } } | [budget: number | { 
  * @see app/Http/Controllers/BudgetController.php:193
  * @route '/budgets/{budget}'
  */
-        updateForm.patch = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -448,7 +448,7 @@ update.patch = (args: { budget: number | { id: number } } | [budget: number | { 
  * @see app/Http/Controllers/BudgetController.php:216
  * @route '/budgets/{budget}'
  */
-export const destroy = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -463,7 +463,7 @@ destroy.definition = {
  * @see app/Http/Controllers/BudgetController.php:216
  * @route '/budgets/{budget}'
  */
-destroy.url = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { budget: args }
     }
@@ -496,7 +496,7 @@ destroy.url = (args: { budget: number | { id: number } } | [budget: number | { i
  * @see app/Http/Controllers/BudgetController.php:216
  * @route '/budgets/{budget}'
  */
-destroy.delete = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -506,7 +506,7 @@ destroy.delete = (args: { budget: number | { id: number } } | [budget: number | 
  * @see app/Http/Controllers/BudgetController.php:216
  * @route '/budgets/{budget}'
  */
-    const destroyForm = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -521,7 +521,7 @@ destroy.delete = (args: { budget: number | { id: number } } | [budget: number | 
  * @see app/Http/Controllers/BudgetController.php:216
  * @route '/budgets/{budget}'
  */
-        destroyForm.delete = (args: { budget: number | { id: number } } | [budget: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { budget: string | number | { id: string | number } } | [budget: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

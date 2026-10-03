@@ -59,7 +59,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/ProvidentFundController.php:217
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-export const update = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -74,7 +74,7 @@ update.definition = {
  * @see app/Http/Controllers/ProvidentFundController.php:217
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-update.url = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { contribution: args }
     }
@@ -107,7 +107,7 @@ update.url = (args: { contribution: number | { id: number } } | [contribution: n
  * @see app/Http/Controllers/ProvidentFundController.php:217
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-update.put = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -117,7 +117,7 @@ update.put = (args: { contribution: number | { id: number } } | [contribution: n
  * @see app/Http/Controllers/ProvidentFundController.php:217
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-    const updateForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -132,7 +132,7 @@ update.put = (args: { contribution: number | { id: number } } | [contribution: n
  * @see app/Http/Controllers/ProvidentFundController.php:217
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-        updateForm.put = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -148,7 +148,7 @@ update.put = (args: { contribution: number | { id: number } } | [contribution: n
  * @see app/Http/Controllers/ProvidentFundController.php:252
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-export const destroy = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -163,7 +163,7 @@ destroy.definition = {
  * @see app/Http/Controllers/ProvidentFundController.php:252
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-destroy.url = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { contribution: args }
     }
@@ -196,7 +196,7 @@ destroy.url = (args: { contribution: number | { id: number } } | [contribution: 
  * @see app/Http/Controllers/ProvidentFundController.php:252
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-destroy.delete = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -206,7 +206,7 @@ destroy.delete = (args: { contribution: number | { id: number } } | [contributio
  * @see app/Http/Controllers/ProvidentFundController.php:252
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-    const destroyForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -221,7 +221,7 @@ destroy.delete = (args: { contribution: number | { id: number } } | [contributio
  * @see app/Http/Controllers/ProvidentFundController.php:252
  * @route '/investments/provident-fund/contribution/{contribution}'
  */
-        destroyForm.delete = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { contribution: string | number | { id: string | number } } | [contribution: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

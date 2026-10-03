@@ -216,7 +216,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-export const show = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -231,7 +231,7 @@ show.definition = {
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-show.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+show.url = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
@@ -264,7 +264,7 @@ show.url = (args: { dps: number | { id: number } } | [dps: number | { id: number
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-show.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -273,7 +273,7 @@ show.get = (args: { dps: number | { id: number } } | [dps: number | { id: number
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-show.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -283,7 +283,7 @@ show.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-    const showForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -293,7 +293,7 @@ show.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-        showForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -302,7 +302,7 @@ show.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:100
  * @route '/investments/dps/{dps}'
  */
-        showForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -318,7 +318,7 @@ show.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-export const edit = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -333,7 +333,7 @@ edit.definition = {
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-edit.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+edit.url = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
@@ -366,7 +366,7 @@ edit.url = (args: { dps: number | { id: number } } | [dps: number | { id: number
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-edit.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -375,7 +375,7 @@ edit.get = (args: { dps: number | { id: number } } | [dps: number | { id: number
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -385,7 +385,7 @@ edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-    const editForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const editForm = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: edit.url(args, options),
         method: 'get',
     })
@@ -395,7 +395,7 @@ edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-        editForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.get = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, options),
             method: 'get',
         })
@@ -404,7 +404,7 @@ edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:47
  * @route '/investments/dps/edit/{dps}'
  */
-        editForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.head = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -420,7 +420,7 @@ edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: numbe
  * @see app/Http/Controllers/DpsController.php:183
  * @route '/investments/dps/{dps}'
  */
-export const destroy = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -435,7 +435,7 @@ destroy.definition = {
  * @see app/Http/Controllers/DpsController.php:183
  * @route '/investments/dps/{dps}'
  */
-destroy.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
@@ -468,7 +468,7 @@ destroy.url = (args: { dps: number | { id: number } } | [dps: number | { id: num
  * @see app/Http/Controllers/DpsController.php:183
  * @route '/investments/dps/{dps}'
  */
-destroy.delete = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -478,7 +478,7 @@ destroy.delete = (args: { dps: number | { id: number } } | [dps: number | { id: 
  * @see app/Http/Controllers/DpsController.php:183
  * @route '/investments/dps/{dps}'
  */
-    const destroyForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -493,7 +493,7 @@ destroy.delete = (args: { dps: number | { id: number } } | [dps: number | { id: 
  * @see app/Http/Controllers/DpsController.php:183
  * @route '/investments/dps/{dps}'
  */
-        destroyForm.delete = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
@@ -509,7 +509,7 @@ destroy.delete = (args: { dps: number | { id: number } } | [dps: number | { id: 
  * @see app/Http/Controllers/DpsController.php:146
  * @route '/investments/dps/update/{dps}'
  */
-export const update = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -524,7 +524,7 @@ update.definition = {
  * @see app/Http/Controllers/DpsController.php:146
  * @route '/investments/dps/update/{dps}'
  */
-update.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
@@ -557,7 +557,7 @@ update.url = (args: { dps: number | { id: number } } | [dps: number | { id: numb
  * @see app/Http/Controllers/DpsController.php:146
  * @route '/investments/dps/update/{dps}'
  */
-update.put = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -567,7 +567,7 @@ update.put = (args: { dps: number | { id: number } } | [dps: number | { id: numb
  * @see app/Http/Controllers/DpsController.php:146
  * @route '/investments/dps/update/{dps}'
  */
-    const updateForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -582,7 +582,7 @@ update.put = (args: { dps: number | { id: number } } | [dps: number | { id: numb
  * @see app/Http/Controllers/DpsController.php:146
  * @route '/investments/dps/update/{dps}'
  */
-        updateForm.put = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
