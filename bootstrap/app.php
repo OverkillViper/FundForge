@@ -37,7 +37,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
     })
     ->create();
 
-if ($app->environment('production')) {
+if (($_ENV['APP_ENV'] ?? null) === 'production') {
     URL::forceScheme('https');
 }
 
