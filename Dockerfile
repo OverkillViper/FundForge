@@ -31,8 +31,8 @@ FROM php:8.4-cli-bookworm
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq5 \
-    libzip4 \
+    libpq-dev \
+    libzip-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_pgsql opcache zip
