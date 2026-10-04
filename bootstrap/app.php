@@ -9,7 +9,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -36,9 +35,5 @@ $app = Application::configure(basePath: dirname(__DIR__))
         );
     })
     ->create();
-
-if (($_ENV['APP_ENV'] ?? null) === 'production') {
-    URL::forceScheme('https');
-}
 
 return $app;
