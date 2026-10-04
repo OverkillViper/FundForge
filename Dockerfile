@@ -1,17 +1,17 @@
-FROM node:22-bookworm-slim AS node
-
 FROM dunglas/frankenphp:php8.4-bookworm AS builder
 
 WORKDIR /app
 
-RUN install-php-extensions pdo_pgsql opcache zip && apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
+RUN install-php-extensions pdo_pgsql opcache zip
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    unzip \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY --from=node /usr/local/bin/node /usr/local/bin/node
-COPY --from=node /usr/local/bin/npm /usr/local/bin/npm
-COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-
-ENV PATH="/usr/local/lib/node_modules/npm/bin:$PATH"
 
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
@@ -29,7 +29,7 @@ FROM dunglas/frankenphp:php8.4-bookworm
 
 WORKDIR /app
 
-RUN install-php-extensions pdo_pgsql opcache zip && apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
+RUN install-php-extensions pdo_pgsql opcache zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
