@@ -1,18 +1,14 @@
-FROM node:22-bookworm AS builder
+FROM dunglas/frankenphp:php8.4-bookworm AS builder
 
 WORKDIR /app
 
+RUN install-php-extensions pdo_pgsql opcache zip
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    php8.4-cli \
-    php8.4-pgsql \
-    php8.4-zip \
-    php8.4-mbstring \
-    php8.4-xml \
-    php8.4-curl \
-    php8.4-bcmath \
-    php8.4-intl \
-    unzip \
     curl \
+    unzip \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -55,18 +51,11 @@ COPY --from=builder /app/resources/js/routes ./resources/js/routes
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-RUN mkdir -p \
-    /data/storage/app/public \
-    /data/storage/framework/cache \
-    /data/storage/framework/sessions \
-    /data/storage/framework/views \
-    /data/storage/logs
-
-ENV LARAVEL_STORAGE_PATH=/data/storage
+ENV LARAVEL_STORAGE_PATH=/tmp/storage
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["sh", "-c", "mkdir -p /tmp/storage/app/public /tmp/storage/framework/cache /tmp/storage/framework/sessions /tmp/storage/framework/views /tmp/storage/logs && php artisan serve --host=0.0.0.0 --port=${PORT}"]
