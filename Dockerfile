@@ -49,6 +49,8 @@ COPY --from=builder /app/public/build ./public/build
 COPY --from=builder /app/resources/js/actions ./resources/js/actions
 COPY --from=builder /app/resources/js/routes ./resources/js/routes
 
+RUN php artisan config:clear
+
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 ENV LARAVEL_STORAGE_PATH=/tmp/storage
