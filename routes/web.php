@@ -18,3 +18,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+
+Route::get('/debug-scheme', function (Illuminate\Http\Request $request) {
+    return response()->json([
+        'secure' => $request->isSecure(),
+        'scheme' => $request->getScheme(),
+        'host' => $request->getHost(),
+        'url' => $request->url(),
+        'full_url' => $request->fullUrl(),
+        'forwarded_proto' => $request->header('X-Forwarded-Proto'),
+        'forwarded_host' => $request->header('X-Forwarded-Host'),
+        'app_url' => config('app.url'),
+    ]);
+});
