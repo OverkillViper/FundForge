@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
  * @see app/Http/Controllers/DpsController.php:261
  * @route '/investments/dps/{dps}/payment'
  */
-export const store = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ store.definition = {
  * @see app/Http/Controllers/DpsController.php:261
  * @route '/investments/dps/{dps}/payment'
  */
-store.url = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+store.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
@@ -52,7 +52,7 @@ store.url = (args: { dps: string | number | { id: string | number } } | [dps: st
  * @see app/Http/Controllers/DpsController.php:261
  * @route '/investments/dps/{dps}/payment'
  */
-store.post = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ store.post = (args: { dps: string | number | { id: string | number } } | [dps: s
  * @see app/Http/Controllers/DpsController.php:261
  * @route '/investments/dps/{dps}/payment'
  */
-    const storeForm = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const storeForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: store.url(args, options),
         method: 'post',
     })
@@ -72,7 +72,7 @@ store.post = (args: { dps: string | number | { id: string | number } } | [dps: s
  * @see app/Http/Controllers/DpsController.php:261
  * @route '/investments/dps/{dps}/payment'
  */
-        storeForm.post = (args: { dps: string | number | { id: string | number } } | [dps: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        storeForm.post = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: store.url(args, options),
             method: 'post',
         })
@@ -83,7 +83,7 @@ store.post = (args: { dps: string | number | { id: string | number } } | [dps: s
  * @see app/Http/Controllers/DpsController.php:348
  * @route '/investments/dps/payment/{payment}'
  */
-export const update = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -98,7 +98,7 @@ update.definition = {
  * @see app/Http/Controllers/DpsController.php:348
  * @route '/investments/dps/payment/{payment}'
  */
-update.url = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { payment: args }
     }
@@ -131,7 +131,7 @@ update.url = (args: { payment: string | number | { id: string | number } } | [pa
  * @see app/Http/Controllers/DpsController.php:348
  * @route '/investments/dps/payment/{payment}'
  */
-update.put = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -141,7 +141,7 @@ update.put = (args: { payment: string | number | { id: string | number } } | [pa
  * @see app/Http/Controllers/DpsController.php:348
  * @route '/investments/dps/payment/{payment}'
  */
-    const updateForm = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -156,7 +156,7 @@ update.put = (args: { payment: string | number | { id: string | number } } | [pa
  * @see app/Http/Controllers/DpsController.php:348
  * @route '/investments/dps/payment/{payment}'
  */
-        updateForm.put = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -172,7 +172,7 @@ update.put = (args: { payment: string | number | { id: string | number } } | [pa
  * @see app/Http/Controllers/DpsController.php:454
  * @route '/investments/dps/payment/{payment}'
  */
-export const destroy = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -187,7 +187,7 @@ destroy.definition = {
  * @see app/Http/Controllers/DpsController.php:454
  * @route '/investments/dps/payment/{payment}'
  */
-destroy.url = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { payment: args }
     }
@@ -220,7 +220,7 @@ destroy.url = (args: { payment: string | number | { id: string | number } } | [p
  * @see app/Http/Controllers/DpsController.php:454
  * @route '/investments/dps/payment/{payment}'
  */
-destroy.delete = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -230,7 +230,7 @@ destroy.delete = (args: { payment: string | number | { id: string | number } } |
  * @see app/Http/Controllers/DpsController.php:454
  * @route '/investments/dps/payment/{payment}'
  */
-    const destroyForm = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -245,7 +245,7 @@ destroy.delete = (args: { payment: string | number | { id: string | number } } |
  * @see app/Http/Controllers/DpsController.php:454
  * @route '/investments/dps/payment/{payment}'
  */
-        destroyForm.delete = (args: { payment: string | number | { id: string | number } } | [payment: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { payment: number | { id: number } } | [payment: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',
