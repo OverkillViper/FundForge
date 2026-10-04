@@ -4,7 +4,7 @@ FROM dunglas/frankenphp:php8.4-bookworm AS builder
 
 WORKDIR /app
 
-RUN install-php-extensions pdo_pgsql opcache
+RUN install-php-extensions pdo_pgsql opcache zip && apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
@@ -29,7 +29,7 @@ FROM dunglas/frankenphp:php8.4-bookworm
 
 WORKDIR /app
 
-RUN install-php-extensions pdo_pgsql opcache
+RUN install-php-extensions pdo_pgsql opcache zip && apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
