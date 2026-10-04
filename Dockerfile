@@ -52,6 +52,8 @@ COPY --from=builder /app/resources/js/routes ./resources/js/routes
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 ENV LARAVEL_STORAGE_PATH=/tmp/storage
+ENV VIEW_COMPILED_PATH=/tmp/storage/framework/views
+ENV TMPDIR=/tmp
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV PORT=8080
