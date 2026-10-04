@@ -1,11 +1,27 @@
-FROM node:22-bookworm-slim AS frontend
+FROM node:22-bookworm-slim AS node
+
+FROM dunglas/frankenphp:php8.4-bookworm AS builder
 
 WORKDIR /app
+
+RUN install-php-extensions pdo_pgsql opcache
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/bin/npm /usr/local/bin/npm
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+
+ENV PATH="/usr/local/lib/node_modules/npm/bin:$PATH"
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+RUN php artisan wayfinder:generate --with-form
 RUN npm run build
 
 
@@ -22,7 +38,9 @@ RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --opt
 
 COPY . .
 
-COPY --from=frontend /app/public/build ./public/build
+COPY --from=builder /app/public/build ./public/build
+COPY --from=builder /app/resources/js/actions ./resources/js/actions
+COPY --from=builder /app/resources/js/routes ./resources/js/routes
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
