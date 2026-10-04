@@ -26,7 +26,7 @@ const accountTypes = [
         icon: 'pi pi-[#181518] pi-building',
     },
     { label: 'Cash', value: 'cash', icon: 'pi pi-wallet' },
-    { label: 'Mobile Wallet', value: 'mobile_walllet', icon: 'pi pi-mobile' },
+    { label: 'Mobile Wallet', value: 'mobile_wallet', icon: 'pi pi-mobile' },
     { label: 'Other', value: 'other', icon: 'pi pi-ellipsis-h' },
 ];
 

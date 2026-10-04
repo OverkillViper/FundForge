@@ -51,7 +51,7 @@ class AccountController extends Controller
                 Rule::in([
                     'bank',
                     'cash',
-                    'mobile_walllet',
+                    'mobile_wallet',
                     'other',
                 ]),
             ],

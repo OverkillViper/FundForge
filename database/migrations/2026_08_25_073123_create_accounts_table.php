@@ -26,7 +26,7 @@ return new class extends Migration
             $table->enum('type', [
                 'bank',
                 'cash',
-                'mobile_walllet',
+                'mobile_wallet',
                 'other',
             ]);
 

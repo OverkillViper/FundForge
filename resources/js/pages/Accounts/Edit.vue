@@ -50,7 +50,7 @@ const accountTypes = [
     },
     {
         label: 'Mobile Wallet',
-        value: 'mobile_walllet',
+        value: 'mobile_wallet',
         icon: 'pi pi-mobile',
     },
     {
