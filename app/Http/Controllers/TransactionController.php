@@ -527,19 +527,11 @@ class TransactionController extends Controller
     ) {
         return match ($type) {
             'income',
-            'borrowing' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'borrowing' => $this->adjustBalance($currentBalance, $amount),
 
             'expense',
             'investment',
-            'lending' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'lending' => $this->adjustBalance($currentBalance, $amount, true),
 
             default => $currentBalance,
         };
@@ -555,22 +547,54 @@ class TransactionController extends Controller
     ) {
         return match ($type) {
             'income',
-            'borrowing' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'borrowing' => $this->adjustBalance($currentBalance, $amount, true),
 
             'expense',
             'investment',
-            'lending' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'lending' => $this->adjustBalance($currentBalance, $amount),
 
             default => $currentBalance,
         };
+    }
+
+    private function adjustBalance($balance, $amount, bool $subtract = false): string
+    {
+        $balanceInCents = $this->toMinorUnits($balance);
+        $amountInCents = $this->toMinorUnits($amount);
+        $resultInCents = $subtract
+            ? $balanceInCents - $amountInCents
+            : $balanceInCents + $amountInCents;
+
+        $absoluteCents = abs($resultInCents);
+        $wholeUnits = intdiv($absoluteCents, 100);
+        $fractionalUnits = str_pad((string) ($absoluteCents % 100), 2, '0', STR_PAD_LEFT);
+
+        return ($resultInCents < 0 ? '-' : '')
+            .$wholeUnits
+            .'.'
+            .$fractionalUnits;
+    }
+
+    private function toMinorUnits($amount): int
+    {
+        $value = trim((string) $amount);
+
+        if (!preg_match('/^([+-]?)(\d+)(?:\.(\d*))?$/', $value, $parts)) {
+            $value = number_format((float) $value, 2, '.', '');
+            preg_match('/^([+-]?)(\d+)(?:\.(\d*))?$/', $value, $parts);
+        }
+
+        $wholeUnits = (int) $parts[2];
+        $fractionalUnits = (int) str_pad(
+            substr($parts[3] ?? '', 0, 2),
+            2,
+            '0'
+        );
+        $minorUnits = ($wholeUnits * 100) + $fractionalUnits;
+
+        return ($parts[1] ?? '') === '-'
+            ? -$minorUnits
+            : $minorUnits;
     }
 
     /**
