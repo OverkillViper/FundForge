@@ -22,41 +22,43 @@ class SavingsCertificateController extends Controller
     {
         $userId = auth()->id();
         $today = Carbon::today();
+        $calculationData = $this->savingsCertificateService
+            ->getUserCalculationData($userId);
 
         // Overall current total user investment
         $totalUserInvestment =
             $this->savingsCertificateService
                 ->getCumulativeInvestmentOnDate(
                     $userId,
-                    $today
+                    $today,
+                    calculationData: $calculationData
                 );
 
         $currentTaxPercent =
             $this->savingsCertificateService
                 ->getTaxPercentForInvestment(
                     $userId,
-                    $totalUserInvestment
+                    $totalUserInvestment,
+                    $calculationData
                 );
 
         $currentMonthInterest =
             $this->savingsCertificateService
                 ->getCurrentMonthInterestSummary(
                     $userId,
-                    $today
+                    $today,
+                    $calculationData
                 );
 
-        $certificates = SavingsCertificate::query()
-            ->whereHas('investment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->with('investment')
-            ->latest('issue_date')
-            ->get();
+        $certificates = $calculationData['certificates']
+            ->sortByDesc('issue_date')
+            ->values();
 
         $certificates->transform(
             function ($certificate) use ($currentTaxPercent) {
                 $certificate->tax_percent =
                     $currentTaxPercent;
+                $certificate->unsetRelation('rates');
 
                 return $certificate;
             }
@@ -172,6 +174,8 @@ class SavingsCertificateController extends Controller
         ]);
 
         $userId = auth()->id();
+        $calculationData = $this->savingsCertificateService
+            ->getUserCalculationData($userId);
 
         /*
          * Current cumulative investment.
@@ -183,14 +187,16 @@ class SavingsCertificateController extends Controller
             $this->savingsCertificateService
                 ->getCumulativeInvestmentOnDate(
                     $userId,
-                    Carbon::today()
+                    Carbon::today(),
+                    calculationData: $calculationData
                 );
 
         $savingsCertificate->tax_percent =
             $this->savingsCertificateService
                 ->getTaxPercentForInvestment(
                     $userId,
-                    $totalUserInvestment
+                    $totalUserInvestment,
+                    $calculationData
                 );
 
         /*
@@ -202,12 +208,14 @@ class SavingsCertificateController extends Controller
         $interestSchedule =
             $this->savingsCertificateService
                 ->buildInterestSchedule(
-                    $savingsCertificate
+                    $savingsCertificate,
+                    $calculationData
                 );
 
         $rateTiers = $this->savingsCertificateService
                           ->getApplicableRateTiers(
-                              $savingsCertificate
+                              $savingsCertificate,
+                              $calculationData
                           );
 
         return Inertia::render(

@@ -22,45 +22,40 @@ class SavingsCertificateService
         int $userId,
         Carbon $date,
         bool $onlyActive = true,
-        bool $includeMaturityDate = false
+        bool $includeMaturityDate = false,
+        ?array $calculationData = null
     ): float {
-        $query = SavingsCertificate::query()
-            ->whereHas('investment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
+        $certificates = $calculationData['certificates']
+            ?? $this->getUserCalculationData($userId)['certificates'];
+        $targetDate = $date->copy()->startOfDay();
+
+        return (float) $certificates
+            ->filter(function (SavingsCertificate $certificate) use (
+                $targetDate,
+                $onlyActive,
+                $includeMaturityDate
+            ) {
+                $issueDate = Carbon::parse($certificate->issue_date)->startOfDay();
+
+                if ($issueDate->gt($targetDate)) {
+                    return false;
+                }
+
+                if (!$onlyActive) {
+                    return true;
+                }
+
+                $maturityDate = $issueDate->copy()->addYearsNoOverflow(
+                    (int) $certificate->duration_years
+                )->startOfDay();
+
+                return $includeMaturityDate
+                    ? $maturityDate->gte($targetDate)
+                    : $maturityDate->gt($targetDate);
             })
-            ->where(
-                'issue_date',
-                '<=',
-                $date->toDateString()
+            ->sum(fn (SavingsCertificate $certificate) =>
+                (float) $certificate->principal_value
             );
-
-        if ($onlyActive) {
-            if (config('database.default') === 'pgsql') {
-                $operator = $includeMaturityDate
-                    ? '>='
-                    : '>';
-
-                $query->whereRaw(
-                    "issue_date + (duration_years || ' years')::interval {$operator} ?",
-                    [
-                        $date->toDateString(),
-                    ]
-                );
-            } else {
-                $operator = $includeMaturityDate
-                    ? '>='
-                    : '>';
-
-                $query->whereRaw(
-                    "DATE_ADD(issue_date, INTERVAL duration_years YEAR) {$operator} ?",
-                    [
-                        $date->toDateString(),
-                    ]
-                );
-            }
-        }
-
-        return (float) $query->sum('principal_value');
     }
 
     /**
@@ -71,29 +66,21 @@ class SavingsCertificateService
      */
     public function getHighestCumulativeInvestmentOnDate(
         int $userId,
-        Carbon $date
+        Carbon $date,
+        ?array $calculationData = null
     ): float {
-        $certificates = SavingsCertificate::query()
-            ->whereHas('investment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->where(
-                'issue_date',
-                '<=',
-                $date->toDateString()
-            )
-            ->orderBy('issue_date')
-            ->orderBy('id')
-            ->get([
-                'id',
-                'issue_date',
-                'principal_value',
-            ]);
+        $certificates = $calculationData['certificates']
+            ?? $this->getUserCalculationData($userId)['certificates'];
+        $targetDate = $date->copy()->startOfDay();
 
         $cumulativeInvestment = 0.0;
         $highestInvestment = 0.0;
 
         foreach ($certificates as $certificate) {
+            if (Carbon::parse($certificate->issue_date)->startOfDay()->gt($targetDate)) {
+                continue;
+            }
+
             $cumulativeInvestment +=
                 (float) $certificate->principal_value;
 
@@ -112,17 +99,13 @@ class SavingsCertificateService
      */
     public function getTaxPercentForInvestment(
         int $userId,
-        float $cumulativeInvestment
+        float $cumulativeInvestment,
+        ?array $calculationData = null
     ): float {
-        $taxBrackets = SavingsCertificateTaxBracket::where(
-            'user_id',
-            $userId
-        )
-            ->orderBy(
-                'minimum_investment',
-                'desc'
-            )
-            ->get();
+        $taxBrackets = $calculationData['tax_brackets']
+            ?? SavingsCertificateTaxBracket::where('user_id', $userId)
+                ->orderByDesc('minimum_investment')
+                ->get();
 
         foreach ($taxBrackets as $bracket) {
             if (
@@ -137,21 +120,37 @@ class SavingsCertificateService
     }
 
     /**
+     * Load all user-specific inputs needed for certificate calculations.
+     *
+     * @return array{certificates: Collection<int, SavingsCertificate>, tax_brackets: Collection<int, SavingsCertificateTaxBracket>}
+     */
+    public function getUserCalculationData(int $userId): array
+    {
+        return [
+            'certificates' => SavingsCertificate::query()
+                ->whereHas('investment', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                })
+                ->with(['investment', 'rates'])
+                ->orderBy('issue_date')
+                ->orderBy('id')
+                ->get(),
+            'tax_brackets' => SavingsCertificateTaxBracket::where('user_id', $userId)
+                ->orderByDesc('minimum_investment')
+                ->get(),
+        ];
+    }
+
+    /**
      * Get the current month's interest summary.
      */
     public function getCurrentMonthInterestSummary(
         int $userId,
-        Carbon $month
+        Carbon $month,
+        ?array $calculationData = null
     ): array {
-        $certificates = SavingsCertificate::query()
-            ->whereHas('investment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->with([
-                'rates',
-                'investment',
-            ])
-            ->get();
+        $calculationData ??= $this->getUserCalculationData($userId);
+        $certificates = $calculationData['certificates'];
 
         $totalGross = 0.0;
         $totalTax = 0.0;
@@ -162,7 +161,8 @@ class SavingsCertificateService
         foreach ($certificates as $certificate) {
             $schedule =
                 $this->buildInterestSchedule(
-                    $certificate
+                    $certificate,
+                    $calculationData
                 );
 
             foreach ($schedule['history'] as $item) {
@@ -212,15 +212,21 @@ class SavingsCertificateService
      * certificate matures.
      */
     public function buildInterestSchedule(
-        SavingsCertificate $certificate
+        SavingsCertificate $certificate,
+        ?array $calculationData = null
     ): array {
-        $certificate->loadMissing([
-            'rates',
-            'investment',
-        ]);
+        $certificate->loadMissing('investment');
+        $userId = $certificate->investment->user_id;
 
-        $userId =
-            $certificate->investment->user_id;
+        $calculationData ??= $this->getUserCalculationData($userId);
+        $loadedCertificate = $calculationData['certificates']
+            ->firstWhere('id', $certificate->id);
+
+        if ($loadedCertificate !== null) {
+            $certificate = $loadedCertificate;
+        } else {
+            $certificate->loadMissing(['rates', 'investment']);
+        }
 
         $issueDate =
             Carbon::parse(
@@ -243,7 +249,8 @@ class SavingsCertificateService
          */
         $rateBreakdown =
             $this->calculateRateBreakdown(
-                $certificate
+                $certificate,
+                $calculationData['certificates']
             );
 
         /*
@@ -280,7 +287,8 @@ class SavingsCertificateService
                     $userId,
                     $interestDate,
                     true,
-                    true
+                    true,
+                    $calculationData
                 );
 
             /*
@@ -291,7 +299,8 @@ class SavingsCertificateService
             $highestInvestment =
                 $this->getHighestCumulativeInvestmentOnDate(
                     $userId,
-                    $interestDate
+                    $interestDate,
+                    $calculationData
                 );
 
             /*
@@ -308,7 +317,8 @@ class SavingsCertificateService
             $taxPercent =
                 $this->getTaxPercentForInvestment(
                     $userId,
-                    $taxBasis
+                    $taxBasis,
+                    $calculationData
                 );
 
             $grossInterest = null;
@@ -443,14 +453,12 @@ class SavingsCertificateService
      * lifetime of the certificate.
      */
     private function calculateRateBreakdown(
-        SavingsCertificate $certificate
+        SavingsCertificate $certificate,
+        Collection $certificates
     ): ?array {
         $certificate->loadMissing(
             'investment'
         );
-
-        $userId =
-            $certificate->investment->user_id;
 
         $issueDate =
             Carbon::parse(
@@ -466,38 +474,13 @@ class SavingsCertificateService
          * 1. issue_date
          * 2. id
          */
-        $certificates =
-            SavingsCertificate::query()
-                ->whereHas(
-                    'investment',
-                    function ($query) use ($userId) {
-                        $query->where(
-                            'user_id',
-                            $userId
-                        );
-                    }
-                )
-                ->where(
-                    'issue_date',
-                    '<=',
-                    $issueDate->toDateString()
-                )
-                ->orderBy(
-                    'issue_date'
-                )
-                ->orderBy(
-                    'id'
-                )
-                ->get([
-                    'id',
-                    'issue_date',
-                    'principal_value',
-                    'duration_years',
-                ]);
-
         $cumulativeBefore = 0.0;
 
         foreach ($certificates as $existingCertificate) {
+            if (Carbon::parse($existingCertificate->issue_date)->gt($issueDate)) {
+                break;
+            }
+
             if (
                 $existingCertificate->id ===
                 $certificate->id
@@ -642,117 +625,35 @@ class SavingsCertificateService
     }
 
     /**
-     * Get the currently active certificates on a date.
-     *
-     * Maturity date is inclusive because the certificate's
-     * final interest payment occurs on that date.
-     */
-    private function getActiveCertificatesOnDate(
-        int $userId,
-        Carbon $date
-    ): Collection {
-        $query = SavingsCertificate::query()
-            ->whereHas(
-                'investment',
-                function ($query) use ($userId) {
-                    $query->where(
-                        'user_id',
-                        $userId
-                    );
-                }
-            )
-            ->where(
-                'issue_date',
-                '<=',
-                $date->toDateString()
-            )
-            ->with([
-                'investment',
-                'rates',
-            ])
-            ->orderBy(
-                'issue_date'
-            )
-            ->orderBy(
-                'id'
-            );
-
-        if (
-            config('database.default') === 'pgsql'
-        ) {
-            /*
-             * Include a certificate on its maturity date
-             * because its final interest payout occurs then.
-             */
-            $query->whereRaw(
-                "issue_date + (duration_years || ' years')::interval >= ?",
-                [
-                    $date->toDateString(),
-                ]
-            );
-        } else {
-            $query->whereRaw(
-                "DATE_ADD(issue_date, INTERVAL duration_years YEAR) >= ?",
-                [
-                    $date->toDateString(),
-                ]
-            );
-        }
-
-        return $query->get();
-    }
-
-    /**
      * Get the rate tiers that actually intersect this
      * certificate's fixed investment range.
      *
      * Used by the Rates.vue UI.
      */
     public function getApplicableRateTiers(
-        SavingsCertificate $certificate
+        SavingsCertificate $certificate,
+        ?array $calculationData = null
     ): Collection {
         $certificate->loadMissing(
             'investment'
         );
 
-        $userId =
-            $certificate->investment->user_id;
+        $calculationData ??= $this->getUserCalculationData(
+            $certificate->investment->user_id
+        );
 
         $issueDate =
             Carbon::parse(
                 $certificate->issue_date
             );
 
-        $certificates =
-            SavingsCertificate::query()
-                ->whereHas(
-                    'investment',
-                    function ($query) use ($userId) {
-                        $query->where(
-                            'user_id',
-                            $userId
-                        );
-                    }
-                )
-                ->where(
-                    'issue_date',
-                    '<=',
-                    $issueDate->toDateString()
-                )
-                ->orderBy(
-                    'issue_date'
-                )
-                ->orderBy(
-                    'id'
-                )
-                ->get([
-                    'id',
-                    'principal_value',
-                ]);
-
         $cumulativeBefore = 0.0;
 
-        foreach ($certificates as $existingCertificate) {
+        foreach ($calculationData['certificates'] as $existingCertificate) {
+            if (Carbon::parse($existingCertificate->issue_date)->gt($issueDate)) {
+                break;
+            }
+
             if (
                 $existingCertificate->id ===
                 $certificate->id

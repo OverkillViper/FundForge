@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use App\Services\SavingsCertificateService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,23 +22,114 @@ class DashboardController extends Controller
 
         $thisMonth = $today->copy()->startOfMonth();
         $lastMonth = $today->copy()->subMonth()->startOfMonth();
+        $lastMonthEnd = $lastMonth->copy()->endOfMonth();
+        $yearStart = $today->copy()->startOfYear();
+        $transactionStart = $yearStart->lt($lastMonth)
+            ? $yearStart
+            : $lastMonth;
+
+        $allAccounts = $user->accounts()
+            ->get([
+                'id',
+                'name',
+                'type',
+                'currency',
+                'balance',
+                'opening_balance',
+                'is_active',
+            ]);
+        $accounts = $allAccounts
+            ->where('is_active', true)
+            ->values();
+
+        $transactions = $user->transactions()
+            ->whereBetween('transaction_date', [
+                $transactionStart->toDateString(),
+                $today->toDateString(),
+            ])
+            ->with('category:id,name')
+            ->get([
+                'id',
+                'account_id',
+                'category_id',
+                'title',
+                'type',
+                'amount',
+                'transaction_date',
+            ]);
+
+        $balanceChanges = $accounts->isEmpty()
+            ? collect()
+            : Transaction::query()
+                ->whereIn('account_id', $accounts->modelKeys())
+                ->whereDate('transaction_date', '<=', $lastMonthEnd)
+                ->selectRaw("account_id, SUM(CASE WHEN type IN ('income', 'borrowing') THEN amount WHEN type IN ('expense', 'investment', 'lending') THEN -amount ELSE 0 END) AS balance_change")
+                ->groupBy('account_id')
+                ->pluck('balance_change', 'account_id');
+
+        $budgets = $user->budgets()
+            ->whereIn('period', ['daily', 'monthly', 'quarterly'])
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', $today);
+            })
+            ->get(['id', 'period', 'amount', 'start_date']);
+
+        $obligations = $user->obligations()
+            ->where('is_settled', false)
+            ->get(['type', 'amount']);
+
+        $calculationData = $this->savingsCertificateService
+            ->getUserCalculationData($user->id);
+        $currentMonthInterest = $this->savingsCertificateService
+            ->getCurrentMonthInterestSummary(
+                $user->id,
+                $thisMonth,
+                $calculationData
+            );
+        $lastMonthInterest = $this->savingsCertificateService
+            ->getCurrentMonthInterestSummary(
+                $user->id,
+                $lastMonth,
+                $calculationData
+            );
 
         return Inertia::render('Dashboard', [
-            'totalBalance' => $this->getTotalBalance($user, $today, $lastMonth),
-            'transactionSummary' => $this->getTransactionSummary($user, $thisMonth, $today, $lastMonth),
-            'expenseCategories' => $this->getExpenseCategories($user, $today),
-            'recentTransactions' => $this->getRecentTransactions($user),
-            'budgets' => $this->getBudgets($user, $today),
-            'obligations' => $this->getObligations($user),
+            'totalBalance' => $this->getTotalBalance(
+                $accounts,
+                $balanceChanges,
+                $transactions->contains(fn ($transaction) =>
+                    $transaction->transaction_date->gte($lastMonth)
+                    && $transaction->transaction_date->lte($lastMonthEnd)
+                )
+            ),
+            'transactionSummary' => $this->getTransactionSummary(
+                $transactions,
+                $thisMonth,
+                $today,
+                $lastMonth,
+                $lastMonthEnd,
+                $currentMonthInterest['net_interest'],
+                $lastMonthInterest['net_interest']
+            ),
+            'expenseCategories' => $this->getExpenseCategories(
+                $transactions,
+                $today,
+                $yearStart
+            ),
+            'recentTransactions' => $this->getRecentTransactions($user, $allAccounts),
+            'budgets' => $this->getBudgets($budgets, $transactions, $today),
+            'obligations' => $this->getObligations($obligations),
         ]);
     }
 
-    private function getTotalBalance($user, Carbon $today, Carbon $lastMonth): array
+    private function getTotalBalance(
+        EloquentCollection $accounts,
+        $balanceChanges,
+        bool $hasPreviousMonthActivity
+    ): array
     {
-        $accounts = $user->accounts()
-            ->where('is_active', true)
-            ->get();
-
         $totalBalance = (float) $accounts->sum('balance');
 
         $topAccounts = $accounts
@@ -52,18 +145,12 @@ class DashboardController extends Controller
             ])
             ->all();
 
-        $hasPreviousMonthActivity = $user->transactions()
-            ->whereBetween('transaction_date', [
-                $lastMonth->toDateString(),
-                $lastMonth->copy()->endOfMonth()->toDateString(),
-            ])
-            ->exists();
-
         $lastMonthBalance = $hasPreviousMonthActivity
             ? (float) $accounts->sum(
-                fn ($account) => $this->getAccountBalanceAtDate(
-                    $account,
-                    $lastMonth->copy()->endOfMonth()
+                fn ($account) => round(
+                    (float) $account->opening_balance
+                    + (float) ($balanceChanges[$account->id] ?? 0),
+                    2
                 )
             )
             : null;
@@ -78,39 +165,24 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getAccountBalanceAtDate($account, Carbon $date): float
+    private function getTransactionSummary(
+        EloquentCollection $transactions,
+        Carbon $thisMonth,
+        Carbon $today,
+        Carbon $lastMonth,
+        Carbon $lastMonthEnd,
+        float $currentMonthInterest,
+        float $lastMonthInterest
+    ): array
     {
-        $transactions = $account->transactions()
-            ->whereDate('transaction_date', '<=', $date)
-            ->get(['type', 'amount']);
-
-        $balance = (float) $account->opening_balance;
-
-        foreach ($transactions as $transaction) {
-            $amount = (float) $transaction->amount;
-
-            $balance += match ($transaction->type) {
-                'income', 'borrowing' => $amount,
-                'expense', 'investment', 'lending' => -$amount,
-                default => 0,
-            };
-        }
-
-        return round($balance, 2);
-    }
-
-    private function getTransactionSummary($user, Carbon $thisMonth, Carbon $today, Carbon $lastMonth): array
-    {
-        $lastMonthEnd = $lastMonth->copy()->endOfMonth();
-
-        $income = $this->getIncome($user, $thisMonth, $today);
-        $lastIncome = $this->getIncome($user, $lastMonth, $lastMonthEnd);
-
-        $expense = $this->getExpense($user, $thisMonth, $today);
-        $lastExpense = $this->getExpense($user, $lastMonth, $lastMonthEnd);
-
-        $investment = $this->getInvestment($user, $thisMonth, $today);
-        $lastInvestment = $this->getInvestment($user, $lastMonth, $lastMonthEnd);
+        $income = $this->sumTransactions($transactions, 'income', $thisMonth, $today)
+            + $currentMonthInterest;
+        $lastIncome = $this->sumTransactions($transactions, 'income', $lastMonth, $lastMonthEnd)
+            + $lastMonthInterest;
+        $expense = $this->sumTransactions($transactions, 'expense', $thisMonth, $today);
+        $lastExpense = $this->sumTransactions($transactions, 'expense', $lastMonth, $lastMonthEnd);
+        $investment = $this->sumTransactions($transactions, 'investment', $thisMonth, $today);
+        $lastInvestment = $this->sumTransactions($transactions, 'investment', $lastMonth, $lastMonthEnd);
 
         $savings = $income - $expense;
         $lastSavings = $lastIncome - $lastExpense;
@@ -142,84 +214,55 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getIncome($user, Carbon $from, Carbon $to): float
+    private function sumTransactions(
+        EloquentCollection $transactions,
+        string $type,
+        Carbon $from,
+        Carbon $to
+    ): float
     {
-        $transactionIncome = (float) $user->transactions()
-            ->where('type', 'income')
-            ->whereBetween('transaction_date', [
-                $from->toDateString(),
-                $to->toDateString(),
-            ])
-            ->sum('amount');
-
-        $interest = $this->savingsCertificateService
-            ->getCurrentMonthInterestSummary(
-                $user->id,
-                $from
-            );
-
-        return round($transactionIncome + $interest['net_interest'], 2);
+        return round((float) $transactions
+            ->where('type', $type)
+            ->filter(fn ($transaction) =>
+                $transaction->transaction_date->gte($from)
+                && $transaction->transaction_date->lte($to)
+            )
+            ->sum(fn ($transaction) => (float) $transaction->amount), 2);
     }
 
-    private function getExpense($user, Carbon $from, Carbon $to): float
-    {
-        return round(
-            (float) $user->transactions()
-                ->where('type', 'expense')
-                ->whereBetween('transaction_date', [
-                    $from->toDateString(),
-                    $to->toDateString(),
-                ])
-                ->sum('amount'),
-            2
-        );
-    }
-
-    private function getInvestment($user, Carbon $from, Carbon $to): float
-    {
-        return round(
-            (float) $user->transactions()
-                ->where('type', 'investment')
-                ->whereBetween('transaction_date', [
-                    $from->toDateString(),
-                    $to->toDateString(),
-                ])
-                ->sum('amount'),
-            2
-        );
-    }
-
-    private function getExpenseCategories($user, Carbon $today): array
+    private function getExpenseCategories(
+        EloquentCollection $transactions,
+        Carbon $today,
+        Carbon $yearStart
+    ): array
     {
         $monthStart = $today->copy()->startOfMonth();
-        $yearStart = $today->copy()->startOfYear();
-
-        $monthly = $this->getExpense($user, $monthStart, $today);
-        $yearly = $this->getExpense($user, $yearStart, $today);
-
-        $categories = $user->transactions()
+        $monthlyExpenses = $transactions
             ->where('type', 'expense')
-            ->whereBetween('transaction_date', [
-                $monthStart->toDateString(),
-                $today->toDateString(),
-            ])
-            ->with('category')
-            ->selectRaw('category_id, SUM(amount) as amount')
+            ->filter(fn ($transaction) =>
+                $transaction->transaction_date->gte($monthStart)
+                && $transaction->transaction_date->lte($today)
+            );
+        $monthly = (float) $monthlyExpenses
+            ->sum(fn ($transaction) => (float) $transaction->amount);
+        $yearly = $this->sumTransactions($transactions, 'expense', $yearStart, $today);
+
+        $categories = $monthlyExpenses
             ->groupBy('category_id')
-            ->orderByDesc('amount')
-            ->get()
-            ->map(function ($item) use ($monthly) {
-                $amount = (float) $item->amount;
+            ->map(function ($items, $categoryId) use ($monthly) {
+                $amount = (float) $items
+                    ->sum(fn ($item) => (float) $item->amount);
 
                 return [
-                    'id' => $item->category_id,
-                    'name' => $item->category?->name ?? 'Uncategorized',
+                    'id' => $categoryId === '' ? null : $categoryId,
+                    'name' => $items->first()->category?->name ?? 'Uncategorized',
                     'amount' => round($amount, 2),
                     'percentage' => $monthly > 0
                         ? round(($amount / $monthly) * 100, 2)
                         : 0,
                 ];
             })
+            ->sortByDesc('amount')
             ->values()
             ->all();
 
@@ -234,50 +277,61 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getRecentTransactions($user): array
+    private function getRecentTransactions($user, EloquentCollection $accounts): array
     {
         return $user->transactions()
-            ->with(['category', 'account'])
+            ->with('category')
             ->orderByDesc('transaction_date')
             ->orderByDesc('id')
             ->limit(4)
             ->get()
-            ->map(fn ($transaction) => [
-                'id' => $transaction->id,
-                'title' => $transaction->title,
-                'date' => Carbon::parse($transaction->transaction_date)->format('d M Y'),
-                'category' => $transaction->category?->name,
-                'account' => $transaction->account?->name,
-                'account_type' => $transaction->account?->type,
-                'amount' => (float) $transaction->amount,
-                'currency' => $transaction->account?->currency ?? 'BDT',
-                'type' => $transaction->type,
-            ])
+            ->map(function ($transaction) use ($accounts) {
+                $account = $accounts->firstWhere('id', $transaction->account_id);
+
+                return [
+                    'id' => $transaction->id,
+                    'title' => $transaction->title,
+                    'date' => Carbon::parse($transaction->transaction_date)->format('d M Y'),
+                    'category' => $transaction->category?->name,
+                    'account' => $account?->name,
+                    'account_type' => $account?->type,
+                    'amount' => (float) $transaction->amount,
+                    'currency' => $account?->currency ?? 'BDT',
+                    'type' => $transaction->type,
+                ];
+            })
             ->all();
     }
 
-    private function getBudgets($user, Carbon $today): array
+    private function getBudgets(
+        EloquentCollection $budgets,
+        EloquentCollection $transactions,
+        Carbon $today
+    ): array
     {
-        $daily = $this->getActiveBudget($user, 'daily', $today);
-        $monthly = $this->getActiveBudget($user, 'monthly', $today);
-        $quarterly = $this->getActiveBudget($user, 'quarterly', $today);
+        $daily = $this->getActiveBudget($budgets, 'daily');
+        $monthly = $this->getActiveBudget($budgets, 'monthly');
+        $quarterly = $this->getActiveBudget($budgets, 'quarterly');
 
-        $dailySpent = $this->getExpense(
-            $user,
+        $dailySpent = $this->sumTransactions(
+            $transactions,
+            'expense',
             $today->copy()->startOfDay(),
             $today
         );
 
-        $monthlySpent = $this->getExpense(
-            $user,
+        $monthlySpent = $this->sumTransactions(
+            $transactions,
+            'expense',
             $today->copy()->startOfMonth(),
             $today
         );
 
         $quarterlyStart = $today->copy()->startOfQuarter();
 
-        $quarterlySpent = $this->getExpense(
-            $user,
+        $quarterlySpent = $this->sumTransactions(
+            $transactions,
+            'expense',
             $quarterlyStart,
             $today
         );
@@ -300,16 +354,11 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getActiveBudget($user, string $period, Carbon $date)
+    private function getActiveBudget(EloquentCollection $budgets, string $period)
     {
-        return $user->budgets()
+        return $budgets
             ->where('period', $period)
-            ->whereDate('start_date', '<=', $date)
-            ->where(function ($query) use ($date) {
-                $query->whereNull('end_date')
-                    ->orWhereDate('end_date', '>=', $date);
-            })
-            ->latest('start_date')
+            ->sortByDesc('start_date')
             ->first();
     }
 
@@ -327,12 +376,8 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getObligations($user): array
+    private function getObligations(EloquentCollection $obligations): array
     {
-        $obligations = $user->obligations()
-            ->where('is_settled', false)
-            ->get();
-
         return [
             'lent' => round(
                 (float) $obligations

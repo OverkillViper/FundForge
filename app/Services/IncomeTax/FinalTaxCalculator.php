@@ -118,16 +118,15 @@ class FinalTaxCalculator
         Carbon $incomeYearStart,
         Carbon $incomeYearEnd
     ): float {
-        $certificates = $user->investments()
-            ->whereHas('savingsCertificate')
-            ->with('savingsCertificate')
-            ->get()
-            ->pluck('savingsCertificate');
+        $calculationData = $this->savingsCertificateService
+            ->getUserCalculationData($user->id);
+        $certificates = $calculationData['certificates'];
 
         $totalTax = 0.0;
 
         foreach ($certificates as $certificate) {
-            $schedule = $this->savingsCertificateService->buildInterestSchedule($certificate);
+            $schedule = $this->savingsCertificateService
+                ->buildInterestSchedule($certificate, $calculationData);
 
             foreach ($schedule['history'] as $item) {
                 if ($item['tax'] === null) {

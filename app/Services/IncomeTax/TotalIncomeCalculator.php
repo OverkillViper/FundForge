@@ -466,15 +466,9 @@ class TotalIncomeCalculator
             30
         );
 
-        $certificates = $user
-            ->investments()
-            ->whereHas('savingsCertificate')
-            ->with([
-                'savingsCertificate.rates',
-                'savingsCertificate.investment',
-            ])
-            ->get()
-            ->pluck('savingsCertificate');
+        $calculationData = $this->savingsCertificateService
+            ->getUserCalculationData($user->id);
+        $certificates = $calculationData['certificates'];
 
         /*
          * Total GROSS interest before TDS.
@@ -526,7 +520,7 @@ class TotalIncomeCalculator
              */
             $schedule =
                 $this->savingsCertificateService
-                    ->buildInterestSchedule($certificate);
+                    ->buildInterestSchedule($certificate, $calculationData);
 
             foreach ($schedule['history'] as $item) {
                 /*
