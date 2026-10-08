@@ -33,6 +33,19 @@ class PerformanceLogger
             'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
         ]);
 
+        collect($queries)
+            ->sortByDesc('time')
+            ->take(10)
+            ->values()
+            ->each(function (array $query, int $index): void {
+                logger()->warning('SLOW QUERY', [
+                    'rank' => $index + 1,
+                    'time_ms' => $query['time'],
+                    'sql' => $query['query'],
+                    'bindings' => $query['bindings'],
+                ]);
+            });
+
         return $response;
     }
 }
