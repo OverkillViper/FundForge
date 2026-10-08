@@ -7,6 +7,7 @@ use App\Models\DpsPayment;
 use App\Models\Investment;
 use App\Models\Transaction;
 use App\Models\Account;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -512,19 +513,11 @@ class DpsController extends Controller
     ) {
         return match ($type) {
             'income',
-            'borrowing' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'borrowing' => Money::add($currentBalance, $amount),
 
             'expense',
             'investment',
-            'lending' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'lending' => Money::subtract($currentBalance, $amount),
 
             default => $currentBalance,
         };
@@ -540,19 +533,11 @@ class DpsController extends Controller
     ) {
         return match ($type) {
             'income',
-            'borrowing' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'borrowing' => Money::subtract($currentBalance, $amount),
 
             'expense',
             'investment',
-            'lending' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'lending' => Money::add($currentBalance, $amount),
 
             default => $currentBalance,
         };

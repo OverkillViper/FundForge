@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Obligation;
 use App\Models\Transaction;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -536,17 +537,9 @@ class ObligationController extends Controller
         $amount
     ) {
         return match ($type) {
-            'income', 'borrowing' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'income', 'borrowing' => Money::add($currentBalance, $amount),
 
-            'expense', 'investment', 'lending' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'expense', 'investment', 'lending' => Money::subtract($currentBalance, $amount),
 
             default => $currentBalance,
         };
@@ -558,17 +551,9 @@ class ObligationController extends Controller
         $amount
     ) {
         return match ($type) {
-            'income', 'borrowing' => bcsub(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'income', 'borrowing' => Money::subtract($currentBalance, $amount),
 
-            'expense', 'investment', 'lending' => bcadd(
-                (string) $currentBalance,
-                (string) $amount,
-                2
-            ),
+            'expense', 'investment', 'lending' => Money::add($currentBalance, $amount),
 
             default => $currentBalance,
         };

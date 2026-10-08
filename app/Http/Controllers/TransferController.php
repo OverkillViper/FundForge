@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Transfer;
+use App\Support\Money;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -120,11 +121,7 @@ class TransferController extends Controller
          * Don't allow transferring more than
          * the source account contains.
          */
-        if (bccomp(
-            (string) $fromAccount->balance,
-            (string) $validated['amount'],
-            2
-        ) < 0) {
+        if (Money::compare($fromAccount->balance, $validated['amount']) < 0) {
             throw ValidationException::withMessages([
                 'amount' => 'Insufficient balance in the source account.',
             ]);
@@ -325,11 +322,7 @@ class TransferController extends Controller
             */
 
             if (
-                bccomp(
-                    (string) $newFromAccount->balance,
-                    (string) $validated['amount'],
-                    2
-                ) < 0
+                Money::compare($newFromAccount->balance, $validated['amount']) < 0
             ) {
                 throw ValidationException::withMessages([
                     'amount' => 'Insufficient balance in the source account.',
