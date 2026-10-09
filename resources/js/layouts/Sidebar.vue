@@ -90,7 +90,18 @@ const showChildren = computed(() => !props.collapsed);
 
                     <!-- Children -->
                     <div v-if="i.children?.length" class="overflow-hidden transition-all duration-300" :class="showChildren && isExpanded(i) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'">
-                        <Link v-for="child in i.children" :key="child.href" :href="child.href" class="group flex items-center text-[13px] font-medium text-gray-500 rounded-md py-1 ps-10 pe-2 border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200" :class="isActive(child) ? 'text-primary bg-gray-50' : ''">
+                        <Link
+                            v-for="child in i.children"
+                            :key="child.href"
+                            :href="child.href"
+                            :method="child.name === 'Sign Out' ? 'POST' : 'GET'"
+                            class="
+                                    group flex items-center text-[13px] font-medium
+                                    text-gray-500 rounded-md py-1 ps-10 pe-2 border
+                                    border-transparent hover:bg-gray-50 hover:border-gray-200
+                                    transition-all duration-200
+                            "
+                            :class="isActive(child) ? 'text-primary bg-gray-50' : ''">
                             <div class="flex items-center justify-center w-6 h-6 shrink-0">
                                 <span class="pi text-[11px]" :class="child.icon"></span>
                             </div>
