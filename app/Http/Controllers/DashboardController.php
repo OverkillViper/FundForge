@@ -56,6 +56,7 @@ class DashboardController extends Controller
                 'type',
                 'amount',
                 'transaction_date',
+                'note',
             ]);
 
         $balanceChanges = $accounts->isEmpty()
@@ -128,8 +129,7 @@ class DashboardController extends Controller
         EloquentCollection $accounts,
         $balanceChanges,
         bool $hasPreviousMonthActivity
-    ): array
-    {
+    ): array {
         $totalBalance = (float) $accounts->sum('balance');
 
         $topAccounts = $accounts
@@ -173,8 +173,7 @@ class DashboardController extends Controller
         Carbon $lastMonthEnd,
         float $currentMonthInterest,
         float $lastMonthInterest
-    ): array
-    {
+    ): array {
         $income = $this->sumTransactions($transactions, 'income', $thisMonth, $today)
             + $currentMonthInterest;
         $lastIncome = $this->sumTransactions($transactions, 'income', $lastMonth, $lastMonthEnd)
@@ -192,22 +191,18 @@ class DashboardController extends Controller
                 'amount' => round($income, 2),
                 'percentage_change' => $this->percentageChange($lastIncome, $income),
             ],
-
             'expense' => [
                 'amount' => round($expense, 2),
                 'percentage_change' => $this->percentageChange($lastExpense, $expense),
             ],
-
             'savings' => [
                 'amount' => round($savings, 2),
                 'percentage_change' => $this->percentageChange($lastSavings, $savings),
             ],
-
             'investment' => [
                 'amount' => round($investment, 2),
                 'percentage_change' => $this->percentageChange($lastInvestment, $investment),
             ],
-
             'savings_invested_percentage' => $savings > 0
                 ? round(($investment / $savings) * 100, 2)
                 : 0,
@@ -219,13 +214,19 @@ class DashboardController extends Controller
         string $type,
         Carbon $from,
         Carbon $to
-    ): float
-    {
+    ): float {
         return round((float) $transactions
             ->where('type', $type)
             ->filter(fn ($transaction) =>
                 $transaction->transaction_date->gte($from)
                 && $transaction->transaction_date->lte($to)
+                && (
+                    $type !== 'income'
+                    || (
+                        !str_starts_with($transaction->note ?? '', 'For the money lent on ')
+                        && !str_starts_with($transaction->note ?? '', 'For the money borrowed on ')
+                    )
+                )
             )
             ->sum(fn ($transaction) => (float) $transaction->amount), 2);
     }
@@ -234,8 +235,7 @@ class DashboardController extends Controller
         EloquentCollection $transactions,
         Carbon $today,
         Carbon $yearStart
-    ): array
-    {
+    ): array {
         $monthStart = $today->copy()->startOfMonth();
         $monthlyExpenses = $transactions
             ->where('type', 'expense')
@@ -307,8 +307,7 @@ class DashboardController extends Controller
         EloquentCollection $budgets,
         EloquentCollection $transactions,
         Carbon $today
-    ): array
-    {
+    ): array {
         $daily = $this->getActiveBudget($budgets, 'daily');
         $monthly = $this->getActiveBudget($budgets, 'monthly');
         $quarterly = $this->getActiveBudget($budgets, 'quarterly');
@@ -341,12 +340,10 @@ class DashboardController extends Controller
                 (float) ($daily?->amount ?? 0),
                 $dailySpent
             ),
-
             'monthly' => $this->formatBudget(
                 (float) ($monthly?->amount ?? 0),
                 $monthlySpent
             ),
-
             'quarterly' => $this->formatBudget(
                 (float) ($quarterly?->amount ?? 0),
                 $quarterlySpent
@@ -385,7 +382,6 @@ class DashboardController extends Controller
                     ->sum('amount'),
                 2
             ),
-
             'borrowed' => round(
                 (float) $obligations
                     ->where('type', 'borrowing')
