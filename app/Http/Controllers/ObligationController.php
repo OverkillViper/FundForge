@@ -379,10 +379,7 @@ class ObligationController extends Controller
         $this->authorizeObligation($obligation);
 
         if ($obligation->is_settled) {
-            abort(
-                422,
-                'This obligation is already settled.'
-            );
+            abort(422, 'This obligation is already settled.');
         }
 
         $validated = $request->validate([
@@ -391,7 +388,6 @@ class ObligationController extends Controller
                 'integer',
                 'exists:accounts,id',
             ],
-
             'date' => [
                 'required',
                 'date',
@@ -404,76 +400,94 @@ class ObligationController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        DB::transaction(function () use (
-            $obligation,
-            $validated,
-            $account
-        ) {
-            /*
-             * Lending:
-             *   Money comes back to us -> income.
-             *
-             * Borrowing:
-             *   We pay the money back -> expense.
-             */
-            $transactionType = match ($obligation->type) {
-                'lending' => 'income',
-                'borrowing' => 'expense',
-            };
+        try {
+            DB::transaction(function () use (
+                $obligation,
+                $validated,
+                $account
+            ) {
+                /*
+                * Lending:
+                *   Money comes back to us -> income.
+                *
+                * Borrowing:
+                *   We pay the money back -> expense.
+                */
+                $transactionType = match ($obligation->type) {
+                    'lending' => 'income',
+                    'borrowing' => 'expense',
+                };
 
-            /*
-             * Keep the settlement transaction title concise.
-             */
-            $transactionTitle = match ($obligation->type) {
-                'lending' => 'Received from ' . $obligation->person,
-                'borrowing' => 'Repaid to ' . $obligation->person,
-            };
+                /*
+                * Keep the settlement transaction title concise.
+                */
+                $transactionTitle = match ($obligation->type) {
+                    'lending' => 'Received from ' . $obligation->person,
+                    'borrowing' => 'Repaid to ' . $obligation->person,
+                };
 
-            /*
-             * The note identifies the original obligation.
-             */
-            $transactionNote = match ($obligation->type) {
-                'lending' => sprintf(
-                    'For the money lent on %s.',
-                    $obligation->date->format('d-M-Y')
-                ),
+                /*
+                * The note identifies the original obligation.
+                */
+                $transactionNote = match ($obligation->type) {
+                    'lending' => sprintf(
+                        'For the money lent on %s.',
+                        $obligation->date->format('d-M-Y')
+                    ),
+                    'borrowing' => sprintf(
+                        'For the money borrowed on %s.',
+                        $obligation->date->format('d-M-Y')
+                    ),
+                };
 
-                'borrowing' => sprintf(
-                    'For the money borrowed on %s.',
-                    $obligation->date->format('d-M-Y')
-                ),
-            };
+                Transaction::create([
+                    'user_id' => auth()->id(),
+                    'account_id' => $account->id,
+                    'category_id' => null,
+                    'title' => $transactionTitle,
+                    'type' => $transactionType,
+                    'amount' => $obligation->amount,
+                    'transaction_date' => $validated['date'],
+                    'note' => $transactionNote,
+                    'reference' => null,
+                ]);
 
-            Transaction::create([
-                'user_id' => auth()->id(),
-                'account_id' => $account->id,
-                'category_id' => null,
-                'title' => $transactionTitle,
-                'type' => $transactionType,
-                'amount' => $obligation->amount,
-                'transaction_date' => $validated['date'],
-                'note' => $transactionNote,
-                'reference' => null,
-            ]);
+                /*
+                * Apply the settlement transaction
+                * to the selected account.
+                */
+                $newBalance = $this->calculateNewBalance(
+                    $account->balance,
+                    $transactionType,
+                    $obligation->amount
+                );
 
-            /*
-             * Apply the settlement transaction
-             * to the selected account.
-             */
-            $newBalance = $this->calculateNewBalance(
-                $account->balance,
-                $transactionType,
-                $obligation->amount
+                $account->update([
+                    'balance' => $newBalance,
+                ]);
+
+                $obligation->update([
+                    'is_settled' => true,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error(
+                'Obligation settlement failed',
+                [
+                    'obligation_id' => $obligation->id,
+                    'exception' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'sql_state' => $e instanceof \Illuminate\Database\QueryException
+                        ? ($e->errorInfo[0] ?? null)
+                        : null,
+                    'driver_message' => $e instanceof \Illuminate\Database\QueryException
+                        ? ($e->errorInfo[2] ?? null)
+                        : null,
+                ]
             );
 
-            $account->update([
-                'balance' => $newBalance,
-            ]);
-
-            $obligation->update([
-                'is_settled' => true,
-            ]);
-        });
+            throw $e;
+        }
 
         return back()->with(
             'success',
