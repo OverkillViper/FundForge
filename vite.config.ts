@@ -32,10 +32,15 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '192.168.0.198',
+        host: '0.0.0.0',
         port: 5173,
         strictPort: true,
-
+        cors: true,
+        hmr: {
+            host: process.env.CODESPACE_NAME ? `${process.env.CODESPACE_NAME}-5173.app.github.dev` : 'localhost',
+            protocol: 'wss',
+        },
+        origin: process.env.CODESPACE_NAME ? `https://${process.env.CODESPACE_NAME}-5173.app.github.dev` : 'http://localhost:5173',
         watch: {
             ignored: [
                 '**/.agents/**',

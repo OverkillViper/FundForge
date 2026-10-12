@@ -68,7 +68,16 @@ const showChildren = computed(() => !props.collapsed);
             <!-- Top-level items -->
             <template v-for="i in item.items" :key="i.href">
                 <div class="relative">
-                    <Link :href="i.href" class="group flex items-center text-[13px] font-semibold text-gray-500 rounded-md border border-transparent hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 py-1 overflow-hidden" :class="[collapsed ? 'justify-center' : 'gap-x-1.5', !collapsed && isActive(i) ? 'text-primary bg-gray-100' : '']">
+                    <Link 
+                        :href="i.href"
+                        class="group flex items-center text-[13px] font-semibold 
+                            text-gray-500 rounded-md border border-transparent 
+                            hover:bg-gray-50 hover:border-gray-200 transition-all 
+                            duration-200 py-1 overflow-hidden min-w-full
+                        "
+                        :method="i.href === '/logout' ? 'POST' : 'GET'"
+                        :class="[collapsed ? 'justify-center' : 'gap-x-1.5', !collapsed && isActive(i) ? 'text-primary bg-gray-100' : '']"
+                    >
                         <!-- Active bar -->
                         <div v-if="!collapsed" class="w-0.5 h-5 rounded-r-full shrink-0" :class="isActive(i) ? 'bg-primary' : 'bg-transparent'"></div>
 
@@ -94,7 +103,6 @@ const showChildren = computed(() => !props.collapsed);
                             v-for="child in i.children"
                             :key="child.href"
                             :href="child.href"
-                            :method="child.name === 'Sign Out' ? 'POST' : 'GET'"
                             class="
                                     group flex items-center text-[13px] font-medium
                                     text-gray-500 rounded-md py-1 ps-10 pe-2 border
