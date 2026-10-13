@@ -213,15 +213,18 @@ const amountPrefix = (transaction: Transaction) => {
 const loadTransactions = (direction: 'next' | 'previous') => {
     if (isLoading.value) return;
 
-    const url = direction === 'next'
+    const paginationUrl = direction === 'next'
         ? props.transactions.next_page_url
         : props.transactions.prev_page_url;
 
-    if (!url) return;
+    if (!paginationUrl) return;
+
+    const url = new URL(paginationUrl, window.location.origin);
+    const relativeUrl = `${url.pathname}${url.search}`;
 
     isLoading.value = true;
 
-    router.get(url, {}, {
+    router.get(relativeUrl, {}, {
         only: ['transactions'],
         preserveState: true,
         preserveScroll: true,
