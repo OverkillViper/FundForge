@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\TransactionController::bulkDestroy
-* @see app/Http/Controllers/TransactionController.php:414
+* @see app/Http/Controllers/TransactionController.php:391
 * @route '/transactions/bulk-destroy'
 */
 export const bulkDestroy = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -16,7 +16,7 @@ bulkDestroy.definition = {
 
 /**
 * @see \App\Http\Controllers\TransactionController::bulkDestroy
-* @see app/Http/Controllers/TransactionController.php:414
+* @see app/Http/Controllers/TransactionController.php:391
 * @route '/transactions/bulk-destroy'
 */
 bulkDestroy.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ bulkDestroy.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TransactionController::bulkDestroy
-* @see app/Http/Controllers/TransactionController.php:414
+* @see app/Http/Controllers/TransactionController.php:391
 * @route '/transactions/bulk-destroy'
 */
 bulkDestroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -35,7 +35,7 @@ bulkDestroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> =>
 
 /**
 * @see \App\Http\Controllers\TransactionController::bulkDestroy
-* @see app/Http/Controllers/TransactionController.php:414
+* @see app/Http/Controllers/TransactionController.php:391
 * @route '/transactions/bulk-destroy'
 */
 const bulkDestroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -50,7 +50,7 @@ const bulkDestroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post
 
 /**
 * @see \App\Http\Controllers\TransactionController::bulkDestroy
-* @see app/Http/Controllers/TransactionController.php:414
+* @see app/Http/Controllers/TransactionController.php:391
 * @route '/transactions/bulk-destroy'
 */
 bulkDestroyForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -505,7 +505,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\TransactionController::destroy
-* @see app/Http/Controllers/TransactionController.php:356
+* @see app/Http/Controllers/TransactionController.php:333
 * @route '/transactions/{transaction}'
 */
 export const destroy = (args: { transaction: number | { id: number } } | [transaction: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -520,7 +520,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\TransactionController::destroy
-* @see app/Http/Controllers/TransactionController.php:356
+* @see app/Http/Controllers/TransactionController.php:333
 * @route '/transactions/{transaction}'
 */
 destroy.url = (args: { transaction: number | { id: number } } | [transaction: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -553,7 +553,7 @@ destroy.url = (args: { transaction: number | { id: number } } | [transaction: nu
 
 /**
 * @see \App\Http\Controllers\TransactionController::destroy
-* @see app/Http/Controllers/TransactionController.php:356
+* @see app/Http/Controllers/TransactionController.php:333
 * @route '/transactions/{transaction}'
 */
 destroy.delete = (args: { transaction: number | { id: number } } | [transaction: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -563,7 +563,7 @@ destroy.delete = (args: { transaction: number | { id: number } } | [transaction:
 
 /**
 * @see \App\Http\Controllers\TransactionController::destroy
-* @see app/Http/Controllers/TransactionController.php:356
+* @see app/Http/Controllers/TransactionController.php:333
 * @route '/transactions/{transaction}'
 */
 const destroyForm = (args: { transaction: number | { id: number } } | [transaction: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -578,7 +578,7 @@ const destroyForm = (args: { transaction: number | { id: number } } | [transacti
 
 /**
 * @see \App\Http\Controllers\TransactionController::destroy
-* @see app/Http/Controllers/TransactionController.php:356
+* @see app/Http/Controllers/TransactionController.php:333
 * @route '/transactions/{transaction}'
 */
 destroyForm.delete = (args: { transaction: number | { id: number } } | [transaction: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

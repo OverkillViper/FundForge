@@ -111,7 +111,7 @@ const progressPercentage = computed(() =>
         </div>
 
         <!-- Summary -->
-        <div class="mt-4 grid grid-cols-3 gap-2">
+        <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
             <!-- Budget -->
             <div class="rounded-lg bg-gray-50 px-3 py-2.5">
                 <div class="text-[9px] font-medium text-gray-400">

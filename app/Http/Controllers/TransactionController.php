@@ -279,55 +279,35 @@ class TransactionController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use (
-            $transaction,
-            $validated
-        ) {
-            /*
-             * Lock the old account.
-             */
+        DB::transaction(function () use ($transaction, $validated) {
             $oldAccount = Account::query()
                 ->where('user_id', auth()->id())
                 ->lockForUpdate()
-                ->findOrFail(
-                    $transaction->account_id
-                );
+                ->findOrFail($transaction->account_id);
 
-            /*
-             * Validate the new account.
-             */
-            $newAccount = Account::query()
-                ->where('user_id', auth()->id())
-                ->lockForUpdate()
-                ->findOrFail(
-                    $validated['account_id']
-                );
+            $newAccount = (int) $validated['account_id'] === (int) $oldAccount->id
+                ? $oldAccount
+                : Account::query()
+                    ->where('user_id', auth()->id())
+                    ->lockForUpdate()
+                    ->findOrFail($validated['account_id']);
 
-            /*
-             * Validate category ownership.
-             */
             if (!empty($validated['category_id'])) {
                 Category::query()
                     ->where('user_id', auth()->id())
-                    ->findOrFail(
-                        $validated['category_id']
-                    );
+                    ->findOrFail($validated['category_id']);
             }
 
-            /*
-             * First reverse the effect of the old transaction.
-             */
             $oldAccount->balance = $this->reverseBalanceEffect(
                 $oldAccount->balance,
                 $transaction->type,
                 $transaction->amount
             );
 
-            $oldAccount->save();
+            if ($oldAccount->id !== $newAccount->id) {
+                $oldAccount->save();
+            }
 
-            /*
-             * Apply the new transaction effect.
-             */
             $newAccount->balance = $this->calculateNewBalance(
                 $newAccount->balance,
                 $validated['type'],
@@ -336,9 +316,6 @@ class TransactionController extends Controller
 
             $newAccount->save();
 
-            /*
-             * Update transaction itself.
-             */
             $transaction->update($validated);
         });
 

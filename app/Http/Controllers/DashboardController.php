@@ -57,6 +57,7 @@ class DashboardController extends Controller
                 'amount',
                 'transaction_date',
                 'note',
+                'reference',
             ]);
 
         $balanceChanges = $accounts->isEmpty()
@@ -227,6 +228,10 @@ class DashboardController extends Controller
                         && !str_starts_with($transaction->note ?? '', 'For the money borrowed on ')
                     )
                 )
+                && !(
+                    $type === 'expense'
+                    && $transaction->reference === 'Investment Payment'
+                )
             )
             ->sum(fn ($transaction) => (float) $transaction->amount), 2);
     }
@@ -237,14 +242,18 @@ class DashboardController extends Controller
         Carbon $yearStart
     ): array {
         $monthStart = $today->copy()->startOfMonth();
+
         $monthlyExpenses = $transactions
             ->where('type', 'expense')
             ->filter(fn ($transaction) =>
                 $transaction->transaction_date->gte($monthStart)
                 && $transaction->transaction_date->lte($today)
+                && $transaction->reference !== 'Investment Payment'
             );
+
         $monthly = (float) $monthlyExpenses
             ->sum(fn ($transaction) => (float) $transaction->amount);
+
         $yearly = $this->sumTransactions($transactions, 'expense', $yearStart, $today);
 
         $categories = $monthlyExpenses

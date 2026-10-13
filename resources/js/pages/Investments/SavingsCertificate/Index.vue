@@ -54,7 +54,7 @@ defineProps<{
 
     <template #content>
         <!-- Summary -->
-        <div v-if="certificates.length" class="mt-2 grid grid-cols-3 gap-4">
+        <div v-if="certificates.length" class="mt-2 grid grid-cols-1 lg:grid-cols-3 gap-4">
             <StatCard 
                 icon="icon-landmark"
                 :value="formatCurrency(total_investment.toString())"

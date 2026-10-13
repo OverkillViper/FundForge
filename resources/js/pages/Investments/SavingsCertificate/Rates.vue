@@ -148,14 +148,14 @@ const getOrdinal = (year: number): string => {
                 <!-- Header -->
                 <thead>
                     <tr class="border-b border-gray-400">
-                        <th class="px-2 py-3 text-left text-sm font-medium">
+                        <th class="px-2 py-3 text-left text-xs lg:text-sm font-medium">
                             Rate Tier
                         </th>
 
                         <th
                             v-for="year in certificate.duration_years"
                             :key="year"
-                            class="px-2 py-3 text-center text-sm font-medium"
+                            class="px-2 py-3 text-center text-xs lg:text-sm font-medium"
                         >
                             {{ getOrdinal(year) }} Year
                         </th>
@@ -171,7 +171,7 @@ const getOrdinal = (year: number): string => {
                     >
                         <!-- Tier -->
                         <td class="border-r border-gray-400 p-2">
-                            <div class="text-sm font-medium capitalize">
+                            <div class="text-xs lg:text-sm font-medium capitalize">
                                 {{ tier.key }}
                             </div>
 
@@ -188,7 +188,7 @@ const getOrdinal = (year: number): string => {
                         >
                             <input
                                 v-model="form.rates[year][tier.key]"
-                                class="h-16 w-full text-center focus:bg-gray-300 focus:outline-0"
+                                class="h-10 lg:h-16 w-full text-sm lg:text-md text-center focus:bg-gray-300 focus:outline-0"
                             />
                         </td>
                     </tr>

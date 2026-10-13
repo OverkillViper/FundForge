@@ -5,6 +5,11 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import ScrollArea from 'primevue/scrollarea';
+import ScrollAreaViewport from 'primevue/scrollareaviewport';
+import ScrollAreaContent from 'primevue/scrollareacontent';
+import ScrollAreaScrollbar from 'primevue/scrollareascrollbar';
+import ScrollAreaHandle from 'primevue/scrollareahandle';
 import { formatCurrency } from '@/lib/formatters';
 
 interface RateBreakdown {
@@ -30,19 +35,14 @@ defineProps<{
     interestHistory: InterestHistory[] | null;
 }>();
 
-function formatDate(dateString: any) {
+function formatDate(dateString: string | null) {
     if (!dateString) return '';
 
-    const date = new Date(dateString);
-
-    // Formats to: "12 July, 2026"
     return new Intl.DateTimeFormat('en-GB', {
         day: 'numeric',
-        month: 'long',
+        month: 'short',
         year: 'numeric',
-    })
-        .format(date)
-        .replace(/(\d+) (\w+) (\d+)/, '$1 $2, $3');
+    }).format(new Date(dateString));
 }
 </script>
 
@@ -50,69 +50,109 @@ function formatDate(dateString: any) {
 :deep(.p-accordionpanel) {
     border-bottom: none !important;
 }
+
+:deep(.p-accordionheader) {
+    padding: 0.75rem 1rem;
+}
+
+:deep(.p-accordioncontent-content) {
+    min-width: 0;
+    padding: 0.25rem 0.5rem 0.5rem;
+}
+
+:deep(.p-datatable-table-container) {
+    overflow-x: auto;
+}
+
+:deep(.p-datatable-thead > tr > th),
+:deep(.p-datatable-tbody > tr > td) {
+    padding: 0.5rem 0.625rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+    :deep(.p-accordionheader) {
+        padding: 0.625rem 0.75rem;
+    }
+
+    :deep(.p-accordioncontent-content) {
+        padding: 0.125rem 0.25rem 0.375rem;
+    }
+
+    :deep(.p-datatable-thead > tr > th),
+    :deep(.p-datatable-tbody > tr > td) {
+        padding: 0.375rem 0.5rem;
+    }
+}
 </style>
 
 <template>
-    <Accordion class="mt-4 overflow-hidden! rounded-xl!">
+    <Accordion class="mt-3 overflow-hidden! rounded-xl! border! p-0! sm:mt-4">
         <AccordionPanel>
-            <AccordionHeader
-                ><div class="font-semibold text-black">
+            <AccordionHeader>
+                <div class="text-sm font-semibold text-black sm:text-base">
                     Interest History
-                </div></AccordionHeader
-            >
+                </div>
+            </AccordionHeader>
+
             <AccordionContent>
-                <DataTable
-                    :value="interestHistory"
-                    tableStyle="min-width: 50rem"
-                    class="text-sm!"
-                >
-                    <Column field="date" header="Date">
-                        <template #body="slotProps">
-                            {{ formatDate(slotProps.data.date) }}
-                        </template>
-                    </Column>
-                    <Column header="Interest Rate (%)">
-                        <template #body="{ data }">
-                            {{
-                                data.annual_rate !== null
-                                    ? data.annual_rate
-                                    : (data.rate_breakdown?.[0]?.annual_rate ??
-                                      '-')
-                            }}
-                        </template>
-                    </Column>
-                    <Column
-                        header="Gross Interest (BDT)"
-                    >
-                        <template #body="{ data }">
-                            {{ formatCurrency(data.gross_interest) }}
-                        </template>
-                    </Column>
-                    <Column header="Tax (BDT)">
-                        <template #body="{ data }">
-                            {{ formatCurrency(data.tax) }}
-                        </template>
-                    </Column>
-                    <Column header="Net Interest (BDT)">
-                        <template #body="{ data }">
-                            {{ formatCurrency(data.net_interest) }}
-                        </template>
-                    </Column>
-                    <Column field="status" header="Status">
-                        <template #body="slotProps">
-                            <div
-                                class="rounded-sm p-1 text-center text-xs font-medium uppercase"
-                                :class="
-                                    slotProps.data.status === 'upcoming'
-                                        ? 'bg-gray-900 text-white'
-                                        : 'bg-gray-100'
-                                "
-                            >
-                                {{ slotProps.data.status }}
+                <ScrollArea class="w-[300px] lg:w-full max-w-full border">
+                    <ScrollAreaViewport class="w-full">
+                        <ScrollAreaContent class="min-w-[50rem]">
+                            <div class="min-w-[50rem]">
+                                <DataTable
+                                    :value="interestHistory"
+                                    class="text-[10px] lg:text-sm!"
+                                >
+                                    <Column field="date" header="Date">
+                                        <template #body="{ data }">
+                                            {{ formatDate(data.date) }}
+                                        </template>
+                                    </Column>
+
+                                    <Column header="Interest Rate (%)">
+                                        <template #body="{ data }">
+                                            {{ data.annual_rate !== null ? data.annual_rate : (data.rate_breakdown?.[0]?.annual_rate ?? '-') }}
+                                        </template>
+                                    </Column>
+
+                                    <Column header="Gross Interest (BDT)">
+                                        <template #body="{ data }">
+                                            {{ formatCurrency(data.gross_interest) }}
+                                        </template>
+                                    </Column>
+
+                                    <Column header="Tax (BDT)">
+                                        <template #body="{ data }">
+                                            {{ formatCurrency(data.tax) }}
+                                        </template>
+                                    </Column>
+
+                                    <Column header="Net Interest (BDT)">
+                                        <template #body="{ data }">
+                                            {{ formatCurrency(data.net_interest) }}
+                                        </template>
+                                    </Column>
+
+                                    <Column field="status" header="Status">
+                                        <template #body="{ data }">
+                                            <div
+                                                class="rounded-sm px-1.5 py-0.5 text-center text-[9px] font-medium uppercase sm:p-1 sm:text-xs"
+                                                :class="data.status === 'upcoming' ? 'bg-gray-900 text-white' : 'bg-gray-100'"
+                                            >
+                                                {{ data.status }}
+                                            </div>
+                                        </template>
+                                    </Column>
+                                </DataTable>
                             </div>
-                        </template>
-                    </Column>
-                </DataTable>
+                        </ScrollAreaContent>
+                    </ScrollAreaViewport>
+
+                    <ScrollAreaScrollbar orientation="horizontal">
+                        <ScrollAreaHandle />
+                    </ScrollAreaScrollbar>
+                </ScrollArea>
             </AccordionContent>
         </AccordionPanel>
     </Accordion>

@@ -60,23 +60,25 @@ const isActive = computed(() => {
 </script>
 
 <template>
-    <Link :href="show.url(certificate.id)" class="group flex min-h-20 items-center gap-4 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md">
-        <!-- Icon -->
-        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-            <i class="pi pi-building-columns text-sm text-primary"></i>
-        </div>
-
-        <!-- Name -->
-        <div class="min-w-48 flex-1">
-            <div class="truncate text-sm font-semibold text-gray-800">
-                {{ certificate.investment.name }}
+    <Link :href="show.url(certificate.id)" class="group grid grid-cols-2 lg:flex lg:min-h-20 items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md">
+        <div class="flex items-center flex-1 gap-4 col-span-2">
+            <!-- Icon -->
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <i class="pi pi-building-columns text-sm text-primary"></i>
             </div>
 
-            <div class="mt-0.5 text-[10px] text-gray-400">
-                Savings Certificate
+            <!-- Name -->
+            <div class="min-w-48 flex-1">
+                <div class="truncate text-sm font-semibold text-gray-800">
+                    {{ certificate.investment.name }}
+                </div>
+
+                <div class="mt-0.5 text-[10px] text-gray-400">
+                    Savings Certificate
+                </div>
             </div>
         </div>
-
+        
         <!-- Principal -->
         <div class="w-32 shrink-0">
             <div class="text-[9px] font-semibold uppercase tracking-wider text-gray-400">
@@ -136,7 +138,7 @@ const isActive = computed(() => {
         </div>
 
         <!-- Arrow -->
-        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-300 transition-all group-hover:bg-primary/10 group-hover:text-primary">
+        <div class="hidden lg:flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-300 transition-all group-hover:bg-primary/10 group-hover:text-primary">
             <i class="pi pi-chevron-right text-xs"></i>
         </div>
     </Link>

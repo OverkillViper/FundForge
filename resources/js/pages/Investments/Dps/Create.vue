@@ -94,7 +94,7 @@ const submit = () => {
 <AppLayout pageTitle="New Scheme">
     <template #content>
         <form
-            class="mx-auto mt-4 mt-6 grid w-1/2 grid-cols-2 gap-x-4"
+            class="mx-auto mt-4 mt-6 grid w-full lg:w-1/3 grid-cols-2 gap-x-4"
             @submit.prevent="submit"
         >
             <div class="col-span-2 text-sm font-medium">Scheme Name</div>
@@ -106,25 +106,27 @@ const submit = () => {
                 placeholder="Enter a easily recognisable scheme name"
             />
 
-            <div class="mt-4 text-sm font-medium">Issue Date</div>
-            <div class="mt-4 text-sm font-medium">Bank Name</div>
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1">Issue Date</div>
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 hidden lg:block">Bank Name</div>
 
             <DatePicker
                 dateFormat="dd-M-yy"
                 v-model="form.issue_date"
-                class="mt-2"
+                class="mt-2 col-span-2 lg:col-span-1"
                 fluid
                 size="small"
                 placeholder="Select issue date"
                 showButtonBar
             />
+
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 lg:hidden">Bank Name</div>
             <Select
                 :options="banks"
                 v-model="form.bank_name"
                 showClear
                 filter
                 size="small"
-                class="mt-2 text-sm!"
+                class="mt-2 text-sm! col-span-2 lg:col-span-1"
                 optionValue="label"
                 optionLabel="label"
                 placeholder="Select bank name"

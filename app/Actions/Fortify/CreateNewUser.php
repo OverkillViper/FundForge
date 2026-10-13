@@ -95,6 +95,7 @@ class CreateNewUser implements CreatesNewUsers
             ['name' => 'Education', 'icon' => 'graduation-cap'],
             ['name' => 'Travel & Vacation', 'icon' => 'plane'],
             ['name' => 'Festival', 'icon' => 'balloon'],
+            ['name' => 'Investment Payment', 'icon' => 'piggy-bank'],
         ];
 
         foreach ($categories as $category) {

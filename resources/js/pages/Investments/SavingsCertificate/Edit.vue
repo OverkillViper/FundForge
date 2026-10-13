@@ -43,7 +43,7 @@ const submit = () => {
 <AppLayout page-title="Edit Certificate">
     <template #content>
         <form
-            class="mx-auto mt-6 grid w-1/3 grid-cols-2 gap-x-4"
+            class="mx-auto mt-6 grid w-full lg:w-1/3 grid-cols-2 gap-x-4"
             @submit.prevent="submit"
         >
             <div class="col-span-2 text-sm font-medium">Certificate Name</div>

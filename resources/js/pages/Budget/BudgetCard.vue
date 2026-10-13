@@ -291,7 +291,7 @@ const editBudget = () => {
     <!-- Empty State -->
     <div
         v-else
-        class="flex items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50/70 p-8 transition-colors hover:border-gray-400"
+        class="flex items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50/70 p-4 lg:p-8 transition-colors hover:border-gray-400"
     >
         <div
             class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100"

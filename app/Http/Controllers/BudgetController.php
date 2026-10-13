@@ -77,6 +77,10 @@ class BudgetController extends Controller
         $spent = Transaction::query()
             ->where('user_id', auth()->id())
             ->where('type', 'expense')
+            ->where(function ($query) {
+                $query->where('reference', '!=', 'Investment Payment')
+                    ->orWhereNull('reference');
+            })
             ->whereDate('transaction_date', '>=', $spentFrom)
             ->whereDate('transaction_date', '<=', $spentTo)
             ->sum('amount');

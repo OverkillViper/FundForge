@@ -107,42 +107,42 @@ watch(
                 :class="{ 'bg-white shadow': !hideBackground }"
             >
                 <!-- Page header -->
-                <div class="mb-4 flex items-start justify-between gap-3">
-                    <div class="flex min-w-0 flex-col">
+                <div class="mb-4 flex flex-col gap-y-1 lg:gap-y-0">
+                    <div class="flex min-w-0 items-center justify-between">
                         <div class="text-md lg:text-xl text-gray-700">{{ pageTitle }}</div>
 
-                        <Breadcrumb
-                            v-if="page.url !== '/dashboard'"
-                            :model="breadcrumbs"
-                            class="mt-1 p-0! text-xs"
-                            :pt="{
-                                list: { class: 'gap-2!' },
-                                separator: { class: 'mx-0!' }
-                            }"
-                        >
-                            <template #item="{ item }">
-                                <Link
-                                    v-if="item.url"
-                                    :href="item.url"
-                                    class="m-0 text-xs text-gray-500 transition-colors hover:text-primary"
-                                >
-                                    <i v-if="item.icon" :class="item.icon"></i>
-                                    <span v-else>{{ item.label }}</span>
-                                </Link>
-
-                                <span v-else class="text-xs text-gray-400">
-                                    <i v-if="item.icon" :class="item.icon"></i>
-                                    <span v-else>{{ item.label }}</span>
-                                </span>
-                            </template>
-
-                            <template #separator>/</template>
-                        </Breadcrumb>
+                        <div class="flex shrink-0 items-center gap-x-2 app-toolbar">
+                            <slot name="toolbar" />
+                        </div>
                     </div>
 
-                    <div class="flex shrink-0 items-center gap-x-2 app-toolbar">
-                        <slot name="toolbar" />
-                    </div>
+                    <Breadcrumb
+                        v-if="page.url !== '/dashboard'"
+                        :model="breadcrumbs"
+                        class="p-0! text-xs"
+                        :pt="{
+                            list: { class: 'gap-2!' },
+                            separator: { class: 'mx-0!' }
+                        }"
+                    >
+                        <template #item="{ item }">
+                            <Link
+                                v-if="item.url"
+                                :href="item.url"
+                                class="m-0 text-xs text-gray-500 transition-colors hover:text-primary truncate"
+                            >
+                                <i v-if="item.icon" :class="item.icon"></i>
+                                <span v-else>{{ item.label }}</span>
+                            </Link>
+
+                            <span v-else class="text-xs text-gray-400 truncate">
+                                <i v-if="item.icon" :class="item.icon"></i>
+                                <span v-else>{{ item.label }}</span>
+                            </span>
+                        </template>
+
+                        <template #separator>/</template>
+                    </Breadcrumb>
                 </div>
 
                 <div class="min-h-0 flex-1">

@@ -142,27 +142,27 @@ const submit = () => {
             </small>
 
             <!-- Issue Date / Bank Name -->
-            <div class="mt-4 text-sm font-medium">Issue Date</div>
-
-            <div class="mt-4 text-sm font-medium">Bank Name</div>
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1">Issue Date</div>
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 hidden lg:block">Bank Name</div>
 
             <DatePicker
                 v-model="form.issue_date"
                 dateFormat="dd-M-yy"
-                class="mt-2"
+                class="mt-2 col-span-2 lg:col-span-1"
                 fluid
                 size="small"
                 placeholder="Select issue date"
                 showButtonBar
             />
 
+            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 lg:hidden">Bank Name</div>
             <Select
                 v-model="form.bank_name"
                 :options="banks"
                 showClear
                 filter
                 size="small"
-                class="mt-2 text-sm!"
+                class="mt-2 text-sm! col-span-2 lg:col-span-1"
                 optionValue="label"
                 optionLabel="label"
                 placeholder="Select bank name"

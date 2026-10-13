@@ -8,7 +8,11 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from 'primevue/useconfirm';
 import NextInterest from '@/pages/Investments/SavingsCertificate/NextInterest.vue';
 import InterestHistory from '@/pages/Investments/SavingsCertificate/InterestHistory.vue';
-import ScrollPanel from 'primevue/scrollpanel';
+import ScrollArea from 'primevue/scrollarea';
+import ScrollAreaViewport from 'primevue/scrollareaviewport';
+import ScrollAreaContent from 'primevue/scrollareacontent';
+import ScrollAreaScrollbar from 'primevue/scrollareascrollbar';
+import ScrollAreaHandle from 'primevue/scrollareahandle';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 const confirm = useConfirm();
@@ -81,24 +85,19 @@ const props = defineProps<{
 const confirmDelete = (event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
-
-        message: `Delete this savings certificate?`,
-
+        message: 'Delete this savings certificate?',
         icon: 'pi pi-exclamation-triangle',
-
         rejectProps: {
             label: 'Cancel',
             severity: 'secondary',
             outlined: true,
             size: 'small',
         },
-
         acceptProps: {
             label: 'Delete',
             severity: 'danger',
             size: 'small',
         },
-
         accept: () => {
             router.delete(destroy.url(props.certificate.id), {
                 preserveScroll: true,
@@ -110,82 +109,87 @@ const confirmDelete = (event: Event) => {
 function formatDate(dateString: any) {
     if (!dateString) return '';
 
-    const date = new Date(dateString);
-
-    // Formats to: "12 July, 2026"
     return new Intl.DateTimeFormat('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-    })
-        .format(date)
-        .replace(/(\d+) (\w+) (\d+)/, '$1 $2, $3');
+    }).format(new Date(dateString)).replace(/(\d+) (\w+) (\d+)/, '$1 $2, $3');
 }
 </script>
 
 <template>
-<AppLayout :page-title="certificate.investment.name">
-    <template #toolbar>
-        <Button
-            label="Edit Certificate"
-            icon="pi pi-pencil"
-            size="small"
-            @click="router.visit(edit.url(certificate.id))"
-        />
-        <Button
-            label="Delete Certificate"
-            icon="pi pi-trash"
-            severity="secondary"
-            size="small"
-            @click="confirmDelete"
-        />
-        <ConfirmPopup class="text-sm!"></ConfirmPopup>
-    </template>
-    <template #content>
-        <div class="flex my-4 justify-between">
-            <div class="flex flex-col w-1/2">
-                <div class="flex items-center gap-x-2">
-                    <div class="bg-primary size-8 flex items-center justify-center rounded-lg">
-                        <span class="pi pi-money-bill text-white"></span>
-                    </div>
-                    <span class="text-sm font-semibold">Principal Value</span>
-                </div>
-                <div class="ms-10 text-4xl">
-                    {{ formatCurrency(certificate.principal_value) }}
-                    <span class="text-sm text-gray-500">BDT</span>
-                </div>
-            </div>
-            <div class="flex flex-col w-1/5 text-sm">
-                <div class="flex">
-                    <span class="w-1/2 py-0.5 text-gray-500">Issued On</span>
-                    <span class="w-1/2 text-end py-0.5 font-semibold">{{ formatDate(certificate.issue_date) }}</span>
-                </div>
-                <div class="flex">
-                    <span class="w-1/2 py-0.5 text-gray-500">Duration</span>
-                    <span class="w-1/2 text-end py-0.5 font-semibold">{{ certificate.duration_years }} years</span>
-                </div>
-                <div class="flex">
-                    <span class="w-1/2 py-0.5 text-gray-500">Interest Interval</span>
-                    <span class="w-1/2 text-end py-0.5 font-semibold">{{ certificate.interest_interval_months }} months</span>
-                </div>
-                <div class="flex">
-                    <span class="w-1/2 py-0.5 text-gray-500">Tax Rate</span>
-                    <span class="w-1/2 text-end py-0.5 font-semibold">{{ certificate.tax_percent }} %</span>
-                </div>
-            </div>
-        </div>
-
-        <ScrollPanel class="mt-2 h-[560px] w-full pe-4">
-            <Rates
-                :rates="certificate.rates"
-                :certificate="certificate"
-                :rate-tiers="rateTiers"
+    <AppLayout :page-title="certificate.investment.name">
+        <template #toolbar>
+            <Button
+                label="Edit Certificate"
+                icon="pi pi-pencil"
+                size="small"
+                @click="router.visit(edit.url(certificate.id))"
             />
+            <Button
+                label="Delete Certificate"
+                icon="pi pi-trash"
+                severity="secondary"
+                size="small"
+                @click="confirmDelete"
+            />
+            <ConfirmPopup class="text-sm!" />
+        </template>
 
-            <NextInterest :next-interest="nextInterest" />
+        <template #content>
+            <div class="my-4 flex flex-col justify-between gap-y-4 lg:flex-row">
+                <div class="flex flex-col lg:w-1/2">
+                    <div class="flex items-center gap-x-2">
+                        <div class="bg-primary flex size-8 items-center justify-center rounded-lg">
+                            <span class="pi pi-money-bill text-white"></span>
+                        </div>
+                        <span class="text-sm font-semibold">Principal Value</span>
+                    </div>
+                    <div class="ms-10 flex items-baseline gap-x-2 text-4xl">
+                        <span>{{ formatCurrency(certificate.principal_value) }}</span>
+                        <span class="text-sm text-gray-500">BDT</span>
+                    </div>
+                </div>
 
-            <InterestHistory :interest-history="interestHistory" />
-        </ScrollPanel>
-    </template>
-</AppLayout>
+                <div class="flex flex-col border-y border-y-gray-300 py-3 text-sm lg:w-1/5 lg:border-y-transparent lg:py-0">
+                    <div class="flex">
+                        <span class="w-1/2 py-0.5 text-gray-500">Issued On</span>
+                        <span class="w-1/2 py-0.5 text-end font-semibold">{{ formatDate(certificate.issue_date) }}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-1/2 py-0.5 text-gray-500">Duration</span>
+                        <span class="w-1/2 py-0.5 text-end font-semibold">{{ certificate.duration_years }} years</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-1/2 py-0.5 text-gray-500">Interest Interval</span>
+                        <span class="w-1/2 py-0.5 text-end font-semibold">{{ certificate.interest_interval_months }} months</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-1/2 py-0.5 text-gray-500">Tax Rate</span>
+                        <span class="w-1/2 py-0.5 text-end font-semibold">{{ certificate.tax_percent }} %</span>
+                    </div>
+                </div>
+            </div>
+
+            <ScrollArea class="mt-2 h-[560px] w-full lg:pe-4">
+                <ScrollAreaViewport class="h-full w-full">
+                    <ScrollAreaContent>
+                        <Rates
+                            :rates="certificate.rates"
+                            :certificate="certificate"
+                            :rate-tiers="rateTiers"
+                        />
+
+                        <NextInterest :next-interest="nextInterest" />
+
+                        <InterestHistory :interest-history="interestHistory" />
+                    </ScrollAreaContent>
+                </ScrollAreaViewport>
+
+                <ScrollAreaScrollbar orientation="vertical">
+                    <ScrollAreaHandle />
+                </ScrollAreaScrollbar>
+            </ScrollArea>
+        </template>
+    </AppLayout>
 </template>
