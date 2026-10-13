@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\AccountBalanceSyncService;
+use App\Models\Account;
 
 class SettingsController extends Controller
 {
@@ -29,10 +31,16 @@ class SettingsController extends Controller
             ]
         );
 
+        $accounts = Account::query()
+                    ->where('user_id', $user->id)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'type', 'currency', 'balance', 'is_active']);
+
         return Inertia::render('settings/Settings', [
             'settings' => $settings,
             'savingsCertificateTaxBrackets' => SavingsCertificateTaxBracket::where('user_id', $user->id)->orderBy('minimum_investment')->get(),
             'incomeTaxSlabs' => IncomeTaxSlab::where('user_id', $user->id)->orderBy('income_from')->get(),
+            'accounts' => $accounts,
         ]);
     }
 
@@ -159,5 +167,42 @@ class SettingsController extends Controller
         });
 
         return back()->with('success', 'Tax settings restored to defaults.');
+    }
+
+    public function syncAllAccountBalances(
+        Request $request,
+        AccountBalanceSyncService $balanceSync
+    ): RedirectResponse {
+        $count = $balanceSync->syncAll($request->user());
+
+        return redirect()
+            ->route('tax-settings.edit')
+            ->with(
+                'success',
+                "{$count} account(s) synchronized successfully."
+            );
+    }
+
+    public function syncAccountBalance(
+        Request $request,
+        Account $account,
+        AccountBalanceSyncService $balanceSync
+    ): RedirectResponse {
+        abort_unless(
+            $account->user_id === $request->user()->id,
+            404
+        );
+
+        $count = $balanceSync->syncAccount(
+            $request->user(),
+            $account->id
+        );
+
+        return redirect()
+            ->route('tax-settings.edit')
+            ->with(
+            'success',
+            "{$count} account(s) synchronized successfully, including connected transfer accounts."
+        );
     }
 }

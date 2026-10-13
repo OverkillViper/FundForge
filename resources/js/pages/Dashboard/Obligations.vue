@@ -39,7 +39,7 @@ const formattedAmount = (amount: number) => amount.toLocaleString('en-IN');
         </div>
 
         <!-- Summary -->
-        <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
             <!-- Lent -->
             <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
                 <div class="flex items-center gap-2">

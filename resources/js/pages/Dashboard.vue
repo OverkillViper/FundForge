@@ -145,10 +145,13 @@ const props = defineProps<{
     <template #content>
         <div class="flex justify-between -mt-2">
             <div class="text-3xl">
-                <div class="text-gray-500 font-light">Welcome back, <span class="text-black">{{ user.name }}</span></div>
+                <div class="text-gray-500 font-light flex gap-x-2 flex-col lg:flex-row">
+                    <span>Welcome back,</span>
+                    <span class="text-black">{{ user.name }}</span>
+                </div>
                 <div class="text-xs text-gray-500">Stay on top of your finances</div>
             </div>
-            <div class="flex gap-x-2 items-center">
+            <div class="hidden lg:flex gap-x-2 items-center">
                 <div class="text-[38px] font-light">{{ day }}</div>
                 <div class="flex flex-col">
                     <div class="uppercase text-sm font-light text-gray-500 tracking-widest">
@@ -161,7 +164,7 @@ const props = defineProps<{
             </div>
         </div>
 
-        <div class="grid grid-cols-3 mt-2 gap-3">
+        <div class="flex flex-col lg:grid lg:grid-cols-3 mt-6 lg:mt-2 gap-3">
             <TotalBalance :total-balance="totalBalance"/>
             <TransactionSummary :transaction-summary="transactionSummary"/>
             <ExpenseCategory :expense-categories="expenseCategories"/>

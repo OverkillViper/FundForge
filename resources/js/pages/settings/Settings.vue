@@ -33,10 +33,20 @@ interface IncomeTaxSlab {
     tax_percent: number;
 }
 
+interface Account {
+    id: number;
+    name: string;
+    type: string;
+    currency: string;
+    balance: string | number;
+    is_active: boolean;
+}
+
 const props = defineProps<{
     settings: UserSetting;
     savingsCertificateTaxBrackets: SavingsCertificateTaxBracket[];
     incomeTaxSlabs: IncomeTaxSlab[];
+    accounts: Account[];
 }>();
 
 const months = [
@@ -132,6 +142,49 @@ const restoreDefaults = () => {
         onFinish: () => {
             restoringDefaults.value = false;
             restoreDefaultsDialog.value = false;
+        },
+    });
+};
+
+const syncingAccountIds = ref<number[]>([]);
+const syncingAllAccounts = ref(false);
+
+const formatBalance = (balance: string | number, currency: string) =>
+    `${Number(balance).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })} ${currency}`;
+
+const syncAllAccounts = () => {
+    if (!window.confirm('Recalculate the balances of all your accounts from their opening balances, transactions, and transfers?')) {
+        return;
+    }
+
+    syncingAllAccounts.value = true;
+
+    router.post('/settings/app/sync', {}, {
+        preserveScroll: true,
+        onFinish: () => {
+            syncingAllAccounts.value = false;
+        },
+    });
+};
+
+const syncAccount = (account: Account) => {
+    if (syncingAllAccounts.value || syncingAccountIds.value.length > 0) {
+        return;
+    }
+
+    if (!window.confirm(`Recalculate "${account.name}" and all accounts connected to it through transfers?`)) {
+        return;
+    }
+
+    syncingAccountIds.value = [account.id];
+
+    router.post(`/settings/app/${account.id}/sync`, {}, {
+        preserveScroll: true,
+        onFinish: () => {
+            syncingAccountIds.value = [];
         },
     });
 };
@@ -455,6 +508,87 @@ const restoreDefaults = () => {
                                 :loading="incomeTaxForm.processing"
                                 @click="saveIncomeTaxSlabs"
                             />
+                        </div>
+                    </section>
+
+                    <!-- Account Balance Synchronization -->
+                    <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                    <i class="pi pi-sync text-sm"></i>
+                                </div>
+
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-900">Account Balance Synchronization</div>
+                                    <div class="mt-0.5 text-xs text-gray-500">
+                                        Recalculate balances from your financial records.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Button
+                                label="Sync All"
+                                icon="pi pi-sync"
+                                size="small"
+                                :loading="syncingAllAccounts"
+                                :disabled="syncingAccountIds.length > 0"
+                                @click="syncAllAccounts"
+                            />
+                        </div>
+
+                        <div class="p-5">
+                            <div class="mb-4 flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50/70 p-3">
+                                <i class="pi pi-info-circle mt-0.5 text-xs text-amber-600"></i>
+                                <p class="text-xs leading-5 text-amber-800">
+                                    Balances will be rebuilt from opening balances, transactions, and transfers.
+                                    Syncing an account also synchronizes accounts connected through transfers.
+                                    Financial records themselves will not be changed.
+                                </p>
+                            </div>
+
+                            <div v-if="!accounts.length" class="py-8 text-center">
+                                <i class="pi pi-wallet text-2xl text-gray-300"></i>
+                                <p class="mt-2 text-sm font-medium text-gray-600">No accounts found</p>
+                                <p class="mt-1 text-xs text-gray-400">Create an account to synchronize its balance.</p>
+                            </div>
+
+                            <div v-else class="divide-y divide-gray-100">
+                                <div
+                                    v-for="account in accounts"
+                                    :key="account.id"
+                                    class="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                                >
+                                    <div class="flex min-w-0 items-center gap-3">
+                                        <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-500">
+                                            <i class="pi pi-wallet text-sm"></i>
+                                        </div>
+
+                                        <div class="min-w-0">
+                                            <div class="truncate text-sm font-medium text-gray-800">
+                                                {{ account.name }}
+                                            </div>
+
+                                            <div class="mt-0.5 text-xs text-gray-500">
+                                                {{ account.type.replaceAll('_', ' ') }}
+                                                <span class="mx-1 text-gray-300">·</span>
+                                                {{ formatBalance(account.balance, account.currency) }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        label="Sync"
+                                        icon="pi pi-refresh"
+                                        severity="secondary"
+                                        outlined
+                                        size="small"
+                                        :loading="syncingAccountIds.includes(account.id)"
+                                        :disabled="syncingAllAccounts || syncingAccountIds.length > 0 || !account.is_active"
+                                        @click="syncAccount(account)"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </section>
                 </div>

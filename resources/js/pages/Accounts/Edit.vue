@@ -92,9 +92,9 @@ const cancel = () => {
 </script>
 
 <template>
-    <div class="flex h-full flex-col p-6">
+    <div class="flex h-full flex-col lg:p-4">
         <!-- Header -->
-        <form @submit.prevent="submit" class="max-w-100 space-y-4 pt-2">
+        <form @submit.prevent="submit" class="space-y-3 lg:space-y-4 lg:pt-2">
             <!-- Account Name -->
             <div class="flex flex-col gap-1.5">
                 <label for="name" class="text-sm font-semibold text-[#181518]">
@@ -179,7 +179,7 @@ const cancel = () => {
             </div>
 
             <!-- Currency -->
-            <div class="flex flex-col gap-1.5">
+            <!-- <div class="flex flex-col gap-1.5">
                 <label
                     for="currency"
                     class="text-sm font-semibold text-[#181518]"
@@ -201,7 +201,7 @@ const cancel = () => {
                 <small v-if="form.errors.currency" class="text-xs text-red-500">
                     {{ form.errors.currency }}
                 </small>
-            </div>
+            </div> -->
 
             <!-- Current Balance Information -->
             <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">

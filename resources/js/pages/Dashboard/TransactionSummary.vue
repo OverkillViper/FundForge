@@ -54,7 +54,7 @@ const changeText = (percentage: number | null) => {
 </script>
 
 <template>
-    <div class="grid grid-cols-2 gap-3 rounded-2xl border border-gray-200 bg-white p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 rounded-2xl border border-gray-200 bg-white p-4">
         <!-- Total Income -->
         <div class="flex min-h-36 flex-col justify-between rounded-lg bg-primary p-4 text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm">
             <div class="flex items-start justify-between">

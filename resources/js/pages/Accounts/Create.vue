@@ -59,8 +59,8 @@ const cancel = () => {
 </script>
 
 <template>
-    <div class="flex h-full flex-col p-6">
-        <form @submit.prevent="submit" class="max-w-100 space-y-4 pt-2">
+    <div class="flex h-full flex-col lg:p-4">
+        <form @submit.prevent="submit" class="space-y-3 lg:space-y-4 lg:pt-2">
             <!-- Account Name -->
             <div class="flex flex-col gap-1.5">
                 <label for="name" class="text-sm font-semibold text-[#181518]"
@@ -133,47 +133,23 @@ const cancel = () => {
                 >
             </div>
 
-            <!-- Currency & Opening Balance Row -->
-            <div class="grid grid-cols-5 gap-3">
-                <!-- Currency -->
-                <div class="col-span-2 flex flex-col gap-1.5">
-                    <label
-                        for="currency"
-                        class="text-sm font-semibold text-[#181518]"
-                        >Currency</label
-                    >
-                    <Select
-                        id="currency"
-                        v-model="form.currency"
-                        :options="currencies"
-                        optionLabel="label"
-                        optionValue="value"
-                        class="w-full !text-sm"
-                        :invalid="!!form.errors.currency"
-                        size="small"
-                        disabled
-                    />
-                </div>
-
-                <!-- Opening Balance -->
-                <div class="col-span-3 flex flex-col gap-1.5">
-                    <label
-                        for="opening_balance"
-                        class="text-sm font-semibold text-[#181518]"
-                        >Opening Balance</label
-                    >
-                    <InputNumber
-                        id="opening_balance"
-                        v-model="form.opening_balance"
-                        mode="decimal"
-                        :minFractionDigits="2"
-                        :maxFractionDigits="2"
-                        placeholder="0.00"
-                        class="w-full"
-                        :invalid="!!form.errors.opening_balance"
-                        size="small"
-                    />
-                </div>
+            <div class="col-span-3 flex flex-col gap-1.5">
+                <label
+                    for="opening_balance"
+                    class="text-sm font-semibold text-[#181518]"
+                    >Opening Balance</label
+                >
+                <InputNumber
+                    id="opening_balance"
+                    v-model="form.opening_balance"
+                    mode="decimal"
+                    :minFractionDigits="2"
+                    :maxFractionDigits="2"
+                    placeholder="0.00"
+                    :invalid="!!form.errors.opening_balance"
+                    size="small"
+                    fluid
+                />
             </div>
             <small
                 v-if="form.errors.opening_balance"

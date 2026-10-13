@@ -89,7 +89,7 @@ const deleteAccount = () => {
         />
     </template>
     <template #content>
-        <div class="grid grid-cols-3 gap-6 py-6">
+        <div class="grid lg:grid-cols-3 gap-4 lg:gap-6 lg:py-6">
             <AccountCard
                 v-for="account in props.accounts"
                 :key="account.id"
@@ -126,7 +126,8 @@ const deleteAccount = () => {
         :visible="creating"
         modal
         header="Create Account"
-        :style="{ width: '32rem' }"
+        :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
+        :breakpoints="{ '640px': 'calc(100vw - 2rem)' }"
         @update:visible="(value) => !value && closeSidePanel()"
     >
         <Create @cancel="closeSidePanel" @success="closeSidePanel" />
@@ -136,7 +137,8 @@ const deleteAccount = () => {
         :visible="editing && selectedAccount !== null"
         modal
         header="Edit Account"
-        :style="{ width: '32rem' }"
+        :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
+        :breakpoints="{ '640px': 'calc(100vw - 2rem)' }"
         @update:visible="(value) => !value && closeSidePanel()"
     >
         <Edit
@@ -151,7 +153,8 @@ const deleteAccount = () => {
         v-model:visible="deleteDialogVisible"
         modal
         header="Delete Account"
-        :style="{ width: '28rem' }"
+        :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
+        :breakpoints="{ '640px': 'calc(100vw - 2rem)' }"
     >
         <div class="flex flex-col gap-4">
             <div class="flex items-start gap-3">

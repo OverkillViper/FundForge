@@ -23,26 +23,31 @@ const { title = '', description = '' } = defineProps<{
 <template>
     <Head :title="title" />
 
-    <div class="flex min-h-screen h-screen min-w-screen w-screen overflow-hidden p-4 gap-x-6">
-        <div class="w-1/2">
-            <div class="bg rounded-lg h-full flex flex-col overflow-hidden">
-                <div class="flex justify-end -me-30 mt-10 flex-1">
-                    <img src="/logo.png" alt="FundForge Logo" class="size-80 object-contain shrink-0 img" />
-                </div>
-                <div class="font-berlin text-7xl text-white m-15 select-none">
+    <div class="relative min-h-screen w-screen overflow-x-hidden p-4 lg:flex lg:h-screen lg:gap-x-6 lg:overflow-hidden">
+        <!-- Green background / branding -->
+        <div class="bg absolute inset-0 flex justify-center rounded-lg lg:relative lg:inset-auto lg:h-full lg:w-1/2 overflow-hidden lg:flex lg:flex-col gap-x-4">
+            <div class="flex justify-center mt-9 lg:pt-8 lg:mt-10 lg:flex-1 lg:justify-end lg:-me-30">
+                <img src="/logo.png" alt="FundForge Logo" class="img size-12 shrink-0 object-contain lg:size-80" />
+            </div>
+
+            <div class="lg:m-6 select-none font-berlin text-2xl text-white sm:text-5xl lg:m-15 lg:text-7xl">
+                <div class="flex lg:flex-col mt-8 lg:mt-0">
                     <div>Fund</div>
                     <div>Forge</div>
+                </div>
+                
 
-                    <div class="flex font-crique mt-4 text-xl capitalize">
-                        Manage your funds
-                    </div>
+                <div class="mt-1 lg:mt-4 flex font-crique text-base capitalize sm:text-lg lg:text-xl">
+                    Manage your funds
                 </div>
             </div>
         </div>
-        <div class="w-1/2 h-full flex items-center justify-center">
-            <div class="w-1/2 bg-white p-4 rounded-xl shadow-sm">
+
+        <!-- Form foreground -->
+        <div class="relative z-10 flex min-h-[calc(100vh-2rem)] w-full items-center justify-center py-6 lg:min-h-0 lg:h-full lg:w-1/2 lg:flex-none lg:py-0">
+            <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl sm:p-6 lg:w-1/2 lg:max-w-none lg:p-12 lg:shadow-sm">
                 <slot />
-            </div>  
+            </div>
         </div>
     </div>
 </template>

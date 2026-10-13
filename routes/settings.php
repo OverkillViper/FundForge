@@ -26,11 +26,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
 
-    Route::get('settings/tax', [SettingsController::class, 'edit'])->name('tax-settings.edit');
-    Route::put('settings/tax', [SettingsController::class, 'update'])->name('tax-settings.update');
-    Route::put('settings/tax/savings-certificates', [SettingsController::class, 'updateSavingsCertificateTaxBrackets'])->name('tax-settings.savings-certificates.update');
-    Route::put('settings/tax/income-slabs', [SettingsController::class, 'updateIncomeTaxSlabs'])->name('tax-settings.income-slabs.update');
-    Route::put('settings/tax/restore-defaults', [SettingsController::class, 'restoreDefaults'])->name('tax-settings.restore-defaults');
+    Route::get('settings/app', [SettingsController::class, 'edit'])->name('tax-settings.edit');
+    Route::put('settings/app', [SettingsController::class, 'update'])->name('tax-settings.update');
+    Route::put('settings/app/savings-certificates', [SettingsController::class, 'updateSavingsCertificateTaxBrackets'])->name('tax-settings.savings-certificates.update');
+    Route::put('settings/app/income-slabs', [SettingsController::class, 'updateIncomeTaxSlabs'])->name('tax-settings.income-slabs.update');
+    Route::put('settings/app/restore-defaults', [SettingsController::class, 'restoreDefaults'])->name('tax-settings.restore-defaults');
+
+    Route::post('settings/app/sync', [
+        SettingsController::class,
+        'syncAllAccountBalances',
+    ])->name('settings.accounts.sync-all');
+
+    Route::post('settings/app/{account}/sync', [
+        SettingsController::class,
+        'syncAccountBalance',
+    ])->name('settings.accounts.sync');
 });
 
 Route::get('.well-known/passkey-endpoints', function () {

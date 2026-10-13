@@ -65,7 +65,7 @@ const progressPercentage = computed(() =>
 <template>
     <div class="rounded-xl border border-gray-200 bg-white p-4">
         <!-- Header -->
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <div class="text-sm font-semibold text-gray-700">Budget</div>
 
@@ -74,20 +74,40 @@ const progressPercentage = computed(() =>
                 </div>
             </div>
 
-            <SelectButton
-                v-model="selectedPeriod"
-                :options="periodOptions"
-                option-label="label"
-                option-value="value"
-                :allow-empty="false"
-                size="small"
-                :pt="{
-                    root: '',
-                    pcToggleButton: {
-                        root: 'border-0! px-1.5! py-1! text-xs! font-medium!',
-                    },
-                }"
-            />
+            <div class="hidden lg:block">
+                <SelectButton
+                    v-model="selectedPeriod"
+                    :options="periodOptions"
+                    option-label="label"
+                    option-value="value"
+                    :allow-empty="false"
+                    size="small"
+                    :pt="{
+                        root: '',
+                        pcToggleButton: {
+                            root: 'border-0! px-1.5! py-1! text-xs! font-medium!',
+                        },
+                    }"
+                />
+            </div>
+            <div class="lg:hidden">
+                <SelectButton
+                    v-model="selectedPeriod"
+                    :options="periodOptions"
+                    option-label="label"
+                    option-value="value"
+                    :allow-empty="false"
+                    size="small"
+                    fluid
+                    :pt="{
+                        root: '',
+                        pcToggleButton: {
+                            root: 'border-0! px-1.5! py-1! text-xs! font-medium!',
+                        },
+                    }"
+                />
+            </div>
+            
         </div>
 
         <!-- Summary -->

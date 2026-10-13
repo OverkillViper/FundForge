@@ -131,11 +131,11 @@ const copyToClipboard = async () => {
             </div>
 
             <div class="min-w-0 flex-1">
-                <div class="truncate text-base font-semibold text-gray-800">
+                <div class="truncate text-sm lg:text-[16px] text-base font-semibold text-gray-800">
                     {{ account.name }}
                 </div>
 
-                <div class="mt-0.5 text-xs font-medium text-gray-400 capitalize">
+                <div class="mt-0.5 text-[10px] lg:text-xs font-medium text-gray-400 capitalize">
                     {{ account.type }} account
                 </div>
             </div>
@@ -160,7 +160,7 @@ const copyToClipboard = async () => {
         </div>
 
         <!-- Status -->
-        <div class="flex items-center justify-between px-4 pt-4">
+        <div class="flex items-center justify-between px-4 py-3 lg:py-4">
             <div class="flex items-center gap-2">
                 <span
                     class="h-2 w-2 rounded-full"
@@ -181,7 +181,7 @@ const copyToClipboard = async () => {
         </div>
 
         <!-- Account Number -->
-        <div class="mt-4 border-t border-gray-100 px-4 pt-3">
+        <div class="border-t border-gray-100 px-4 pt-1 lg:pt-3">
             <div class="mb-2 flex items-center justify-between">
                 <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     Account Number
@@ -210,7 +210,7 @@ const copyToClipboard = async () => {
                     <div
                         v-for="(digit, index) in digits"
                         :key="index"
-                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-50 font-crique text-xs font-medium text-gray-700"
+                        class="flex size-5 lg:size-7 shrink-0 items-center justify-center rounded-sm lg:rounded-md border border-gray-200 bg-gray-50 font-crique text-[10px] lg:text-sm font-medium text-gray-700"
                     >
                         {{ digit }}
                     </div>
@@ -224,13 +224,13 @@ const copyToClipboard = async () => {
 
         <!-- Balance -->
         <div class="mt-4 mx-3 mb-3 rounded-xl bg-primary px-4 py-3.5">
-            <div class="flex items-end justify-between gap-x-4">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-x-4">
                 <div class="min-w-0">
                     <div class="text-[10px] font-semibold uppercase tracking-wider text-white/60">
                         Opening Balance
                     </div>
 
-                    <div class="mt-1 flex items-baseline gap-1.5">
+                    <div class="lg:mt-1 flex items-baseline gap-1.5">
                         <span class="text-lg font-semibold text-white">
                             {{ account.opening_balance }}
                         </span>
@@ -240,14 +240,14 @@ const copyToClipboard = async () => {
                     </div>
                 </div>
 
-                <div class="h-8 w-px bg-white/15"></div>
+                <div class="h-8 w-px bg-white/15 hidden lg:block"></div>
 
-                <div class="min-w-0 text-right">
+                <div class="min-w-0 lg:text-right mt-4 lg:mt-0">
                     <div class="text-[10px] font-semibold uppercase tracking-wider text-white/60">
                         Current Balance
                     </div>
 
-                    <div class="mt-1 flex items-baseline justify-end gap-1.5">
+                    <div class="lg:mt-1 flex items-baseline lg:justify-end gap-1.5">
                         <span class="text-lg font-bold text-white">
                             {{ account.balance }}
                         </span>

@@ -38,9 +38,9 @@ const toggleBalance = () => {
         <div class="flex items-start justify-between gap-x-2">
             <div class="flex-1">
                 <div class="text-xs font-medium text-gray-500">Total Balance</div>
-                <div class="flex gap-x-2 mt-2 text-2xl font-medium tracking-tight text-gray-600" :class="showBalance ? 'items-baseline' : 'items-center'">
+                <div class="flex gap-x-2 mt-2 lg:text-2xl font-medium tracking-tight text-gray-600" :class="showBalance ? 'items-baseline' : 'items-center'">
                     <span v-if="showBalance">{{ formatCurrency(totalBalance.balance) }}</span>
-                    <span v-else class="flex gap-x-1 text-gray-400 transition hover:text-gray-600" @click="showBalance = true">
+                    <span v-else class="text-xs lg:text-2xl flex gap-x-1 text-gray-400 transition hover:text-gray-600" @click="showBalance = true">
                         <span v-for="i in 8" class="icon-asterisk"></span>
                     </span>
                     <span class="text-sm font-medium text-gray-400">BDT</span>
@@ -79,7 +79,7 @@ const toggleBalance = () => {
 
 
         <!-- Accounts -->
-        <div class="mt-7 flex-1 flex flex-col">
+        <div class="mt-2 lg:mt-7 flex-1 flex flex-col">
             <div class="mb-3 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-semibold text-gray-700">Accounts</span>
@@ -135,7 +135,7 @@ const toggleBalance = () => {
                     </div>
                 </div>
             </div>
-            <div v-else class="flex-1 flex flex-col items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-xl">
+            <div v-else class="min-h-20 flex-1 flex flex-col items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-xl">
                 <div class="text-sm text-gray-600">Your account balance will appear here.</div>
                 <div class="text-xs text-gray-400">Currently you dont have any account setup.</div>
             </div>

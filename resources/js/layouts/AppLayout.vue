@@ -23,13 +23,22 @@ const getCookie = (name: string): string | null => {
 };
 
 const collapsed = ref(getCookie('sidebar_collapsed') === 'true');
+const mobileSidebarOpen = ref(false);
 
 watch(collapsed, (value) => {
     document.cookie = `sidebar_collapsed=${value}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
 });
 
 const toggleSidebar = () => {
-    collapsed.value = !collapsed.value;
+    if (window.matchMedia('(min-width: 1024px)').matches) {
+        collapsed.value = !collapsed.value;
+    } else {
+        mobileSidebarOpen.value = !mobileSidebarOpen.value;
+    }
+};
+
+const closeMobileSidebar = () => {
+    mobileSidebarOpen.value = false;
 };
 
 const page = usePage();
@@ -38,44 +47,22 @@ const toast = useToast();
 watch(
     () => page.props.flash,
     (flash: any) => {
-        if (!flash) {
-            return;
-        }
+        if (!flash) return;
 
         if (flash.success) {
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: flash.success,
-                life: 3000,
-            });
+            toast.add({ severity: 'success', summary: 'Success', detail: flash.success, life: 3000 });
         }
 
         if (flash.error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: flash.error,
-                life: 4000,
-            });
+            toast.add({ severity: 'error', summary: 'Error', detail: flash.error, life: 4000 });
         }
 
         if (flash.info) {
-            toast.add({
-                severity: 'info',
-                summary: 'Information',
-                detail: flash.info,
-                life: 3000,
-            });
+            toast.add({ severity: 'info', summary: 'Information', detail: flash.info, life: 3000 });
         }
 
         if (flash.warning) {
-            toast.add({
-                severity: 'warn',
-                summary: 'Warning',
-                detail: flash.warning,
-                life: 4000,
-            });
+            toast.add({ severity: 'warn', summary: 'Warning', detail: flash.warning, life: 4000 });
         }
     },
     { deep: true },
@@ -85,25 +72,49 @@ watch(
 <template>
     <Head :title="pageTitle" />
 
-    <div class="flex flex-col min-h-screen h-screen min-w-screen w-screen overflow-hidden p-4">
-        <Header
-            :collapsed="collapsed"
-            @toggle-sidebar="toggleSidebar"
-        />
+    <div class="flex min-h-screen w-full flex-col overflow-x-hidden p-0 lg:h-screen lg:min-w-screen lg:w-screen lg:overflow-hidden lg:p-4">
+        <div class="fixed lg:relative z-60 shrink-0 p-3 lg:p-0 bg-white lg:bg-transparent">
+            <Header
+                :collapsed="collapsed"
+                :mobile-sidebar-open="mobileSidebarOpen"
+                @toggle-sidebar="toggleSidebar"
+            />
+        </div>
 
-        <div class="flex flex-1 gap-x-6 mt-2">
-            <Sidebar :collapsed="collapsed" />
+        <div class="relative flex min-h-0 flex-1 gap-x-6 mt-15 lg:mt-2 lg:mx-0">
+            <!-- Desktop sidebar -->
+            <aside class="hidden shrink-0 lg:flex">
+                <Sidebar :collapsed="collapsed" />
+            </aside>
 
-            <div class="rounded-xl flex-1 flex flex-col p-5" :class="{'bg-white shadow' : !hideBackground }">
+            <!-- Mobile sidebar overlay -->
+            <template v-if="mobileSidebarOpen">
+                <button
+                    type="button"
+                    aria-label="Close navigation"
+                    class="fixed inset-0 z-40 bg-black/40 lg:hidden"
+                    @click="closeMobileSidebar"
+                ></button>
+
+                <aside class="fixed bottom-0 left-0 top-15 z-40 w-80 overflow-y-auto border border-gray-100 bg-white px-6 py-3 shadow-xl lg:hidden">
+                    <Sidebar :collapsed="false" @close="closeMobileSidebar" />
+                </aside>
+            </template>
+
+            <!-- Page content -->
+            <div
+                class="flex min-w-0 flex-1 flex-col lg:rounded-xl px-6 py-4 sm:p-5 lg:min-h-0"
+                :class="{ 'bg-white shadow': !hideBackground }"
+            >
                 <!-- Page header -->
-                <div class="flex items-start justify-between mb-4">
-                    <div class="flex flex-col">
-                        <div class="text-xl text-gray-700">{{ pageTitle }}</div>
+                <div class="mb-4 flex items-start justify-between gap-3">
+                    <div class="flex min-w-0 flex-col">
+                        <div class="text-md lg:text-xl text-gray-700">{{ pageTitle }}</div>
 
                         <Breadcrumb
                             v-if="page.url !== '/dashboard'"
                             :model="breadcrumbs"
-                            class="text-xs p-0! mt-1"
+                            class="mt-1 p-0! text-xs"
                             :pt="{
                                 list: { class: 'gap-2!' },
                                 separator: { class: 'mx-0!' }
@@ -113,7 +124,7 @@ watch(
                                 <Link
                                     v-if="item.url"
                                     :href="item.url"
-                                    class="text-xs text-gray-500 hover:text-primary transition-colors m-0"
+                                    class="m-0 text-xs text-gray-500 transition-colors hover:text-primary"
                                 >
                                     <i v-if="item.icon" :class="item.icon"></i>
                                     <span v-else>{{ item.label }}</span>
@@ -129,13 +140,12 @@ watch(
                         </Breadcrumb>
                     </div>
 
-                    <div class="flex items-center gap-x-2">
+                    <div class="flex shrink-0 items-center gap-x-2 app-toolbar">
                         <slot name="toolbar" />
                     </div>
                 </div>
 
-                <!-- Page content -->
-                <div class="flex-1 min-h-0">
+                <div class="min-h-0 flex-1">
                     <slot name="content" />
                 </div>
             </div>

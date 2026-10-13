@@ -78,15 +78,15 @@ const formatAmount = (amount: number) => amount.toLocaleString('en-IN');
                 <div class="mt-0.5 text-[10px] text-gray-400">By category</div>
             </div>
 
-            <button class="flex size-7 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-50 hover:text-primary">
+            <!-- <button class="flex size-7 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-50 hover:text-primary">
                 <i class="pi pi-ellipsis-h text-xs"></i>
-            </button>
+            </button> -->
         </div>
 
         <!-- Chart & Legend -->
         <div class="mt-4 flex min-h-44 items-center gap-4" v-if="expenseCategories.categories.length">
             <!-- Chart -->
-            <div class="relative size-40 shrink-0">
+            <div class="relative size-36 shrink-0">
                 <Chart
                     type="doughnut"
                     :data="chartData"
@@ -105,8 +105,9 @@ const formatAmount = (amount: number) => amount.toLocaleString('en-IN');
 
             <!-- Legend -->
             <div class="min-w-0 flex-1 space-y-3">
+                <div class="text-sm">Top 5 categories</div>
                 <div
-                    v-for="(category, index) in expenseCategories.categories"
+                    v-for="(category, index) in expenseCategories.categories.slice(0, 5)"
                     :key="category.id"
                     class="flex items-center gap-2"
                 >
@@ -127,7 +128,7 @@ const formatAmount = (amount: number) => amount.toLocaleString('en-IN');
                 </div>
             </div>
         </div>
-        <div class="flex-1 bg-gray-50 flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl mt-4" v-else>
+        <div class="min-h-26 flex-1 bg-gray-50 flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl mt-4" v-else>
             <div class="text-sm text-gray-600">Your expense category will appear here</div>
             <div class="text-xs text-gray-400">Currently you dont have any expense transactions</div>
         </div>

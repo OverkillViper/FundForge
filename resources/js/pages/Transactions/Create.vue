@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useForm } from '@inertiajs/vue3';
+import { useForm, Link } from '@inertiajs/vue3';
 import Select from 'primevue/select';
 import SelectButton from 'primevue/selectbutton';
 import { ref } from 'vue';
@@ -10,6 +10,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import NoAccountWarning from '../Accounts/NoAccountWarning.vue';
+import { index } from '@/routes/transactions/categories';
 
 const toast = useToast();
 
@@ -326,7 +327,13 @@ const cancel = () => {
                         </div>
                         
                         <div class="flex flex-col">
-                            <label for="name" class="font-medium text-gray-500">Category</label>
+                            <div class="flex items-center justify-between">
+                                <label for="name" class="font-medium text-gray-500">Category</label>
+                                <Link :href="index.url()" class="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-x-2">
+                                    <span class="icon-circle-plus"></span>
+                                    Create new category
+                                </Link>
+                            </div>
                             <Select
                                 v-model="createForm.category_id"
                                 :options="props.categories"

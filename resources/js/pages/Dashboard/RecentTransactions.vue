@@ -91,12 +91,12 @@ const amountPrefix = (transaction: Transaction) => typeConfig(transaction.type).
             <div
                 v-for="transaction in props.recentTransactions"
                 :key="transaction.id"
-                class="grid grid-cols-[minmax(0,1fr)_155px_110px_110px] items-center gap-0 border-b border-gray-100 px-3 py-2.5 transition-colors last:border-b-0 hover:bg-gray-50/70"
+                class="grid grid-cols-[minmax(0,1fr)_minmax(95px,auto)] items-center gap-x-2 gap-y-2 border-b border-gray-100 px-3 py-3 transition-colors last:border-b-0 hover:bg-gray-50/70 lg:grid-cols-[61%_155px_110px_110px] lg:gap-0 lg:py-2.5"
             >
                 <!-- Transaction -->
-                <div class="flex min-w-0 items-center gap-2.5">
+                <div class="flex min-w-0 items-center gap-2.5 lg:col-auto">
                     <div
-                        class="flex size-8 shrink-0 items-center justify-center rounded-lg"
+                        class="flex size-9 shrink-0 items-center justify-center rounded-lg"
                         :class="typeConfig(transaction.type).bg"
                     >
                         <i
@@ -106,7 +106,7 @@ const amountPrefix = (transaction: Transaction) => typeConfig(transaction.type).
                     </div>
 
                     <div class="min-w-0">
-                        <div class="truncate text-sm font-semibold text-gray-800">
+                        <div class="truncate text-xs font-semibold text-gray-800 lg:text-sm">
                             {{ transaction.title }}
                         </div>
 
@@ -119,44 +119,39 @@ const amountPrefix = (transaction: Transaction) => typeConfig(transaction.type).
                     </div>
                 </div>
 
-                <!-- Account -->
-                <div class="flex min-w-0 items-center gap-2">
-                    <div class="flex size-7 shrink-0 items-center justify-center rounded-md bg-gray-50">
-                        <i class="pi pi-wallet text-[10px] text-gray-400"></i>
-                    </div>
-
-                    <div class="min-w-0">
-                        <div class="truncate text-xs font-medium text-gray-600">
-                            {{ transaction.account }}
-                        </div>
-
-                        <div class="truncate text-[10px] text-gray-400">
-                            {{ transaction.account_type }}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Date -->
-                <div class="text-right text-xs font-medium text-gray-500">
-                    {{ transaction.date }}
-                </div>
-
                 <!-- Amount -->
-                <div class="flex flex-col items-end">
+                <div class="flex min-w-0 flex-col items-end lg:col-auto lg:row-auto lg:order-last">
                     <div
-                        class="whitespace-nowrap text-sm font-semibold"
+                        class="whitespace-nowrap text-xs font-semibold sm:text-sm"
                         :class="typeConfig(transaction.type).color"
                     >
                         {{ amountPrefix(transaction) }}{{ formatCurrency(transaction.amount) }}
                     </div>
 
-                    <div class="text-[8px] font-medium text-gray-400">
+                    <div class="text-[9px] font-medium text-gray-400">
                         {{ transaction.currency }}
                     </div>
                 </div>
+
+                <!-- Account -->
+                <div class="col-start-1 flex min-w-0 items-center gap-2 pl-0.5 lg:col-auto lg:pl-0">
+                    <i class="pi pi-wallet shrink-0 text-[10px] text-gray-400"></i>
+
+                    <div class="truncate text-[10px] text-gray-500 lg:text-xs">
+                        {{ transaction.account }}
+                        <span v-if="transaction.account_type" class="text-gray-400">
+                            · {{ transaction.account_type }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Date -->
+                <div class="col-start-2 row-start-2 whitespace-nowrap text-right text-[10px] font-medium text-gray-500 lg:col-auto lg:row-auto lg:text-xs">
+                    {{ transaction.date }}
+                </div>
             </div>
         </div>
-        <div class="flex-1 bg-gray-50 flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl mt-4" v-else>
+        <div class="min-h-26 flex-1 bg-gray-50 flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl mt-4" v-else>
             <div class="text-sm text-gray-600">Your latest transactions will appear here</div>
             <div class="text-xs text-gray-400">Currently you dont have any transactions</div>
         </div>

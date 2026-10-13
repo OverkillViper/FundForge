@@ -45,6 +45,7 @@ const userInitials = computed(() => {
 
     return user.name
         .split(' ')
+        .slice(0, 2)
         .filter(Boolean)
         .map((name) => name.charAt(0))
         .join('')
@@ -66,16 +67,7 @@ const greeting = computed(() => {
 </script>
 
 <template>
-    <div class="flex items-center gap-x-6">
-        <Link class="flex items-center w-54" href="/dashboard">
-            <div class="flex items-center gap-x-4">
-                <div class="bg-white p-2.5 rounded-lg overflow-hidden shadow flex justify-center items-center">
-                    <img src="/logo.png" alt="FundForge Logo" class="w-6 h-6 object-contain shrink-0" />
-                </div>
-                <div class="font-berlin">FundForge</div>
-            </div>
-        </Link>
-
+    <div class="flex items-center gap-x-3 lg:gap-x-6 px-2 lg:px-0">
         <button
             class="flex items-center text-gray-400 hover:text-primary transition-colors duration-200"
             @click="emit('toggleSidebar')"
@@ -86,7 +78,16 @@ const greeting = computed(() => {
             ></span>
         </button>
 
-        <div class="text-lg flex-1 ps-4.5">
+        <Link class="flex items-center w-54 sm:order-first" href="/dashboard">
+            <div class="flex items-center lg:gap-x-4">
+                <div class="bg-white p-2.5 rounded-lg overflow-hidden lg:shadow flex justify-center items-center">
+                    <img src="/logo.png" alt="FundForge Logo" class="size-4 lg:size-6 object-contain shrink-0" />
+                </div>
+                <div class="font-berlin">FundForge</div>
+            </div>
+        </Link>
+
+        <div class="text-lg flex-1 ps-4.5 hidden sm:flex gap-x-2">
             <span class="text-gray-500 font-light">{{ greeting }}, </span>
             <span>{{ user.name }}</span>
         </div>

@@ -442,3 +442,9 @@
 .bg-grad {
   background: linear-gradient(134deg, rgba(217, 236, 229, 0.75) 0%, rgba(223, 234, 235, 0.75) 50%, rgba(219, 231, 238, 0.76) 100%);
 }
+
+@media (max-width: 1023px) {
+    .app-toolbar .p-button .p-button-label {
+        display: none;
+    }
+}

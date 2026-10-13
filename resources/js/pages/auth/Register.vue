@@ -33,7 +33,7 @@ defineOptions({
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-4 lg:gap-6">
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input

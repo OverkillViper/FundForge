@@ -101,12 +101,6 @@ class TransactionController extends Controller
             ->with([
                 'account:id,name,currency',
                 'category:id,name',
-
-                /*
-                 * Used by the transaction page to determine
-                 * whether a transaction is referenced by a
-                 * DPS payment.
-                 */
                 'dpsPayment.dps.investment',
             ])
             ->latest('transaction_date')
