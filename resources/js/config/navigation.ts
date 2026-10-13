@@ -56,7 +56,7 @@ export const navigation: NavigationSection[] = [
     {
         section: 'APP',
         items: [
-            { name: 'Settings' , icon: 'pi-cog'      , href: '/settings/tax' } ,
+            { name: 'Settings' , icon: 'pi-cog'      , href: '/settings/app' } ,
             { name: 'Sign Out' , icon: 'pi-sign-out' , href: '/logout' }   ,
         ],
     },

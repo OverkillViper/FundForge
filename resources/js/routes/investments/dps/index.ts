@@ -2,9 +2,9 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import payment from './payment'
 /**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -17,72 +17,75 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
 * @see \App\Http\Controllers\DpsController::index
- * @see app/Http/Controllers/DpsController.php:21
- * @route '/investments/dps'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
+* @see app/Http/Controllers/DpsController.php:22
+* @route '/investments/dps'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
 /**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
     method: 'get',
@@ -95,72 +98,75 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
 create.url = (options?: RouteQueryOptions) => {
     return create.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(options),
     method: 'head',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
-    const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: create.url(options),
-        method: 'get',
-    })
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
-        createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: create.url(options),
-            method: 'get',
-        })
-            /**
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
 * @see \App\Http\Controllers\DpsController::create
- * @see app/Http/Controllers/DpsController.php:42
- * @route '/investments/dps/create'
- */
-        createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: create.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    create.form = createForm
+* @see app/Http/Controllers/DpsController.php:43
+* @route '/investments/dps/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
 /**
 * @see \App\Http\Controllers\DpsController::store
- * @see app/Http/Controllers/DpsController.php:61
- * @route '/investments/dps/store'
- */
+* @see app/Http/Controllers/DpsController.php:62
+* @route '/investments/dps/store'
+*/
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -173,49 +179,50 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::store
- * @see app/Http/Controllers/DpsController.php:61
- * @route '/investments/dps/store'
- */
+* @see app/Http/Controllers/DpsController.php:62
+* @route '/investments/dps/store'
+*/
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\DpsController::store
- * @see app/Http/Controllers/DpsController.php:61
- * @route '/investments/dps/store'
- */
+* @see app/Http/Controllers/DpsController.php:62
+* @route '/investments/dps/store'
+*/
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::store
- * @see app/Http/Controllers/DpsController.php:61
- * @route '/investments/dps/store'
- */
-    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: store.url(options),
-        method: 'post',
-    })
+* @see app/Http/Controllers/DpsController.php:62
+* @route '/investments/dps/store'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::store
- * @see app/Http/Controllers/DpsController.php:61
- * @route '/investments/dps/store'
- */
-        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: store.url(options),
-            method: 'post',
-        })
-    
-    store.form = storeForm
+* @see app/Http/Controllers/DpsController.php:62
+* @route '/investments/dps/store'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
 /**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
 export const show = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -228,31 +235,31 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
 show.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { dps: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { dps: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    dps: args[0],
-                }
+            dps: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        dps: typeof args.dps === 'object'
-                ? args.dps.id
-                : args.dps,
-                }
+        dps: typeof args.dps === 'object'
+        ? args.dps.id
+        : args.dps,
+    }
 
     return show.definition.url
             .replace('{dps}', parsedArgs.dps.toString())
@@ -261,63 +268,66 @@ show.url = (args: { dps: number | { id: number } } | [dps: number | { id: number
 
 /**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
 show.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
 show.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
-    const showForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: show.url(args, options),
-        method: 'get',
-    })
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
+const showForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
-        showForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, options),
-            method: 'get',
-        })
-            /**
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
+showForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
 * @see \App\Http\Controllers\DpsController::show
- * @see app/Http/Controllers/DpsController.php:100
- * @route '/investments/dps/{dps}'
- */
-        showForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: show.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    show.form = showForm
+* @see app/Http/Controllers/DpsController.php:101
+* @route '/investments/dps/{dps}'
+*/
+showForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
 /**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
 export const edit = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
@@ -330,31 +340,31 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
 edit.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { dps: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { dps: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    dps: args[0],
-                }
+            dps: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        dps: typeof args.dps === 'object'
-                ? args.dps.id
-                : args.dps,
-                }
+        dps: typeof args.dps === 'object'
+        ? args.dps.id
+        : args.dps,
+    }
 
     return edit.definition.url
             .replace('{dps}', parsedArgs.dps.toString())
@@ -363,63 +373,66 @@ edit.url = (args: { dps: number | { id: number } } | [dps: number | { id: number
 
 /**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
 edit.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
 edit.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
-    const editForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: edit.url(args, options),
-        method: 'get',
-    })
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
+const editForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
-        editForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: edit.url(args, options),
-            method: 'get',
-        })
-            /**
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
+editForm.get = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
 * @see \App\Http\Controllers\DpsController::edit
- * @see app/Http/Controllers/DpsController.php:47
- * @route '/investments/dps/edit/{dps}'
- */
-        editForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: edit.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    edit.form = editForm
+* @see app/Http/Controllers/DpsController.php:48
+* @route '/investments/dps/edit/{dps}'
+*/
+editForm.head = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
 /**
 * @see \App\Http\Controllers\DpsController::destroy
- * @see app/Http/Controllers/DpsController.php:183
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:184
+* @route '/investments/dps/{dps}'
+*/
 export const destroy = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -432,31 +445,31 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::destroy
- * @see app/Http/Controllers/DpsController.php:183
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:184
+* @route '/investments/dps/{dps}'
+*/
 destroy.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { dps: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { dps: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    dps: args[0],
-                }
+            dps: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        dps: typeof args.dps === 'object'
-                ? args.dps.id
-                : args.dps,
-                }
+        dps: typeof args.dps === 'object'
+        ? args.dps.id
+        : args.dps,
+    }
 
     return destroy.definition.url
             .replace('{dps}', parsedArgs.dps.toString())
@@ -465,50 +478,51 @@ destroy.url = (args: { dps: number | { id: number } } | [dps: number | { id: num
 
 /**
 * @see \App\Http\Controllers\DpsController::destroy
- * @see app/Http/Controllers/DpsController.php:183
- * @route '/investments/dps/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:184
+* @route '/investments/dps/{dps}'
+*/
 destroy.delete = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::destroy
- * @see app/Http/Controllers/DpsController.php:183
- * @route '/investments/dps/{dps}'
- */
-    const destroyForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: destroy.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'DELETE',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
+* @see app/Http/Controllers/DpsController.php:184
+* @route '/investments/dps/{dps}'
+*/
+const destroyForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::destroy
- * @see app/Http/Controllers/DpsController.php:183
- * @route '/investments/dps/{dps}'
- */
-        destroyForm.delete = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: destroy.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'DELETE',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    destroy.form = destroyForm
+* @see app/Http/Controllers/DpsController.php:184
+* @route '/investments/dps/{dps}'
+*/
+destroyForm.delete = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
 /**
 * @see \App\Http\Controllers\DpsController::update
- * @see app/Http/Controllers/DpsController.php:146
- * @route '/investments/dps/update/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:147
+* @route '/investments/dps/update/{dps}'
+*/
 export const update = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
@@ -521,31 +535,31 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\DpsController::update
- * @see app/Http/Controllers/DpsController.php:146
- * @route '/investments/dps/update/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:147
+* @route '/investments/dps/update/{dps}'
+*/
 update.url = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { dps: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { dps: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { dps: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    dps: args[0],
-                }
+            dps: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        dps: typeof args.dps === 'object'
-                ? args.dps.id
-                : args.dps,
-                }
+        dps: typeof args.dps === 'object'
+        ? args.dps.id
+        : args.dps,
+    }
 
     return update.definition.url
             .replace('{dps}', parsedArgs.dps.toString())
@@ -554,54 +568,55 @@ update.url = (args: { dps: number | { id: number } } | [dps: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\DpsController::update
- * @see app/Http/Controllers/DpsController.php:146
- * @route '/investments/dps/update/{dps}'
- */
+* @see app/Http/Controllers/DpsController.php:147
+* @route '/investments/dps/update/{dps}'
+*/
 update.put = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\DpsController::update
- * @see app/Http/Controllers/DpsController.php:146
- * @route '/investments/dps/update/{dps}'
- */
-    const updateForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: update.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'PUT',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
+* @see app/Http/Controllers/DpsController.php:147
+* @route '/investments/dps/update/{dps}'
+*/
+const updateForm = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\DpsController::update
- * @see app/Http/Controllers/DpsController.php:146
- * @route '/investments/dps/update/{dps}'
- */
-        updateForm.put = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: update.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'PUT',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    update.form = updateForm
+* @see app/Http/Controllers/DpsController.php:147
+* @route '/investments/dps/update/{dps}'
+*/
+updateForm.put = (args: { dps: number | { id: number } } | [dps: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
 const dps = {
     index: Object.assign(index, index),
-create: Object.assign(create, create),
-store: Object.assign(store, store),
-show: Object.assign(show, show),
-edit: Object.assign(edit, edit),
-destroy: Object.assign(destroy, destroy),
-update: Object.assign(update, update),
-payment: Object.assign(payment, payment),
+    create: Object.assign(create, create),
+    store: Object.assign(store, store),
+    show: Object.assign(show, show),
+    edit: Object.assign(edit, edit),
+    destroy: Object.assign(destroy, destroy),
+    update: Object.assign(update, update),
+    payment: Object.assign(payment, payment),
 }
 
 export default dps

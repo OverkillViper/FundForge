@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ProvidentFundController::store
- * @see app/Http/Controllers/ProvidentFundController.php:186
- * @route '/investments/provident-fund/contribution'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:186
+* @route '/investments/provident-fund/contribution'
+*/
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -16,49 +16,50 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::store
- * @see app/Http/Controllers/ProvidentFundController.php:186
- * @route '/investments/provident-fund/contribution'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:186
+* @route '/investments/provident-fund/contribution'
+*/
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::store
- * @see app/Http/Controllers/ProvidentFundController.php:186
- * @route '/investments/provident-fund/contribution'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:186
+* @route '/investments/provident-fund/contribution'
+*/
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::store
- * @see app/Http/Controllers/ProvidentFundController.php:186
- * @route '/investments/provident-fund/contribution'
- */
-    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: store.url(options),
-        method: 'post',
-    })
+* @see app/Http/Controllers/ProvidentFundController.php:186
+* @route '/investments/provident-fund/contribution'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::store
- * @see app/Http/Controllers/ProvidentFundController.php:186
- * @route '/investments/provident-fund/contribution'
- */
-        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: store.url(options),
-            method: 'post',
-        })
-    
-    store.form = storeForm
+* @see app/Http/Controllers/ProvidentFundController.php:186
+* @route '/investments/provident-fund/contribution'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
 /**
 * @see \App\Http\Controllers\ProvidentFundController::update
- * @see app/Http/Controllers/ProvidentFundController.php:217
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:217
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 export const update = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
@@ -71,31 +72,31 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::update
- * @see app/Http/Controllers/ProvidentFundController.php:217
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:217
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 update.url = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { contribution: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { contribution: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { contribution: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    contribution: args[0],
-                }
+            contribution: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        contribution: typeof args.contribution === 'object'
-                ? args.contribution.id
-                : args.contribution,
-                }
+        contribution: typeof args.contribution === 'object'
+        ? args.contribution.id
+        : args.contribution,
+    }
 
     return update.definition.url
             .replace('{contribution}', parsedArgs.contribution.toString())
@@ -104,50 +105,51 @@ update.url = (args: { contribution: number | { id: number } } | [contribution: n
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::update
- * @see app/Http/Controllers/ProvidentFundController.php:217
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:217
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 update.put = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::update
- * @see app/Http/Controllers/ProvidentFundController.php:217
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
-    const updateForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: update.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'PUT',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
+* @see app/Http/Controllers/ProvidentFundController.php:217
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
+const updateForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::update
- * @see app/Http/Controllers/ProvidentFundController.php:217
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
-        updateForm.put = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: update.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'PUT',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    update.form = updateForm
+* @see app/Http/Controllers/ProvidentFundController.php:217
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
+updateForm.put = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
 /**
 * @see \App\Http\Controllers\ProvidentFundController::destroy
- * @see app/Http/Controllers/ProvidentFundController.php:252
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:252
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 export const destroy = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
@@ -160,31 +162,31 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::destroy
- * @see app/Http/Controllers/ProvidentFundController.php:252
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:252
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 destroy.url = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { contribution: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { contribution: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { contribution: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    contribution: args[0],
-                }
+            contribution: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        contribution: typeof args.contribution === 'object'
-                ? args.contribution.id
-                : args.contribution,
-                }
+        contribution: typeof args.contribution === 'object'
+        ? args.contribution.id
+        : args.contribution,
+    }
 
     return destroy.definition.url
             .replace('{contribution}', parsedArgs.contribution.toString())
@@ -193,49 +195,50 @@ destroy.url = (args: { contribution: number | { id: number } } | [contribution: 
 
 /**
 * @see \App\Http\Controllers\ProvidentFundController::destroy
- * @see app/Http/Controllers/ProvidentFundController.php:252
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
+* @see app/Http/Controllers/ProvidentFundController.php:252
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
 destroy.delete = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::destroy
- * @see app/Http/Controllers/ProvidentFundController.php:252
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
-    const destroyForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: destroy.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'DELETE',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
+* @see app/Http/Controllers/ProvidentFundController.php:252
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
+const destroyForm = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
 
-            /**
+/**
 * @see \App\Http\Controllers\ProvidentFundController::destroy
- * @see app/Http/Controllers/ProvidentFundController.php:252
- * @route '/investments/provident-fund/contribution/{contribution}'
- */
-        destroyForm.delete = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: destroy.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'DELETE',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    destroy.form = destroyForm
+* @see app/Http/Controllers/ProvidentFundController.php:252
+* @route '/investments/provident-fund/contribution/{contribution}'
+*/
+destroyForm.delete = (args: { contribution: number | { id: number } } | [contribution: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
 const contribution = {
     store: Object.assign(store, store),
-update: Object.assign(update, update),
-destroy: Object.assign(destroy, destroy),
+    update: Object.assign(update, update),
+    destroy: Object.assign(destroy, destroy),
 }
 
 export default contribution
