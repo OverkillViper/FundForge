@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -33,3 +34,5 @@ Route::get('/debug-scheme', function (Request $request) {
         'app_url' => config('app.url'),
     ]);
 });
+
+Route::get('/transactions/debug', [TransactionController::class, 'debug'])->name('transactions.debug');

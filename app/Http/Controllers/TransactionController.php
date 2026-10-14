@@ -11,29 +11,57 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Transfer;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
     public function create(Request $request): Response
     {
-        $accounts = Account::where(
-            'user_id',
-            auth()->id()
-        )->get();
+        $userId = auth()->id();
 
-        $categories = Category::where(
-            'user_id',
-            auth()->id()
-        )->get();
+        $accounts = Account::query()
+            ->where('user_id', $userId)
+            ->withCount(['transactions as usage_count' => fn ($query) => $query->whereIn('type', ['expense', 'income'])])
+            ->orderByDesc('usage_count')
+            ->orderBy('name')
+            ->get();
+
+        $categories = Category::where('user_id', $userId)->get();
+
+        $rankedTransactions = Transaction::query()
+            ->where('user_id', $userId)
+            ->whereIn('type', ['expense', 'income'])
+            ->selectRaw('
+                id,
+                account_id,
+                category_id,
+                title,
+                type,
+                amount,
+                note,
+                reference,
+                created_at,
+                COUNT(*) OVER (
+                    PARTITION BY title, type, account_id, category_id
+                ) AS usage_count,
+                ROW_NUMBER() OVER (
+                    PARTITION BY title, type, account_id, category_id
+                    ORDER BY created_at DESC, id DESC
+                ) AS row_number
+            ');
 
         $frequentTransactions = Transaction::query()
-            ->where('user_id', auth()->id())
-            ->whereIn('type', ['expense', 'income'])
+            ->fromSub($rankedTransactions, 'transactions')
+            ->where('row_number', 1)
             ->with([
                 'account:id,name,currency',
                 'category:id,name',
             ])
-            ->select([
+            ->orderByDesc('usage_count')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get([
                 'id',
                 'account_id',
                 'category_id',
@@ -42,10 +70,8 @@ class TransactionController extends Controller
                 'amount',
                 'note',
                 'reference',
-            ])
-            ->latest()
-            ->limit(10)
-            ->get();
+                'created_at',
+            ]);
 
         return Inertia::render('Transactions/Create', [
             'accounts' => $accounts,
@@ -540,5 +566,128 @@ class TransactionController extends Controller
             $transaction->user_id === auth()->id(),
             403
         );
+    }
+
+    public function debug()
+    {
+        $userId = Auth::id();
+
+        $accounts = Account::where('user_id', $userId)
+            ->orderBy('id')
+            ->get(['id', 'name', 'opening_balance', 'balance']);
+
+        $accountNames = $accounts->pluck('name', 'id');
+        $accountIds = $accounts->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        $events = collect();
+
+        $transactions = Transaction::where('user_id', $userId)
+            ->orderByDesc('transaction_date')
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get(['id', 'transaction_date', 'title', 'amount', 'type', 'account_id']);
+
+        $transfers = Transfer::where('user_id', $userId)
+            ->orderByDesc('transfer_date')
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get(['id', 'transfer_date', 'amount', 'from_account_id', 'to_account_id']);
+
+        foreach ($transactions as $transaction) {
+            $effect = in_array($transaction->type, ['income', 'borrowing'], true) ? 1 : -1;
+
+            $events->push([
+                'date' => $transaction->transaction_date->toDateString(),
+                'priority' => 1,
+                'id' => $transaction->id,
+                'kind' => 'transaction',
+                'title' => $transaction->title,
+                'amount' => $effect * (float) $transaction->amount,
+                'changes' => [
+                    [
+                        'account_id' => (int) $transaction->account_id,
+                        'effect' => $effect,
+                    ],
+                ],
+            ]);
+        }
+
+        foreach ($transfers as $transfer) {
+            $events->push([
+                'date' => $transfer->transfer_date->toDateString(),
+                'priority' => 0,
+                'id' => $transfer->id,
+                'kind' => 'transfer',
+                'title' => 'Transfer: '.($accountNames[$transfer->from_account_id] ?? 'Unknown')
+                    .' → '.($accountNames[$transfer->to_account_id] ?? 'Unknown'),
+                'amount' => (float) $transfer->amount,
+                'changes' => [
+                    [
+                        'account_id' => (int) $transfer->from_account_id,
+                        'effect' => -1,
+                    ],
+                    [
+                        'account_id' => (int) $transfer->to_account_id,
+                        'effect' => 1,
+                    ],
+                ],
+            ]);
+        }
+
+        $events = $events
+            ->sortByDesc(fn ($event) => $event['date'])
+            ->take(20)
+            ->sortBy(fn ($event) => $event['date'])
+            ->values();
+
+        $runningBalances = [];
+
+        foreach ($accounts as $account) {
+            $runningBalances[$account->id] = (float) $account->opening_balance;
+        }
+
+        $rows = [];
+
+        foreach ($events as $event) {
+            $accountBalances = [];
+
+            foreach ($event['changes'] as $change) {
+                $accountId = $change['account_id'];
+
+                if (!in_array($accountId, $accountIds, true)) {
+                    continue;
+                }
+
+                $runningBalances[$accountId] = round(
+                    $runningBalances[$accountId] + $change['effect'] * abs($event['amount']),
+                    2
+                );
+
+                $accountBalances[] = [
+                    'account_id' => $accountId,
+                    'balance' => $runningBalances[$accountId],
+                ];
+            }
+
+            $rows[] = [
+                'key' => $event['kind'].'-'.$event['id'],
+                'date' => $event['date'],
+                'kind' => $event['kind'],
+                'title' => $event['title'],
+                'amount' => $event['amount'],
+                'balances' => $accountBalances,
+            ];
+        }
+
+        return Inertia::render('Transactions/Debug', [
+            'accounts' => $accounts->map(fn ($account) => [
+                'id' => $account->id,
+                'name' => $account->name,
+                'opening_balance' => (float) $account->opening_balance,
+                'stored_balance' => (float) $account->balance,
+                'calculated_balance' => $runningBalances[$account->id],
+            ]),
+            'rows' => $rows,
+        ]);
     }
 }

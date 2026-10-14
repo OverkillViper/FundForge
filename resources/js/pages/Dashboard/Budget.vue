@@ -43,16 +43,18 @@ const totalBudget = computed(() => currentBudget.value.budget);
 const totalSpent = computed(() => currentBudget.value.spent);
 const remaining = computed(() => currentBudget.value.remaining);
 
+const budgetNotSet = computed(() => totalBudget.value === 0);
+
 const spentPercentage = computed(() => {
-    if (totalBudget.value === 0) {
-        return totalSpent.value > 0 ? 100 : 0;
+    if (budgetNotSet.value) {
+        return 0;
     }
 
     return Math.round((totalSpent.value / totalBudget.value) * 100);
 });
 
 const budgetExceeded = computed(() =>
-    totalSpent.value > totalBudget.value,
+    !budgetNotSet.value && totalSpent.value > totalBudget.value,
 );
 
 const formattedAmount = (amount: number) => amount.toLocaleString('en-IN');
@@ -65,10 +67,9 @@ const progressPercentage = computed(() =>
 <template>
     <div class="rounded-xl border border-gray-200 bg-white p-4">
         <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <div class="text-sm font-semibold text-gray-700">Budget</div>
-
                 <div class="mt-0.5 text-[10px] text-gray-400">
                     Track your spending against your budget
                 </div>
@@ -90,6 +91,7 @@ const progressPercentage = computed(() =>
                     }"
                 />
             </div>
+
             <div class="lg:hidden">
                 <SelectButton
                     v-model="selectedPeriod"
@@ -107,55 +109,41 @@ const progressPercentage = computed(() =>
                     }"
                 />
             </div>
-            
         </div>
 
         <!-- Summary -->
-        <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <div class="mt-4 grid grid-cols-1 gap-2 lg:grid-cols-3">
             <!-- Budget -->
             <div class="rounded-lg bg-gray-50 px-3 py-2.5">
-                <div class="text-[9px] font-medium text-gray-400">
-                    Budget
-                </div>
-
+                <div class="text-[9px] font-medium text-gray-400">Budget</div>
                 <div class="mt-0.5 text-sm font-semibold text-gray-700">
-                    {{ formattedAmount(totalBudget) }}
-                    <span class="text-[9px] font-medium text-gray-400">
-                        BDT
-                    </span>
+                    {{ budgetNotSet ? 'Not Set' : formattedAmount(totalBudget) }}
+                    <span v-if="!budgetNotSet" class="text-[9px] font-medium text-gray-400">BDT</span>
                 </div>
             </div>
 
             <!-- Spent -->
             <div class="rounded-lg bg-gray-50 px-3 py-2.5">
-                <div class="text-[9px] font-medium text-gray-400">
-                    Spent
-                </div>
-
+                <div class="text-[9px] font-medium text-gray-400">Spent</div>
                 <div class="mt-0.5 text-sm font-semibold text-gray-700">
                     {{ formattedAmount(totalSpent) }}
-                    <span class="text-[9px] font-medium text-gray-400">
-                        BDT
-                    </span>
+                    <span class="text-[9px] font-medium text-gray-400">BDT</span>
                 </div>
             </div>
 
             <!-- Remaining -->
             <div
                 class="rounded-lg px-3 py-2.5"
-                :class="remaining < 0 ? 'bg-rose-50' : 'bg-primary/5'"
+                :class="budgetNotSet ? 'bg-gray-50' : remaining < 0 ? 'bg-rose-50' : 'bg-primary/5'"
             >
-                <div class="text-[9px] font-medium text-gray-400">
-                    Remaining
-                </div>
-
+                <div class="text-[9px] font-medium text-gray-400">Remaining</div>
                 <div
                     class="mt-0.5 text-sm font-semibold"
-                    :class="remaining < 0 ? 'text-rose-600' : 'text-primary'"
+                    :class="budgetNotSet ? 'text-gray-400' : remaining < 0 ? 'text-rose-600' : 'text-primary'"
                 >
-                    {{ formattedAmount(remaining) }}
-
+                    {{ budgetNotSet ? 'N/A' : formattedAmount(remaining) }}
                     <span
+                        v-if="!budgetNotSet"
                         class="text-[9px] font-medium"
                         :class="remaining < 0 ? 'text-rose-400' : 'text-primary/60'"
                     >
@@ -174,7 +162,14 @@ const progressPercentage = computed(() =>
                     </span>
 
                     <span
-                        v-if="budgetExceeded"
+                        v-if="budgetNotSet"
+                        class="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500"
+                    >
+                        Not Set
+                    </span>
+
+                    <span
+                        v-else-if="budgetExceeded"
                         class="rounded-md bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-600"
                     >
                         Budget Exceeded
@@ -182,10 +177,15 @@ const progressPercentage = computed(() =>
                 </div>
 
                 <span
+                    v-if="!budgetNotSet"
                     class="text-[10px] font-semibold"
                     :class="budgetExceeded ? 'text-rose-600' : 'text-gray-600'"
                 >
                     {{ spentPercentage }}%
+                </span>
+
+                <span v-else class="text-[10px] font-medium text-gray-400">
+                    —
                 </span>
             </div>
 
@@ -193,7 +193,7 @@ const progressPercentage = computed(() =>
                 <div
                     class="h-full rounded-full transition-all duration-300"
                     :class="budgetExceeded ? 'bg-rose-500' : 'bg-primary'"
-                    :style="{ width: `${progressPercentage}%` }"
+                    :style="{ width: `${budgetNotSet ? 0 : progressPercentage}%` }"
                 ></div>
             </div>
         </div>

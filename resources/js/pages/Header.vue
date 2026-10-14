@@ -67,7 +67,7 @@ const greeting = computed(() => {
 </script>
 
 <template>
-    <div class="flex items-center gap-x-3 lg:gap-x-6 px-2 lg:px-0">
+    <div class="flex items-center gap-x-3 lg:gap-x-6 px-2 lg:px-0 justify-between">
         <button
             class="flex items-center text-gray-400 hover:text-primary transition-colors duration-200"
             @click="emit('toggleSidebar')"
@@ -120,7 +120,7 @@ const greeting = computed(() => {
             </Popover>
 
             <button
-                class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-accent text-sm font-semibold text-white transition hover:bg-gray-800"
+                class="flex size-9 items-center justify-center rounded-full bg-brand-accent text-sm font-semibold text-white transition hover:bg-gray-800"
                 @click="toggleUserPopover"
             >
                 {{ userInitials }}

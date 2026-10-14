@@ -73,7 +73,7 @@ watch(
     <Head :title="pageTitle" />
 
     <div class="flex min-h-screen w-full flex-col overflow-x-hidden p-0 lg:h-screen lg:min-w-screen lg:w-screen lg:overflow-hidden lg:p-4">
-        <div class="fixed lg:relative z-60 shrink-0 p-3 lg:p-0 bg-white lg:bg-transparent">
+        <div class="fixed lg:relative z-60 shrink-0 p-3 lg:p-0 bg-white lg:bg-transparent w-full">
             <Header
                 :collapsed="collapsed"
                 :mobile-sidebar-open="mobileSidebarOpen"
