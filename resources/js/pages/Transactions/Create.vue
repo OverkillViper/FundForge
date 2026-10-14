@@ -227,285 +227,174 @@ const cancel = () => {
 </style>
 
 <template>
-<AppLayout page-title="Create Transactions">
-    <template #content>
-        <NoAccountWarning v-if="!accounts.length" />
+    <AppLayout page-title="Create Transactions">
+        <template #content>
+            <NoAccountWarning v-if="!accounts.length" />
 
-        <div class="flex gap-x-10 pt-6" v-else>
-            <div class="flex w-1/2 flex-col">
-                <div class="flex items-center gap-x-2 text-xs text-gray-500 uppercase">
-                    <span>New transaction</span>
-                    <hr class="flex-1 border" />
-                </div>
-                <form class="mt-4 flex flex-col" @submit.prevent="submit">
-                    <label for="name" class="font-medium text-gray-500">Transaction Title</label>
-                    <input
-                        v-model="createForm.title"
-                        class="input-field focus:outline-0"
-                        :class="{ '!border-red-500': errors.title }"
-                        placeholder="Bus fare / Salary"
-                        autofocus
-                    />
-                    <small v-if="errors.title" class="mt-1 text-xs text-red-500">{{ errors.title }}</small>
-                    
-                    <label for="name" class="mt-6 font-medium text-gray-500">Transaction Type</label>
-                    <SelectButton
-                        v-model="createForm.type"
-                        :options="transactionTypes"
-                        optionLabel="label"
-                        optionValue="value"
-                        aria-labelledby="basic"
-                        size="small"
-                        class="mt-2"
-                        fluid
-                    >
-                        <template #option="{ option }">
-                            <div class="flex items-center justify-center gap-2">
-                                <i :class="option.icon"></i>
-                                <span>{{ option.label }}</span>
-                            </div>
-                        </template>
-                    </SelectButton>
-                    <small v-if="errors.type" class="mt-1 text-xs text-red-500">
-                        {{ errors.type }}
-                    </small>
+            <div v-else class="flex gap-x-10">
+                <!-- New Transaction -->
+                <div class="flex w-full flex-col lg:w-1/2">
+                    <div class="flex items-center gap-x-2 text-xs text-gray-500 uppercase">
+                        <span>New transaction</span>
+                        <hr class="flex-1 border" />
+                    </div>
 
-                    <div class="mt-6 grid grid-cols-2 gap-6">
-                        <div class="flex flex-col">
-                            <label for="name" class="font-medium text-gray-500">Source Account</label>
-                            <Select
-                                v-model="createForm.account_id"
-                                :options="props.accounts"
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Select an account"
-                                class="mt-2"
-                                size="small"
-                            >
-                                <template #option="{ option }">
-                                    <div class="flex w-full items-center justify-between gap-4">
-                                        <div class="flex flex-col">
-                                            <span class="text-sm font-medium">
-                                                {{ option.name }}
-                                            </span>
-                                            <span class="text-xs text-gray-400 capitalize">
-                                                {{ option.type }} account
-                                            </span>
-                                        </div>
-
-                                        <div class="flex flex-col items-end">
-                                            <span class="text-sm font-medium">
-                                                {{ option.balance }}
-                                            </span>
-                                            <span class="text-xs text-gray-400">
-                                                {{ option.currency }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                
-                                <template #value="{ value }">
-                                    <div v-if="value" class="flex w-full items-center justify-between">
-                                        <span>{{ accounts.find((account) => account.id === value,)?.name }}
-                                        </span>
-
-                                        <span class="text-xs text-gray-400">
-                                            {{ accounts.find((account) => account.id === value,)?.balance }}
-                                            {{ accounts.find((account) => account.id === value,)?.currency }}
-                                        </span>
-                                    </div>
-
-                                    <span v-else class="text-gray-400">
-                                        Select an account
-                                    </span>
-                                </template>
-                            </Select>
-                            <small v-if="errors.account_id" class="mt-1 text-xs text-red-500">
-                                {{ errors.account_id }}
-                            </small>
+                    <form class="mt-4 flex flex-col gap-3 lg:gap-6" @submit.prevent="submit">
+                        <!-- Transaction Title -->
+                        <div class="flex flex-col gap-1">
+                            <label for="title" class="text-sm font-medium text-gray-500">Transaction Title</label>
+                            <input id="title" v-model="createForm.title" class="input-field focus:outline-0" :class="{ '!border-red-500': errors.title }" placeholder="Bus fare / Salary" autofocus />
+                            <small v-if="errors.title" class="text-xs text-red-500">{{ errors.title }}</small>
                         </div>
-                        
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between">
-                                <label for="name" class="font-medium text-gray-500">Category</label>
-                                <Link :href="index.url()" class="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-x-2">
-                                    <span class="icon-circle-plus"></span>
-                                    Create new category
-                                </Link>
-                            </div>
-                            <Select
-                                v-model="createForm.category_id"
-                                :options="props.categories"
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Select a category"
-                                class="mt-2 !text-sm"
-                                size="small"
-                                filter
-                                filterPlaceholder="Search category..."
-                                showClear
-                                :disabled="createForm.type !== 'expense'"
-                                :pt="{
-                                    pcFilter: {
-                                        root: {
-                                            class: '!text-sm !h-8 !py-1 !px-2',
-                                        },
-                                    },
-                                }"
-                            >
-                                
+
+                        <!-- Type -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-gray-500">Transaction Type</label>
+                            <SelectButton v-model="createForm.type" :options="transactionTypes" optionLabel="label" optionValue="value" aria-labelledby="basic" size="small" fluid>
                                 <template #option="{ option }">
-                                    <div class="flex w-full items-center justify-between gap-4">
-                                        <div class="flex flex-col">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <i :class="option.icon"></i>
+                                        <span>{{ option.label }}</span>
+                                    </div>
+                                </template>
+                            </SelectButton>
+                            <small v-if="errors.type" class="text-xs text-red-500">{{ errors.type }}</small>
+                        </div>
+
+                        <!-- Account, Category, Amount, and Date -->
+                        <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6">
+                            <!-- Account -->
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-gray-500">Source Account</label>
+                                <Select v-model="createForm.account_id" :options="props.accounts" optionLabel="name" optionValue="id" placeholder="Select an account" size="small">
+                                    <template #option="{ option }">
+                                        <div class="flex w-full items-center justify-between gap-3">
+                                            <div class="flex flex-col">
+                                                <span class="text-sm font-medium">{{ option.name }}</span>
+                                                <span class="text-xs text-gray-400 capitalize">{{ option.type }} account</span>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-sm font-medium">{{ option.balance }}</span>
+                                                <span class="text-xs text-gray-400">{{ option.currency }}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <template #value="{ value }">
+                                        <div v-if="value" class="flex w-full items-center justify-between">
+                                            <span>{{ accounts.find((account) => account.id === value)?.name }}</span>
+                                            <span class="text-xs text-gray-400">
+                                                {{ accounts.find((account) => account.id === value)?.balance }}
+                                                {{ accounts.find((account) => account.id === value)?.currency }}
+                                            </span>
+                                        </div>
+                                        <span v-else class="text-gray-400">Select an account</span>
+                                    </template>
+                                </Select>
+                                <small v-if="errors.account_id" class="text-xs text-red-500">{{ errors.account_id }}</small>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="text-sm font-medium text-gray-500">Category</label>
+                                    <Link :href="index.url()" class="flex items-center gap-x-2 text-xs text-gray-500 hover:text-gray-700">
+                                        <span class="icon-circle-plus"></span>
+                                        Create new category
+                                    </Link>
+                                </div>
+
+                                <Select v-model="createForm.category_id" :options="props.categories" optionLabel="name" optionValue="id" placeholder="Select a category" class="!text-sm" size="small" filter filterPlaceholder="Search category..." showClear :disabled="createForm.type !== 'expense'" :pt="{ pcFilter: { root: { class: '!text-sm !h-8 !py-1 !px-2' } } }">
+                                    <template #option="{ option }">
+                                        <div class="flex w-full items-center justify-between gap-3">
                                             <span class="text-sm font-medium">{{ option.name }}</span>
                                         </div>
-                                    </div>
-                                </template>
-                                
-                                <template #value="{ value }">
-                                    <div v-if="value" class="flex w-full items-center">
-                                        <span> {{ props.categories.find((category) => category.id === value,)?.name }} </span>
-                                    </div>
-                                    <span v-else class="text-gray-400">Select a category</span>
-                                </template>
-                            </Select>
-                            <small v-if="errors.category_id" class="mt-1 text-xs text-red-500">{{ errors.category_id }}</small>
+                                    </template>
+
+                                    <template #value="{ value }">
+                                        <div v-if="value" class="flex w-full items-center">
+                                            <span>{{ props.categories.find((category) => category.id === value)?.name }}</span>
+                                        </div>
+                                        <span v-else class="text-gray-400">Select a category</span>
+                                    </template>
+                                </Select>
+                                <small v-if="errors.category_id" class="text-xs text-red-500">{{ errors.category_id }}</small>
+                            </div>
+
+                            <!-- Amount -->
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-gray-500">Amount</label>
+                                <InputNumber v-model="createForm.amount" size="small" :class="{ 'p-invalid': errors.amount }" placeholder="0.00" mode="decimal" :min="0" :minFractionDigits="0" :maxFractionDigits="2" :useGrouping="true" locale="en-IN" />
+                                <small v-if="errors.amount" class="text-xs text-red-500">{{ errors.amount }}</small>
+                            </div>
+
+                            <!-- Date -->
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-gray-500">Transaction Date</label>
+                                <DatePicker v-model="createForm.transaction_date" placeholder="dd/mm/yyyy" size="small" dateFormat="dd/mm/yy" v-mask="'99/99/9999'" showIcon showButtonBar />
+                                <small v-if="errors.transaction_date" class="text-xs text-red-500">{{ errors.transaction_date }}</small>
+                            </div>
                         </div>
 
-                        
-                        <div class="flex flex-col">
-                            <label for="name" class="font-medium text-gray-500">Amount</label>
-                            <InputNumber
-                                v-model="createForm.amount"
-                                size="small"
-                                class="mt-2"
-                                :class="{ 'p-invalid': errors.amount }"
-                                placeholder="0.00"
-                                mode="decimal"
-                                :min="0"
-                                :minFractionDigits="0"
-                                :maxFractionDigits="2"
-                                :useGrouping="true"
-                                locale="en-IN"
-                            />
-                            <small v-if="errors.amount" class="mt-1 text-xs text-red-500">{{ errors.amount }}</small>
+                        <!-- Note -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-gray-500">Note</label>
+                            <Textarea v-model="createForm.note" placeholder="Write a description" autoResize rows="3" class="text-sm!" />
                         </div>
 
-                        
-                        <div class="flex flex-col">
-                            <label for="name" class="font-medium text-gray-500">Transaction Date</label>
-                            <DatePicker
-                                showButtonBar
-                                placeholder="dd/mm/yyyy"
-                                v-model="createForm.transaction_date"
-                                size="small"
-                                class="mt-2"
-                                dateFormat="dd/mm/yy"
-                                v-mask="'99/99/9999'"
-                                showIcon
-                            />
-                            <small v-if="errors.transaction_date" class="mt-1 text-xs text-red-500">
-                                {{ errors.transaction_date }}
-                            </small>
+                        <!-- Reference -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-gray-500">Reference</label>
+                            <InputText v-model="createForm.reference" placeholder="Transaction Reference" class="text-sm!" size="small" />
                         </div>
-                    </div>
 
-                    
-                    <div class="mt-6 flex flex-col">
-                        <label for="name" class="font-medium text-gray-500">Note</label>
-                        <Textarea
-                            v-model="createForm.note"
-                            placeholder="Write a description"
-                            autoResize
-                            rows="3"
-                            class="mt-2 text-sm!"
-                        />
-                    </div>
-
-                    
-                    <div class="mt-6 flex flex-col">
-                        <label for="name" class="font-medium text-gray-500">Reference</label>
-                        <InputText
-                            v-model="createForm.reference"
-                            placeholder="Transaction Reference"
-                            class="mt-2 text-sm!"
-                            size="small"
-                        />
-                    </div>
-
-                    <div class="flex items-center justify-end gap-x-4">
-                        <Button
-                            label="Cancel"
-                            class="mt-6 w-40"
-                            size="small"
-                            severity="secondary"
-                            icon="pi pi-times"
-                            @click="cancel"
-                        />
-                        <Button
-                            type="submit"
-                            label="Create"
-                            class="mt-6 w-40"
-                            size="small"
-                            icon="pi pi-plus"
-                            :loading="createForm.processing"
-                        />
-                    </div>
-                </form>
-            </div>
-            <div class="w-1/2">
-                <div class="flex items-center gap-x-2 text-xs text-gray-500 uppercase">
-                    <span>Quick Add</span>
-                    <hr class="flex-1 border" />
+                        <!-- Buttons -->
+                        <div class="flex items-center justify-end gap-3">
+                            <Button label="Cancel" class="w-40" size="small" severity="secondary" icon="pi pi-times" type="button" @click="cancel" />
+                            <Button type="submit" label="Create" class="w-40" size="small" icon="pi pi-plus" :loading="createForm.processing" />
+                        </div>
+                    </form>
                 </div>
-                <div v-if="props.frequentTransactions.length" class="mt-4 flex flex-col gap-2">
-                    <button
-                        v-for="transaction in props.frequentTransactions"
-                        :key="transaction.id"
-                        type="button"
-                        class="flex w-full items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-gray-50"
-                        @click="useFrequentTransaction(transaction)"
-                    >
-                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
-                            <i :class="{
-                                    'pi pi-arrow-up-right':
-                                        transaction.type === 'expense',
-                                    'pi pi-arrow-down-right':
-                                        transaction.type === 'income',
-                                    'pi pi-building-columns':
-                                        transaction.type === 'investment',
-                                    'pi pi-arrow-u-turn-up-left':
-                                        transaction.type === 'lending',
-                                    'pi pi-arrow-u-turn-up-right':
-                                        transaction.type === 'borrowing',
-                                }"
-                                class="text-sm"
-                            />
-                        </div>
 
-                        <div class="flex min-w-0 flex-1 flex-col">
-                            <span class="truncate text-sm font-medium">{{ transaction.title }}</span>
+                <!-- Quick Add: kept unchanged -->
+                <div class="hidden w-1/2 lg:block">
+                    <div class="flex items-center gap-x-2 text-xs text-gray-500 uppercase">
+                        <span>Quick Add</span>
+                        <hr class="flex-1 border" />
+                    </div>
 
-                            <span class="text-xs text-gray-400">{{ transaction.account.name }}
-                                <span v-if="transaction.category">
-                                    · {{ transaction.category.name }}
+                    <div v-if="props.frequentTransactions.length" class="mt-4 flex flex-col gap-2">
+                        <button v-for="transaction in props.frequentTransactions" :key="transaction.id" type="button" class="flex w-full items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-gray-50" @click="useFrequentTransaction(transaction)">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
+                                <i :class="{
+                                    'pi pi-arrow-up-right': transaction.type === 'expense',
+                                    'pi pi-arrow-down-right': transaction.type === 'income',
+                                    'pi pi-building-columns': transaction.type === 'investment',
+                                    'pi pi-arrow-u-turn-up-left': transaction.type === 'lending',
+                                    'pi pi-arrow-u-turn-up-right': transaction.type === 'borrowing',
+                                }" class="text-sm" />
+                            </div>
+
+                            <div class="flex min-w-0 flex-1 flex-col">
+                                <span class="truncate text-sm font-medium">{{ transaction.title }}</span>
+                                <span class="text-xs text-gray-400">
+                                    {{ transaction.account.name }}
+                                    <span v-if="transaction.category"> · {{ transaction.category.name }}</span>
                                 </span>
-                            </span>
-                        </div>
+                            </div>
 
-                        <div class="flex flex-col items-end">
-                            <span class="text-sm font-medium">{{ transaction.amount }}</span>
-                            <span class="text-xs text-gray-400">{{ transaction.account.currency }}</span>
-                        </div>
-                    </button>
-                </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm font-medium">{{ transaction.amount }}</span>
+                                <span class="text-xs text-gray-400">{{ transaction.account.currency }}</span>
+                            </div>
+                        </button>
+                    </div>
 
-                <div v-else class="mt-4 text-sm text-gray-400">
-                    No recent transactions
+                    <div v-else class="mt-4 text-sm text-gray-400">
+                        No recent transactions
+                    </div>
                 </div>
             </div>
-        </div>
-    </template>
-</AppLayout>
+        </template>
+    </AppLayout>
 </template>

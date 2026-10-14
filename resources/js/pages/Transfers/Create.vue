@@ -188,11 +188,11 @@ const cancel = () => {
         <NoAccountWarning v-if="!accounts.length" />
         <form
             v-else
-            class="mx-auto mt-8 flex w-1/2 flex-col gap-6"
+            class="mx-auto flex lg:w-1/2 flex-col gap-4"
             @submit.prevent="submit"
         >
             <!-- Accounts -->
-            <div class="grid grid-cols-2 gap-6">
+            <div class="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                 <!-- Source Account -->
                 <div class="flex flex-col">
                     <label class="font-medium text-gray-500">
@@ -347,7 +347,7 @@ const cancel = () => {
             </div>
 
             <!-- Amount + Date -->
-            <div class="grid grid-cols-2 gap-6">
+            <div class="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                 <!-- Amount -->
                 <div class="flex flex-col">
                     <label class="font-medium text-gray-500"> Amount </label>

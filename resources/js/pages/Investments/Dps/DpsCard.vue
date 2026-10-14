@@ -36,7 +36,7 @@ defineProps<{
 <template>
     <Link
         :href="show.url(dps)"
-        class="group flex flex-col rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+        class="group flex flex-col rounded-2xl border border-gray-200 bg-white p-3 lg:p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md"
     >
         <!-- Header -->
         <div class="flex items-start justify-between gap-4">

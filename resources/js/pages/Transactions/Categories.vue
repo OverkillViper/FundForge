@@ -32,9 +32,9 @@ const props = defineProps<{
         />
     </template>
     <template #content>
-        <ScrollPanel class="mt-6 h-[700px] w-full">
+        <ScrollPanel class="lg:mt-6 h-[700px] w-full">
             <div class="space-y-2">
-                <div class="mx-auto grid grid-cols-4 gap-6">
+                <div class="mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <CategoryItem
                         v-for="category in props.categories"
                         :key="category.id"

@@ -55,7 +55,7 @@ const totalInvestment = computed(() => {
     </template>
     <template #content>
         <div class="flex flex-col">
-            <div class="mb-4 grid grid-cols-3 gap-x-6 border-b pb-4" v-if="dps.length">
+            <div class="mb-4 grid grid-cols-1 lg:grid-cols-3 gap-x-6 border-b pb-4" v-if="dps.length">
                 <StatCard 
                     icon="icon-landmark"
                     :value="formatCurrency(totalInvestment)"
@@ -63,7 +63,7 @@ const totalInvestment = computed(() => {
                     prefix="BDT"
                 />
             </div>
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <DpsCard :dps="d" v-for="d in dps" :key="d.id" />
 
                 <div v-if="dps.length === 0" class="col-span-3 rounded-2xl flex flex-col items-center justify-center py-16 text-center border border-dashed border-gray-300 bg-gray-50/70">

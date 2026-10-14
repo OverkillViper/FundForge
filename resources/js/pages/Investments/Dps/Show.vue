@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+
 import { edit, destroy } from '@/routes/investments/dps';
 import { formatCurrency } from '@/lib/formatters.js';
 import InstallmentHistory from './InstallmentHistory.vue';
+
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -32,7 +34,25 @@ interface Dps {
     payments_sum_amount: number;
     payments_count: number;
     investment: Investment;
-    payments: [];
+    payments: Payment[];
+}
+
+interface Payment {
+    id: number;
+    dps_id: number;
+    transaction_id: number;
+    amount: string | number;
+    payment_date: string;
+    created_at: string;
+    updated_at: string;
+    transaction?: {
+        id: number;
+        account?: {
+            id: number;
+            name: string;
+            currency: string;
+        };
+    };
 }
 
 interface Account {
@@ -59,6 +79,8 @@ const openDeleteDialog = () => {
 };
 
 const deleteDps = () => {
+    if (deleting.value) return;
+
     deleting.value = true;
 
     router.delete(destroy.url(props.dps.id), {
@@ -70,175 +92,178 @@ const deleteDps = () => {
     });
 };
 
-function formatDate(dateString: any) {
+const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '';
 
-    const date = new Date(dateString);
+    const [year, month, day] = dateString.slice(0, 10).split('-').map(Number);
 
-    // Formats to: "12 July, 2026"
-    return new Intl.DateTimeFormat('en-GB', {
+    return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-    })
-        .format(date)
-        .replace(/(\d+) (\w+) (\d+)/, '$1 $2, $3');
-}
+    }).replace(/(\d+) (\w+) (\d+)/, '$1 $2, $3');
+};
 </script>
 
 <template>
-<AppLayout pageTitle="">
-    <template #toolbar>
-        <Button
-            label="Edit dps"
-            icon="pi pi-pencil"
-            size="small"
-            @click="router.visit(edit.url(dps.id))"
-        />
+    <AppLayout pageTitle="">
+        <template #toolbar>
+            <Button
+                label="Edit dps"
+                icon="pi pi-pencil"
+                size="small"
+                :disabled="deleting"
+                @click="router.visit(edit.url(dps.id))"
+            />
 
-        <Button
-            label="Delete dps"
-            icon="pi pi-trash"
-            severity="secondary"
-            size="small"
-            @click="openDeleteDialog"
-        />
-    </template>
+            <Button
+                label="Delete dps"
+                icon="pi pi-trash"
+                severity="secondary"
+                size="small"
+                :disabled="deleting"
+                @click="openDeleteDialog"
+            />
+        </template>
 
-    <template #content>
-        <div class="flex gap-x-4 ">
-            <div class="w-1/6 bg-primary rounded-lg p-3">
-                <div class="text-xs text-gray-100 border-b border-b-primary-200 pb-2">Total Payments</div>
-
-                <div class="flex gap-x-2 items-baseline mt-9 text-white">
-                    <span class="text-3xl">{{ formatCurrency(dps.payments_sum_amount || 0) }}</span>
-                    <span class="text-sm text-gray-200">BDT</span>
-                </div>
-            </div>
-            <div class="w-1/6 bg-primary rounded-lg p-3">
-                <div class="text-xs text-gray-100 border-b border-b-primary-200 pb-2">Total installments</div>
-
-                <div class="flex gap-x-2 items-baseline mt-9 text-white">
-                    <span class="text-3xl">{{ dps.payments_count < 10 && dps.payments_count > 0 ? '0' : '' }}{{ dps.payments_count }}</span>
-                </div>
-            </div>
-            <div class="flex-1"></div>
-            <div class="w-1/5 text-sm flex flex-col justify-center">
-                <div class="flex py-0.5">
-                    <span class="w-40 text-gray-500">Issue Date</span>
-                    <span class="w-40 text-end font-semibold">{{ formatDate(dps.investment.start_date) }}</span>
-                </div>
-                <div class="flex py-0.5">
-                    <span class="w-40 text-gray-500">Duration</span>
-                    <span class="w-40 text-end font-semibold">{{ dps.duration_years }} years</span>
-                </div>
-                <div class="flex py-0.5">
-                    <span class="w-40 text-gray-500">Interest Rate</span>
-                    <span class="w-40 text-end font-semibold">{{ dps.interest_rate }} %</span>
-                </div>
-                <div class="flex py-0.5">
-                    <span class="w-40 text-gray-500">Tax Rate</span>
-                    <span class="w-40 text-end font-semibold">{{ dps.tax_rate }} %</span>
-                </div>
-                <div class="flex py-0.5">
-                    <span class="w-40 text-gray-500">Installment Amount</span>
-                    <span class="w-40 text-end font-semibold">{{ formatCurrency(dps.installment_amount || 0) }} BDT</span>
-                </div>
-            </div>
-        </div>
-
-        <InstallmentHistory
-            :payments="dps.payments"
-            :accounts="accounts"
-            :amount="dps.installment_amount"
-            :dps_id="dps.id"
-        />
-
-        <!-- Delete DPS Dialog -->
-        <Dialog
-            v-model:visible="deleteDialogVisible"
-            modal
-            header="Delete DPS?"
-            :style="{ width: '450px' }"
-            :closable="!deleting"
-            :closeOnEscape="!deleting"
-        >
-            <div class="flex flex-col gap-4">
-                <div class="flex items-start gap-3">
-                    <div
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600"
-                    >
-                        <i class="pi pi-exclamation-triangle text-lg"></i>
+        <template #content>
+            <div class="flex flex-col gap-4 lg:flex-row">
+                <div class="rounded-lg bg-primary p-3 lg:w-1/6">
+                    <div class="border-b border-b-primary-200 pb-2 text-xs text-gray-100">
+                        Total Payments
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <div class="font-medium">
-                            {{ dps.investment.name }}
+                    <div class="mt-3 flex items-baseline gap-x-2 text-white lg:mt-9">
+                        <span class="text-3xl">{{ formatCurrency(dps.payments_sum_amount || 0) }}</span>
+                        <span class="text-sm text-gray-200">BDT</span>
+                    </div>
+                </div>
+
+                <div class="rounded-lg bg-primary p-3 lg:w-1/6">
+                    <div class="border-b border-b-primary-200 pb-2 text-xs text-gray-100">
+                        Total installments
+                    </div>
+
+                    <div class="mt-3 flex items-baseline gap-x-2 text-white lg:mt-9">
+                        <span class="text-3xl">
+                            {{ dps.payments_count < 10 && dps.payments_count > 0 ? '0' : '' }}{{ dps.payments_count }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex-1"></div>
+
+                <div class="flex flex-col justify-center text-sm lg:w-1/5">
+                    <div class="flex py-0.5">
+                        <span class="w-40 text-gray-500">Issue Date</span>
+                        <span class="w-full text-end font-semibold lg:w-40">
+                            {{ formatDate(dps.investment.start_date) }}
+                        </span>
+                    </div>
+
+                    <div class="flex py-0.5">
+                        <span class="w-40 text-gray-500">Duration</span>
+                        <span class="w-full text-end font-semibold lg:w-40">{{ dps.duration_years }} years</span>
+                    </div>
+
+                    <div class="flex py-0.5">
+                        <span class="w-40 text-gray-500">Interest Rate</span>
+                        <span class="w-full text-end font-semibold lg:w-40">{{ dps.interest_rate }} %</span>
+                    </div>
+
+                    <div class="flex py-0.5">
+                        <span class="w-40 text-gray-500">Tax Rate</span>
+                        <span class="w-full text-end font-semibold lg:w-40">{{ dps.tax_rate }} %</span>
+                    </div>
+
+                    <div class="flex py-0.5">
+                        <span class="w-40 text-gray-500">Installment Amount</span>
+                        <span class="w-full text-end font-semibold lg:w-40">
+                            {{ formatCurrency(dps.installment_amount || 0) }} BDT
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <InstallmentHistory
+                :payments="dps.payments"
+                :accounts="accounts"
+                :amount="dps.installment_amount"
+                :dps_id="dps.id"
+            />
+
+            <Dialog
+                v-model:visible="deleteDialogVisible"
+                modal
+                header="Delete DPS?"
+                class="w-[22rem] lg:w-[28rem]"
+                :closable="!deleting"
+                :closeOnEscape="!deleting"
+            >
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                            <i class="pi pi-exclamation-triangle text-lg"></i>
                         </div>
 
-                        <div class="text-sm text-gray-500">
-                            This action will permanently delete this DPS.
+                        <div class="flex flex-col gap-1">
+                            <div class="font-medium">{{ dps.investment.name }}</div>
+                            <div class="text-sm text-gray-500">
+                                This action will permanently delete this DPS.
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex flex-col gap-3 rounded-lg border p-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500"> Installments </span>
+                    <div class="flex flex-col gap-3 rounded-lg border p-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Installments</span>
+                            <span class="font-medium">{{ dps.payments_count }}</span>
+                        </div>
 
-                        <span class="font-medium">
-                            {{ dps.payments_count }}
-                        </span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Total paid</span>
+                            <span class="font-medium">
+                                {{ formatCurrency(dps.payments_sum_amount || 0) }} BDT
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Associated transactions</span>
+                            <span class="font-medium">{{ dps.payments_count }}</span>
+                        </div>
                     </div>
 
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500"> Total paid </span>
-
-                        <span class="font-medium">
-                            {{ formatCurrency(dps.payments_sum_amount || 0) }}
-                            BDT
-                        </span>
+                    <div class="text-sm leading-relaxed text-gray-600">
+                        The associated installment transactions will also be deleted.
+                        The affected account balances will be restored accordingly.
                     </div>
 
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500"> Associated transactions </span>
-
-                        <span class="font-medium">
-                            {{ dps.payments_count }}
-                        </span>
+                    <div class="text-sm font-medium text-red-600">
+                        This action cannot be undone.
                     </div>
                 </div>
 
-                <div class="text-sm leading-relaxed text-gray-600">
-                    The associated installment transactions will also be deleted.
-                    The affected account balances will be restored accordingly.
-                </div>
+                <template #footer>
+                    <Button
+                        label="Cancel"
+                        severity="secondary"
+                        outlined
+                        size="small"
+                        :disabled="deleting"
+                        @click="deleteDialogVisible = false"
+                    />
 
-                <div class="text-sm font-medium text-red-600">
-                    This action cannot be undone.
-                </div>
-            </div>
-
-            <template #footer>
-                <Button
-                    label="Cancel"
-                    severity="secondary"
-                    outlined
-                    size="small"
-                    :disabled="deleting"
-                    @click="deleteDialogVisible = false"
-                />
-
-                <Button
-                    label="Delete DPS"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    size="small"
-                    :loading="deleting"
-                    @click="deleteDps"
-                />
-            </template>
-        </Dialog>
-    </template>
-</AppLayout>
+                    <Button
+                        label="Delete DPS"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        size="small"
+                        :loading="deleting"
+                        :disabled="deleting"
+                        @click="deleteDps"
+                    />
+                </template>
+            </Dialog>
+        </template>
+    </AppLayout>
 </template>

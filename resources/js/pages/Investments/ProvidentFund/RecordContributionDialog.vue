@@ -67,7 +67,7 @@ function save() {
         :visible="props.visible"
         modal
         header="Add Contribution"
-        :style="{ width: '28rem' }"
+        class="w-[22rem] lg:w-[28rem]"
         :closable="!form.processing"
         :close-on-escape="!form.processing"
         @update:visible="emit('update:visible', $event)"

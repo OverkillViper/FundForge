@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import ScrollPanel from 'primevue/scrollpanel';
 import { create } from '@/routes/transfers';
-import TransferCard from '../Components/TransferCard.vue';
+import TransferCard from './TransferCard.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Account {
@@ -97,7 +97,7 @@ const props = defineProps<{
                     </Link>
                 </div>
 
-                <div class="flex flex-col gap-2 px-1 pb-4 w-2/3 mx-auto">
+                <div class="flex flex-col gap-2 px-1 pb-4 lg:w-2/3 mx-auto">
                     <TransferCard
                         v-for="transfer in transfers.data"
                         :key="transfer.id"

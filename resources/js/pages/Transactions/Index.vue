@@ -325,6 +325,26 @@ const deleteTransactions = () => {
     opacity: 1;
     pointer-events: auto;
 }
+
+@media (max-width: 639px) {
+    .transaction-actions {
+        opacity: 1;
+        pointer-events: auto;
+        gap: 0;
+    }
+
+    :deep(.p-datatable-tbody > tr > td) {
+        padding: 0.4rem 0.3rem;
+    }
+
+    :deep(.p-datatable-thead > tr > th) {
+        padding: 0.4rem 0.3rem;
+    }
+
+    :deep(.p-checkbox) {
+        transform: scale(0.85);
+    }
+}
 </style>
 
 <template>
@@ -339,101 +359,86 @@ const deleteTransactions = () => {
                 @click="openDeleteDialog"
             />
 
-            <Button
-                label="New Transaction"
-                size="small"
-                icon="pi pi-plus"
-                @click="router.visit(create.url())"
-            />
+            <Button label="New Transaction" size="small" icon="pi pi-plus" @click="router.visit(create.url())" />
         </template>
 
         <template #content>
             <div class="relative mt-4 w-full">
-                <div
-                    v-if="isLoading"
-                    class="absolute right-4 top-4 z-20 rounded-full bg-white/90 p-2 shadow"
-                >
-                    <ProgressSpinner
-                        style="width: 2rem; height: 2rem"
-                    />
+                <div v-if="isLoading" class="absolute inset-0 mx-auto -top-8 lg:-top-12 z-20 rounded-full bg-primary/10 size-8 flex items-center justify-center shadow">
+                    <ProgressSpinner class="size-[1rem]! " />
                 </div>
 
-                <div
-                    ref="scrollContainer"
-                    class="h-[700px] w-full overflow-y-auto"
-                    @scroll="handleScroll"
-                >
+                <div ref="scrollContainer" class="h-[700px] w-full overflow-y-auto" @scroll="handleScroll">
                     <DataTable
                         v-if="transactions.data.length"
                         :value="transactions.data"
                         dataKey="id"
                         rowHover
-                        class="mx-auto w-3/4 overflow-hidden rounded-xl! text-sm!"
+                        class="transaction-table mx-auto w-full overflow-hidden rounded-xl! text-sm! sm:w-3/4"
                     >
-                        <Column header="" style="width: 64px">
+                        <Column class="w-[36px] sm:w-[48px]">
                             <template #body="{ data }">
-                                <div
-                                    class="flex h-9 w-9 items-center justify-center rounded-lg"
-                                    :class="typeConfig(data.type).bg"
-                                >
-                                    <i
-                                        :class="[
-                                            typeConfig(data.type).icon,
-                                            typeConfig(data.type).color,
-                                        ]"
-                                        class="text-sm!"
-                                    ></i>
+                                <div class="flex size-6 items-center justify-center rounded-md sm:size-9 sm:rounded-lg" :class="typeConfig(data.type).bg">
+                                    <i :class="[typeConfig(data.type).icon, typeConfig(data.type).color]" class="text-[10px]! sm:text-sm!"></i>
                                 </div>
                             </template>
                         </Column>
 
-                        <Column header="Transaction">
+                        <Column >
                             <template #body="{ data }">
                                 <div class="min-w-0">
-                                    <div class="truncate font-semibold text-gray-800">
+                                    <div class="truncate text-xs font-semibold text-gray-800 sm:text-sm">
                                         {{ data.title }}
                                     </div>
 
-                                    <div class="mt-0.5 flex items-center gap-x-2 text-xs text-gray-500">
+                                    <!-- Desktop metadata -->
+                                    <div class="mt-0.5 hidden min-w-0 items-center gap-x-2 text-xs text-gray-500 sm:flex">
                                         <span>{{ formattedDate(data) }}</span>
+                                        <template v-if="data.type === 'expense'">
+                                            <span class="text-gray-300">•</span>
+                                            <span class="truncate">{{ data.category?.name ?? 'Uncategorized' }}</span>
+                                        </template>
+                                    </div>
 
-                                        <span
-                                            v-if="data.type === 'expense'"
-                                            class="text-gray-300"
-                                        >
-                                            •
-                                        </span>
+                                    <!-- Mobile metadata -->
+                                    <div class="mt-1 flex min-w-0 items-center gap-x-1 text-[10px] leading-4 text-gray-500 sm:hidden">
+                                        <span class="shrink-0">{{ formattedDate(data) }}</span>
+                                        <template v-if="data.type === 'expense'">
+                                            <span class="text-gray-300">·</span>
+                                            <span class="truncate">{{ data.category?.name ?? 'Uncategorized' }}</span>
+                                            <span class="text-gray-300">·</span>
+                                            <span class="truncate">{{ data.account.name }}</span>
+                                        </template>
+                                    </div>
 
-                                        <span
-                                            v-if="data.type === 'expense'"
-                                            class="truncate"
-                                        >
-                                            {{ data.category?.name ?? 'Uncategorized' }}
-                                        </span>
+                                    <!-- Mobile amount and actions -->
+                                    <div class="flex items-center justify-between gap-1 sm:hidden">
+                                        <div class="flex min-w-0 items-baseline gap-1">
+                                            <span class="whitespace-nowrap text-[11px] font-semibold" :class="typeConfig(data.type).color">
+                                                {{ amountPrefix(data) }}{{ formattedAmount(data) }}
+                                            </span>
+                                            <span class="text-[9px] text-gray-400">{{ data.account?.currency ?? 'BDT' }}</span>
+                                        </div>
+
+                                        <div class="transaction-actions shrink-0" :class="{ 'transaction-actions-selected': isSelected(data.id) }">
+                                            <Checkbox :modelValue="isSelected(data.id)" :binary="true" @update:modelValue="toggleSelection(data.id)" class="me-1"/>
+                                            <Button icon="icon-square-text" severity="secondary" text rounded size="small" aria-label="Transaction information" @click="toggleTransactionInfo($event, data)" />
+                                            <Button icon="icon-pencil" severity="secondary" text rounded size="small" aria-label="Edit transaction" @click="router.visit(edit.url(data.id))" />
+                                        </div>
                                     </div>
                                 </div>
                             </template>
                         </Column>
 
-                        <Column
-                            header="Type"
-                            headerClass="text-left!"
-                            style="width: 130px"
-                        >
+                        <Column class="hidden! sm:table-cell!" bodyClass="hidden! sm:table-cell!" style="width: 130px">
                             <template #body="{ data }">
-                                <span
-                                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-semibold"
-                                    :class="[
-                                        typeConfig(data.type).bg,
-                                        typeConfig(data.type).color,
-                                    ]"
-                                >
+                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-semibold" :class="[typeConfig(data.type).bg, typeConfig(data.type).color]">
                                     {{ typeConfig(data.type).label }}
                                 </span>
                             </template>
                         </Column>
 
-                        <Column header="Account" style="width: 190px">
+                        <Column class="hidden! sm:table-cell!" bodyClass="hidden! sm:table-cell!" style="width: 190px">
                             <template #body="{ data }">
                                 <div class="flex min-w-0 items-center gap-x-2">
                                     <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-gray-100">
@@ -444,11 +449,7 @@ const deleteTransactions = () => {
                                         <div class="truncate text-sm font-medium text-gray-700">
                                             {{ data.account?.name ?? 'Unknown account' }}
                                         </div>
-
-                                        <div
-                                            v-if="data.account?.type"
-                                            class="truncate text-[11px] capitalize text-gray-400"
-                                        >
+                                        <div v-if="data.account?.type" class="truncate text-[11px] capitalize text-gray-400">
                                             {{ data.account.type }}
                                         </div>
                                     </div>
@@ -456,20 +457,12 @@ const deleteTransactions = () => {
                             </template>
                         </Column>
 
-                        <Column
-                            header="Amount"
-                            style="width: 160px"
-                            :pt="{ columnHeaderContent: 'flex justify-end!' }"
-                        >
+                        <Column style="width: 160px" headerClass="hidden! sm:table-cell!" bodyClass="hidden! sm:table-cell!" :pt="{ columnHeaderContent: 'flex justify-end!' }">
                             <template #body="{ data }">
                                 <div class="flex flex-col items-end">
-                                    <div
-                                        class="whitespace-nowrap text-sm font-bold"
-                                        :class="typeConfig(data.type).color"
-                                    >
+                                    <div class="whitespace-nowrap text-sm font-bold" :class="typeConfig(data.type).color">
                                         {{ amountPrefix(data) }}{{ formattedAmount(data) }}
                                     </div>
-
                                     <span class="text-[11px] font-medium text-gray-400">
                                         {{ data.account?.currency ?? 'BDT' }}
                                     </span>
@@ -477,51 +470,23 @@ const deleteTransactions = () => {
                             </template>
                         </Column>
 
-                        <Column header="" style="width: 140px">
+                        <Column header="" style="width: 100px" class="hidden! sm:table-cell!">
                             <template #body="{ data }">
-                                <div
-                                    class="transaction-actions"
-                                    :class="{
-                                        'transaction-actions-selected': isSelected(data.id),
-                                    }"
-                                >
-                                    <Checkbox
-                                        :modelValue="isSelected(data.id)"
-                                        :binary="true"
-                                        @update:modelValue="toggleSelection(data.id)"
-                                    />
-
-                                    <Button
-                                        icon="pi pi-info-circle"
-                                        severity="secondary"
-                                        text
-                                        rounded
-                                        size="small"
-                                        aria-label="Transaction information"
-                                        @click="toggleTransactionInfo($event, data)"
-                                    />
-
-                                    <Button
-                                        icon="pi pi-pencil"
-                                        severity="secondary"
-                                        text
-                                        rounded
-                                        size="small"
-                                        aria-label="Edit transaction"
-                                        @click="router.visit(edit.url(data.id))"
-                                    />
+                                <div class="transaction-actions" :class="{ 'transaction-actions-selected': isSelected(data.id) }">
+                                    <Checkbox :modelValue="isSelected(data.id)" :binary="true" @update:modelValue="toggleSelection(data.id)" />
+                                    <Button icon="pi pi-info-circle" severity="secondary" text rounded size="small" aria-label="Transaction information" @click="toggleTransactionInfo($event, data)" />
+                                    <Button icon="pi pi-pencil" severity="secondary" text rounded size="small" aria-label="Edit transaction" @click="router.visit(edit.url(data.id))" />
                                 </div>
                             </template>
                         </Column>
 
                         <Popover ref="transactionPopover">
-                            <div v-if="selectedTransaction" class="flex w-80 flex-col gap-4">
+                            <div v-if="selectedTransaction" class="flex w-60 lg:w-80 lg:max-w-[80vw] flex-col gap-4">
                                 <div>
                                     <div class="mb-1 flex items-center gap-2">
                                         <i class="pi pi-comment text-gray-500"></i>
                                         <span class="text-sm font-medium text-gray-800">Note</span>
                                     </div>
-
                                     <p class="m-0 break-words whitespace-pre-wrap text-sm leading-6 text-gray-600">
                                         {{ selectedTransaction.note ?? 'No note available.' }}
                                     </p>
@@ -532,7 +497,6 @@ const deleteTransactions = () => {
                                         <i class="pi pi-link text-gray-500"></i>
                                         <span class="text-sm font-medium text-gray-800">Reference</span>
                                     </div>
-
                                     <p class="m-0 break-words whitespace-pre-wrap text-sm leading-6 text-gray-600">
                                         {{ selectedTransaction.reference ?? 'No reference available.' }}
                                     </p>
@@ -541,68 +505,39 @@ const deleteTransactions = () => {
                         </Popover>
                     </DataTable>
 
-                    <div
-                        v-else-if="!isLoading"
-                        class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/70 py-16 text-center"
-                    >
+                    <div v-else-if="!isLoading" class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/70 py-16 text-center">
                         <i class="pi pi-exclamation-triangle mb-3 text-2xl"></i>
                         <span class="text-sm">No transactions recorded yet.</span>
 
                         <Link :href="create.url()" class="mt-4">
-                            <Button
-                                label="New Transaction"
-                                icon="pi pi-plus"
-                                size="small"
-                                severity="secondary"
-                            />
+                            <Button label="New Transaction" icon="pi pi-plus" size="small" severity="secondary" />
                         </Link>
                     </div>
                 </div>
             </div>
 
-            <Dialog
-                v-model:visible="showDeleteWarning"
-                modal
-                header="Unable to Delete Transactions"
-                :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
-            >
+            <Dialog v-model:visible="showDeleteWarning" modal header="Unable to Delete Transactions" :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }" :breakpoints="{ '640px': '95vw' }">
                 <div class="flex flex-col gap-4">
                     <div class="flex items-start gap-3 rounded-lg bg-amber-50 p-3 text-amber-900">
                         <i class="pi pi-exclamation-triangle mt-0.5"></i>
-
                         <p class="m-0 text-sm leading-6">
-                            Some of the selected transactions are referenced by
-                            investment records and cannot be deleted directly.
+                            Some of the selected transactions are referenced by investment records and cannot be deleted directly.
                         </p>
                     </div>
 
                     <div>
                         <p class="mb-3 text-sm text-gray-700">
-                            The following transactions are associated with
-                            investment records:
+                            The following transactions are associated with investment records:
                         </p>
 
                         <div class="flex flex-col gap-2">
-                            <div
-                                v-for="transaction in selectedReferencedTransactions"
-                                :key="transaction.id"
-                                class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3"
-                            >
+                            <div v-for="transaction in selectedReferencedTransactions" :key="transaction.id" class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3">
                                 <div class="min-w-0">
-                                    <div class="truncate text-sm font-medium">
-                                        {{ transaction.title }}
-                                    </div>
-
-                                    <div class="mt-1 text-xs text-gray-500">
-                                        {{ transaction.dps_payment?.dps?.investment?.name }}
-                                    </div>
+                                    <div class="truncate text-sm font-medium">{{ transaction.title }}</div>
+                                    <div class="mt-1 text-xs text-gray-500">{{ transaction.dps_payment?.dps?.investment?.name }}</div>
                                 </div>
 
-                                <Link
-                                    v-if="transaction.dps_payment?.dps?.id"
-                                    :href="`/investments/dps/${transaction.dps_payment.dps.id}`"
-                                    class="shrink-0 text-sm font-medium text-primary-600 hover:text-primary-700"
-                                >
+                                <Link v-if="transaction.dps_payment?.dps?.id" :href="`/investments/dps/${transaction.dps_payment.dps.id}`" class="shrink-0 text-sm font-medium text-primary-600 hover:text-primary-700">
                                     Go to investment
                                 </Link>
                             </div>
@@ -610,19 +545,12 @@ const deleteTransactions = () => {
                     </div>
 
                     <p class="m-0 text-sm leading-6 text-gray-600">
-                        Please delete the related investment records first before
-                        attempting to delete these transactions.
+                        Please delete the related investment records first before attempting to delete these transactions.
                     </p>
                 </div>
 
                 <template #footer>
-                    <Button
-                        label="Close"
-                        severity="secondary"
-                        outlined
-                        size="small"
-                        @click="closeDeleteDialog"
-                    />
+                    <Button label="Close" severity="secondary" outlined size="small" @click="closeDeleteDialog" />
                 </template>
             </Dialog>
         </template>

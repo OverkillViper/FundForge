@@ -132,7 +132,7 @@ const cancel = () => {
     <template #content>
         <form
             @submit.prevent="submit"
-            class="mx-auto mt-4 flex w-1/2 flex-col gap-y-2 text-sm"
+            class="mx-auto mt-4 flex lg:w-1/2 flex-col gap-y-2 text-sm"
         >
             <!-- Obligation Type -->
             <div class="flex items-center justify-between">
@@ -147,133 +147,144 @@ const cancel = () => {
                 />
             </div>
 
-            <div class="mt-2 grid grid-cols-2 gap-2">
+            <div class="mt-2 flex flex-col lg:grid lg:grid-cols-2 gap-4">
                 <!-- Person Name -->
-                <div class="font-medium">Person Name</div>
+                <div class="space-y-2">
+                    <div class="font-medium">Person Name</div>
+                    <InputText
+                        v-model="form.person"
+                        size="small"
+                        :placeholder="
+                            'Enter person name you are ' +
+                            (form.type === 'lending'
+                                ? 'lending to'
+                                : 'borrowing from')
+                        "
+                        fluid
+                    />
+                </div>
 
                 <!-- Amount -->
-                <div class="font-medium">
-                    {{ form.type === 'lending' ? 'Lent' : 'Borrowed' }}
-                    Amount
+                <div class="space-y-2">
+                    <div class="font-medium">
+                        {{ form.type === 'lending' ? 'Lent' : 'Borrowed' }}
+                        Amount
+                    </div>
+                    <InputNumber
+                        v-model="form.amount"
+                        locale="en-IN"
+                        suffix=" BDT"
+                        placeholder="Enter amount"
+                        fluid
+                        size="small"
+                    />
                 </div>
-
-                <InputText
-                    v-model="form.person"
-                    size="small"
-                    :placeholder="
-                        'Enter person name you are ' +
-                        (form.type === 'lending'
-                            ? 'lending to'
-                            : 'borrowing from')
-                    "
-                    fluid
-                />
-
-                <InputNumber
-                    v-model="form.amount"
-                    locale="en-IN"
-                    suffix=" BDT"
-                    placeholder="Enter amount"
-                />
 
                 <!-- Date -->
-                <div class="mt-2 font-medium">Date</div>
-
-                <!-- Due Date -->
-                <div class="mt-2 font-medium">Due Date (Optional)</div>
-
-                <DatePicker
-                    v-model="form.date"
-                    date-format="dd-M-yy"
-                    placeholder="Enter obligation date"
-                    size="small"
-                    show-button-bar
-                />
-
-                <DatePicker
-                    v-model="form.due_date"
-                    date-format="dd-M-yy"
-                    placeholder="Enter obligation due date"
-                    size="small"
-                    show-button-bar
-                />
-
-                <!-- Account -->
-                <div class="col-span-2 mt-2 font-medium">
-                    {{ form.type === 'lending' ? 'Source' : 'Destination' }}
-                    Account
+                <div class="space-y-2">
+                    <div class="font-medium">Date</div>
+                    <DatePicker
+                        v-model="form.date"
+                        date-format="dd-M-yy"
+                        placeholder="Enter obligation date"
+                        size="small"
+                        show-button-bar
+                        fluid
+                    />
                 </div>
 
-                <Select
-                    v-model="form.account_id"
-                    :options="accounts"
-                    optionLabel="name"
-                    optionValue="id"
-                    class="col-span-2"
-                    placeholder="Select account"
-                    size="small"
-                    showClear
-                >
-                    <template #option="{ option }">
-                        <div
-                            class="flex w-full items-center justify-between gap-4"
-                        >
-                            <div class="flex flex-col">
-                                <span class="text-sm font-medium">
-                                    {{ option.name }}
-                                </span>
+                <!-- Due Date -->
+                <div class="space-y-2">
+                    <div class="font-medium">Due Date (Optional)</div>
+                    <DatePicker
+                        v-model="form.due_date"
+                        date-format="dd-M-yy"
+                        placeholder="Enter obligation due date"
+                        size="small"
+                        show-button-bar
+                        fluid
+                    />
+                </div>
 
-                                <span
-                                    class="text-xs text-gray-400 capitalize"
-                                >
-                                    {{ option.type }}
-                                    account
-                                </span>
+                <!-- Account -->
+                <div class="space-y-2 col-span-2">
+                    <div class="col-span-2 font-medium">
+                        {{ form.type === 'lending' ? 'Source' : 'Destination' }}
+                        Account
+                    </div>
+                    <Select
+                        v-model="form.account_id"
+                        :options="accounts"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select account"
+                        size="small"
+                        showClear
+                        fluid
+                    >
+                        <template #option="{ option }">
+                            <div
+                                class="flex w-full items-center justify-between gap-4"
+                            >
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium">
+                                        {{ option.name }}
+                                    </span>
+
+                                    <span
+                                        class="text-xs text-gray-400 capitalize"
+                                    >
+                                        {{ option.type }}
+                                        account
+                                    </span>
+                                </div>
+
+                                <div class="flex flex-col items-end">
+                                    <span class="text-sm font-medium">
+                                        {{ option.balance }}
+                                    </span>
+
+                                    <span class="text-xs text-gray-400">
+                                        {{ option.currency }}
+                                    </span>
+                                </div>
                             </div>
+                        </template>
 
-                            <div class="flex flex-col items-end">
-                                <span class="text-sm font-medium">
-                                    {{ option.balance }}
+                        <template #value="{ value }">
+                            <div
+                                v-if="value"
+                                class="flex w-full items-center justify-between"
+                            >
+                                <span>
+                                    {{ getAccount(value)?.name }}
                                 </span>
 
                                 <span class="text-xs text-gray-400">
-                                    {{ option.currency }}
+                                    {{ getAccount(value)?.balance }}
+                                    {{ getAccount(value)?.currency }}
                                 </span>
                             </div>
-                        </div>
-                    </template>
 
-                    <template #value="{ value }">
-                        <div
-                            v-if="value"
-                            class="flex w-full items-center justify-between"
-                        >
-                            <span>
-                                {{ getAccount(value)?.name }}
+                            <span v-else class="text-gray-400">
+                                Select account
                             </span>
-
-                            <span class="text-xs text-gray-400">
-                                {{ getAccount(value)?.balance }}
-                                {{ getAccount(value)?.currency }}
-                            </span>
-                        </div>
-
-                        <span v-else class="text-gray-400">
-                            Select account
-                        </span>
-                    </template>
-                </Select>
-
+                        </template>
+                    </Select>
+                </div>
+                
                 <!-- Note -->
-                <div class="col-span-2 mt-2 font-medium">Note</div>
+                <div class="space-y-2 col-span-2">
+                    <div class="col-span-2 font-medium">Note</div>
 
-                <Textarea
-                    v-model="form.note"
-                    placeholder="Enter note"
-                    auto-resize
-                    rows="5"
-                    class="col-span-2"
-                />
+                    <Textarea
+                        v-model="form.note"
+                        placeholder="Enter note"
+                        auto-resize
+                        rows="5"
+                        fluid
+                    />
+                </div>
             </div>
 
             <!-- Actions -->

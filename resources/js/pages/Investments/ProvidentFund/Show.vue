@@ -202,7 +202,7 @@ function deleteContribution(contribution: Contribution) {
                 <!-- ===================================================== -->
                 <!-- Summary cards -->
                 <!-- ===================================================== -->
-                <div class="grid grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-2 lg:gap-4">
                     <StatCard 
                         icon="icon-calendar"
                         :value="formatDate(providentFund.start_date)"
@@ -228,22 +228,24 @@ function deleteContribution(contribution: Contribution) {
                         prefix="BDT"
                     />
                 </div>
-                <div class="mt-4 flex gap-x-4">
-                    <div class="p-5 w-2/3">
-                        <div class="flex items-center justify-between">
-                            <div>
+                <div class="mt-4 flex flex-col lg:flex-row gap-4">
+                    <div class="w-full lg:w-2/3">
+                        <div class="flex flex-col lg:flex-row items-center justify-between gap-2">
+                            <div class="w-full lg:w-auto">
                                 <div class="font-medium">Contribution Records</div>
                                 <div class="mt-0.5 text-xs text-gray-500">
                                     Employee contributions made to the
                                     provident fund
                                 </div>
                             </div>
-                            <Button
-                                size="small"
-                                label="Add Record"
-                                icon="pi pi-plus"
-                                @click="contributionDialog = true"
-                            />
+                            <div class="flex-1 flex lg:justify-end w-full lg:w-auto mt-2 lg:mt-0">
+                                <Button
+                                    size="small"
+                                    label="Add Record"
+                                    icon="pi pi-plus"
+                                    @click="contributionDialog = true"
+                                />
+                            </div>
                             <RecordContributionDialog v-model:visible="contributionDialog"/>
                         </div>
 
@@ -251,9 +253,9 @@ function deleteContribution(contribution: Contribution) {
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr>
-                                        <th class="border-y border-y-gray-300 p-2 text-left font-semibold">Date</th>
-                                        <th class="border-y border-y-gray-300 p-2 text-right font-semibold">Amount</th>
-                                        <th class="w-20 border-y border-y-gray-300 p-2"></th>
+                                        <th class="w-1/3 lg:w-3/7 border-y border-y-gray-300 p-2 text-left font-semibold">Date</th>
+                                        <th class="w-1/3 lg:w-3/7 border-y border-y-gray-300 p-2 text-right font-semibold">Amount</th>
+                                        <th class="w-1/3 lg:w-1/7 border-y border-y-gray-300 p-2"></th>
                                     </tr>
                                 </thead>
 
@@ -263,7 +265,7 @@ function deleteContribution(contribution: Contribution) {
                                         <td class="p-2.5 text-right font-medium">{{ formatCurrency( contribution.amount, ) }} BDT </td>
 
                                         <td class="p-2.5">
-                                            <div class="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                            <div class="flex justify-end gap-1 opacity-100 transition-opacity lg:opacity-0 lg:group-hover:opacity-100">
                                                 <Button
                                                     icon="pi pi-pencil"
                                                     text
@@ -299,7 +301,7 @@ function deleteContribution(contribution: Contribution) {
                         </div>
                     </div>
 
-                    <div class="w-1/3 rounded-xl bg-white shadow-sm overflow-hidden border">
+                    <div class="w-full lg:w-1/3 rounded-xl bg-white shadow-sm overflow-hidden border">
                         <!-- Header -->
                         <div class="flex items-center justify-between bg-primary text-white p-4">
                             <div class="font-medium">Employer Rates</div>

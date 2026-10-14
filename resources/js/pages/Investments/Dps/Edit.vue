@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { update } from '@/routes/investments/dps';
 
@@ -7,8 +8,6 @@ import DatePicker from 'primevue/datepicker';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
-
-import { ref } from 'vue';
 
 interface Investment {
     id: number;
@@ -38,15 +37,33 @@ const props = defineProps<{
     dps: Dps;
 }>();
 
+const parseDateOnly = (date: string): Date => {
+    const [year, month, day] = date.slice(0, 10).split('-').map(Number);
+
+    return new Date(year, month - 1, day);
+};
+
+const formatDateForSubmission = (date: Date | null): string | null => {
+    if (!date) return null;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
+
 const form = useForm({
     name: props.dps.investment.name,
-    issue_date: new Date(props.dps.investment.start_date),
+    issue_date: parseDateOnly(props.dps.investment.start_date),
     bank_name: props.dps.bank_name,
     installment_amount: Number(props.dps.installment_amount),
     duration_years: Number(props.dps.duration_years),
     interest_rate: Number(props.dps.interest_rate),
     tax_rate: Number(props.dps.tax_rate),
 });
+
+const updatingDps = ref(false);
 
 const banks = ref([
     { label: 'AB Bank PLC' },
@@ -115,166 +132,190 @@ const banks = ref([
 ]);
 
 const submit = () => {
-    form.put(update.url(props.dps.id));
+    if (form.processing || !form.issue_date) return;
+
+    updatingDps.value = true;
+
+    form.transform((data) => ({
+        ...data,
+        issue_date: formatDateForSubmission(data.issue_date),
+    })).put(update.url(props.dps.id), {
+        preserveScroll: true,
+        onFinish: () => {
+            updatingDps.value = false;
+        },
+    });
 };
 </script>
 
 <template>
-<AppLayout pageTitle="Edit DPS">
-    <template #content>
-        <form
-            class="mx-auto mt-6 grid w-1/2 grid-cols-2 gap-x-4"
-            @submit.prevent="submit"
-        >
-            <!-- Scheme Name -->
-            <div class="col-span-2 text-sm font-medium">Scheme Name</div>
-
-            <InputText
-                v-model="form.name"
-                class="col-span-2 mt-2"
-                fluid
-                size="small"
-                placeholder="Enter a easily recognisable scheme name"
-            />
-
-            <small v-if="form.errors.name" class="col-span-2 mt-1 text-red-500">
-                {{ form.errors.name }}
-            </small>
-
-            <!-- Issue Date / Bank Name -->
-            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1">Issue Date</div>
-            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 hidden lg:block">Bank Name</div>
-
-            <DatePicker
-                v-model="form.issue_date"
-                dateFormat="dd-M-yy"
-                class="mt-2 col-span-2 lg:col-span-1"
-                fluid
-                size="small"
-                placeholder="Select issue date"
-                showButtonBar
-            />
-
-            <div class="mt-4 text-sm font-medium col-span-1 lg:col-span-1 lg:hidden">Bank Name</div>
-            <Select
-                v-model="form.bank_name"
-                :options="banks"
-                showClear
-                filter
-                size="small"
-                class="mt-2 text-sm! col-span-2 lg:col-span-1"
-                optionValue="label"
-                optionLabel="label"
-                placeholder="Select bank name"
-                :pt="{
-                    pcFilter: {
-                        class: '!py-1 !px-1 !text-xs',
-                    },
-                }"
-            />
-
-            <small v-if="form.errors.issue_date" class="mt-1 text-red-500">
-                {{ form.errors.issue_date }}
-            </small>
-
-            <small v-if="form.errors.bank_name" class="mt-1 text-red-500">
-                {{ form.errors.bank_name }}
-            </small>
-
-            <!-- Installment Amount / Duration -->
-            <div class="mt-4 text-sm font-medium">Installment Amount</div>
-
-            <div class="mt-4 text-sm font-medium">Duration</div>
-
-            <InputNumber
-                v-model="form.installment_amount"
-                locale="en-IN"
-                suffix=" BDT"
-                class="mt-2"
-                fluid
-                size="small"
-                placeholder="Enter installment amount"
-            />
-
-            <InputNumber
-                v-model="form.duration_years"
-                suffix=" years"
-                class="mt-2"
-                fluid
-                size="small"
-                placeholder="Enter duration in years"
-            />
-
-            <small
-                v-if="form.errors.installment_amount"
-                class="mt-1 text-red-500"
+    <AppLayout pageTitle="Edit DPS">
+        <template #content>
+            <form
+                class="mx-auto mt-6 grid lg:w-1/2 grid-cols-2 gap-x-4"
+                @submit.prevent="submit"
             >
-                {{ form.errors.installment_amount }}
-            </small>
+                <!-- Scheme Name -->
+                <div class="col-span-2 text-sm font-medium">Scheme Name</div>
 
-            <small v-if="form.errors.duration_years" class="mt-1 text-red-500">
-                {{ form.errors.duration_years }}
-            </small>
-
-            <!-- Interest Rate / Tax Rate -->
-            <div class="mt-4 text-sm font-medium">Interest Rate</div>
-
-            <div class="mt-4 text-sm font-medium">Tax Rate</div>
-
-            <InputNumber
-                v-model="form.interest_rate"
-                suffix=" %"
-                mode="decimal"
-                :minFractionDigits="0"
-                :maxFractionDigits="2"
-                class="mt-2"
-                fluid
-                size="small"
-                placeholder="Enter interest rate"
-            />
-
-            <InputNumber
-                v-model="form.tax_rate"
-                suffix=" %"
-                mode="decimal"
-                :minFractionDigits="0"
-                :maxFractionDigits="2"
-                class="mt-2"
-                fluid
-                size="small"
-                placeholder="Enter tax rate on interest"
-            />
-
-            <small v-if="form.errors.interest_rate" class="mt-1 text-red-500">
-                {{ form.errors.interest_rate }}
-            </small>
-
-            <small v-if="form.errors.tax_rate" class="mt-1 text-red-500">
-                {{ form.errors.tax_rate }}
-            </small>
-
-            <!-- Buttons -->
-            <div class="col-span-2 flex justify-end gap-x-2">
-                <Button
-                    label="Cancel"
-                    severity="secondary"
-                    icon="pi pi-times"
+                <InputText
+                    v-model="form.name"
+                    class="col-span-2 mt-2"
+                    fluid
                     size="small"
-                    class="mt-4"
-                    type="button"
-                    @click="router.visit(`/investments/dps/${props.dps.id}`)"
+                    placeholder="Enter a easily recognisable scheme name"
+                    :disabled="form.processing"
                 />
 
-                <Button
-                    label="Update Scheme"
-                    icon="pi pi-save"
+                <small v-if="form.errors.name" class="col-span-2 mt-1 text-red-500">
+                    {{ form.errors.name }}
+                </small>
+
+                <!-- Issue Date / Bank Name -->
+                <div class="col-span-1 mt-4 text-sm font-medium lg:col-span-1">
+                    Issue Date
+                </div>
+
+                <div class="col-span-1 mt-4 hidden text-sm font-medium lg:block lg:col-span-1">
+                    Bank Name
+                </div>
+
+                <DatePicker
+                    v-model="form.issue_date"
+                    dateFormat="dd-M-yy"
+                    class="col-span-2 mt-2 lg:col-span-1"
+                    fluid
                     size="small"
-                    class="mt-4"
-                    type="submit"
-                    :loading="form.processing"
+                    placeholder="Select issue date"
+                    showButtonBar
+                    :disabled="form.processing"
                 />
-            </div>
-        </form>
-    </template>
-</AppLayout>
+
+                <div class="col-span-1 mt-4 text-sm font-medium lg:hidden">
+                    Bank Name
+                </div>
+
+                <Select
+                    v-model="form.bank_name"
+                    :options="banks"
+                    showClear
+                    filter
+                    size="small"
+                    class="col-span-2 mt-2 text-sm! lg:col-span-1"
+                    optionValue="label"
+                    optionLabel="label"
+                    placeholder="Select bank name"
+                    :disabled="form.processing"
+                    :pt="{
+                        pcFilter: {
+                            class: '!py-1 !px-1 !text-xs',
+                        },
+                    }"
+                />
+
+                <small v-if="form.errors.issue_date" class="mt-1 text-red-500">
+                    {{ form.errors.issue_date }}
+                </small>
+
+                <small v-if="form.errors.bank_name" class="mt-1 text-red-500">
+                    {{ form.errors.bank_name }}
+                </small>
+
+                <!-- Installment Amount / Duration -->
+                <div class="mt-4 text-sm font-medium">Installment Amount</div>
+                <div class="mt-4 text-sm font-medium">Duration</div>
+
+                <InputNumber
+                    v-model="form.installment_amount"
+                    locale="en-IN"
+                    suffix=" BDT"
+                    class="mt-2"
+                    fluid
+                    size="small"
+                    placeholder="Enter installment amount"
+                    :disabled="form.processing"
+                />
+
+                <InputNumber
+                    v-model="form.duration_years"
+                    suffix=" years"
+                    class="mt-2"
+                    fluid
+                    size="small"
+                    placeholder="Enter duration in years"
+                    :disabled="form.processing"
+                />
+
+                <small v-if="form.errors.installment_amount" class="mt-1 text-red-500">
+                    {{ form.errors.installment_amount }}
+                </small>
+
+                <small v-if="form.errors.duration_years" class="mt-1 text-red-500">
+                    {{ form.errors.duration_years }}
+                </small>
+
+                <!-- Interest Rate / Tax Rate -->
+                <div class="mt-4 text-sm font-medium">Interest Rate</div>
+                <div class="mt-4 text-sm font-medium">Tax Rate</div>
+
+                <InputNumber
+                    v-model="form.interest_rate"
+                    suffix=" %"
+                    mode="decimal"
+                    :minFractionDigits="0"
+                    :maxFractionDigits="2"
+                    class="mt-2"
+                    fluid
+                    size="small"
+                    placeholder="Enter interest rate"
+                    :disabled="form.processing"
+                />
+
+                <InputNumber
+                    v-model="form.tax_rate"
+                    suffix=" %"
+                    mode="decimal"
+                    :minFractionDigits="0"
+                    :maxFractionDigits="2"
+                    class="mt-2"
+                    fluid
+                    size="small"
+                    placeholder="Enter tax rate on interest"
+                    :disabled="form.processing"
+                />
+
+                <small v-if="form.errors.interest_rate" class="mt-1 text-red-500">
+                    {{ form.errors.interest_rate }}
+                </small>
+
+                <small v-if="form.errors.tax_rate" class="mt-1 text-red-500">
+                    {{ form.errors.tax_rate }}
+                </small>
+
+                <!-- Buttons -->
+                <div class="col-span-2 flex justify-end gap-x-2">
+                    <Button
+                        label="Cancel"
+                        severity="secondary"
+                        icon="pi pi-times"
+                        size="small"
+                        class="mt-4"
+                        type="button"
+                        :disabled="form.processing"
+                        @click="router.visit(`/investments/dps/${props.dps.id}`)"
+                    />
+
+                    <Button
+                        label="Update Scheme"
+                        icon="pi pi-save"
+                        size="small"
+                        class="mt-4"
+                        type="submit"
+                        :loading="updatingDps"
+                        :disabled="form.processing"
+                    />
+                </div>
+            </form>
+        </template>
+    </AppLayout>
 </template>

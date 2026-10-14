@@ -68,7 +68,7 @@ const cancel = () => {
 <template>
 <AppLayout pageTitle="Provident Fund">
     <template #content>
-        <div class="mx-auto mt-4 flex h-full max-w-2/3 flex-col">
+        <div class="mx-auto mt-4 flex h-full lg:max-w-2/3 flex-col">
             <!-- Information -->
             <div class="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 shadow-sm">
                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100">
@@ -85,19 +85,18 @@ const cancel = () => {
                 </div>
             </div>
 
-            <form class="mt-2 flex flex-col gap-y-2" @submit.prevent="submit">
+            <form class="mt-4 flex flex-col gap-y-2" @submit.prevent="submit">
                 <!-- Basic information -->
-                <div class="flex items-start rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div class="w-1/2">
+                <div class="flex flex-col lg:flex-row items-start rounded-xl border border-gray-200 bg-white p-6 shadow-sm gap-4">
+                    <div class="w-full lg:w-1/2">
                         <div class="text-base font-medium">Provident Fund Details</div>
 
                         <div class="mt-1 text-xs text-gray-500">
-                            Enter the date from which your provident fund
-                            membership started.
+                            Enter the date from which your provident fund membership started.
                         </div>
                     </div>
 
-                    <div class="w-1/2">
+                    <div class="w-full lg:w-1/2">
                         <label for="start_date" class="mb-2 block text-sm font-medium text-gray-700">
                             Start Date
                         </label>
@@ -119,9 +118,9 @@ const cancel = () => {
                 </div>
 
                 <!-- Employer rates -->
-                <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div class="mb-5 flex items-start justify-between gap-4">
-                        <div class="w-4/5">
+                <div class="mt-2 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div class="mb-5 flex flex-col lg:flex-row items-start justify-between gap-4">
+                        <div class="w-full lg:w-4/5">
                             <div class="text-base font-medium">
                                 Employer Contribution Rates
                             </div>

@@ -225,252 +225,118 @@ const cancel = () => {
 </style>
 
 <template>
-<AppLayout page-title="Edit Transaction">
-    <template #content>
-        <div class="flex gap-x-10 pt-6">
-            <!-- Form -->
-            <div class="flex w-1/2 flex-col mx-auto">
-                <div class="flex items-center gap-x-2 text-xs text-gray-500 uppercase">
-                    <span>Edit transaction</span>
-                    <hr class="flex-1 border" />
-                </div>
+    <AppLayout page-title="Edit Transaction">
+        <template #content>
+            <div class="">
+                <div class="mx-auto flex flex-col lg:w-1/2">
+                    <form class="flex flex-col gap-3 lg:gap-6" @submit.prevent="submit">
+                        <!-- Transaction Title -->
+                        <div class="flex flex-col gap-1">
+                            <label for="title" class="font-medium text-gray-500 text-sm">Transaction Title</label>
+                            <input id="title" v-model="editForm.title" class="input-field focus:outline-0" :class="{ '!border-red-500': errors.title }" placeholder="Bus fare / Salary" autofocus />
+                            <small v-if="errors.title" class="text-xs text-red-500">{{ errors.title }}</small>
+                        </div>
 
-                <form class="mt-4 flex flex-col" @submit.prevent="submit">
-                    <!-- Transaction Title -->
-                    <label for="title" class="font-medium text-gray-500">Transaction Title</label>
+                        <!-- Type -->
+                        <div class="flex flex-col gap-1">
+                            <label class="font-medium text-gray-500 text-sm">Transaction Type</label>
+                            <SelectButton v-model="editForm.type" :options="transactionTypes" optionLabel="label" optionValue="value" aria-labelledby="transaction-type" size="small" fluid>
+                                <template #option="{ option }">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <i :class="option.icon"></i>
+                                        <span>{{ option.label }}</span>
+                                    </div>
+                                </template>
+                            </SelectButton>
+                            <small v-if="errors.type" class="text-xs text-red-500">{{ errors.type }}</small>
+                        </div>
 
-                    <input
-                        id="title"
-                        v-model="editForm.title"
-                        class="input-field focus:outline-0"
-                        :class="{'!border-red-500': errors.title,}"
-                        placeholder="Bus fare / Salary"
-                        autofocus
-                    />
-
-                    <small v-if="errors.title" class="mt-1 text-xs text-red-500">
-                        {{ errors.title }}
-                    </small>
-
-                    <!-- Type -->
-                    <label class="mt-6 font-medium text-gray-500">Transaction Type</label>
-
-                    <SelectButton
-                        v-model="editForm.type"
-                        :options="transactionTypes"
-                        optionLabel="label"
-                        optionValue="value"
-                        aria-labelledby="transaction-type"
-                        size="small"
-                        class="mt-2"
-                        fluid
-                    >
-                        <template #option="{ option }">
-                            <div class="flex items-center justify-center gap-2">
-                                <i :class="option.icon"></i>
-
-                                <span>{{ option.label }}</span>
+                        <!-- Account, Category, Amount, and Date -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-6">
+                            <!-- Account -->
+                            <div class="flex flex-col gap-1">
+                                <label class="font-medium text-gray-500 text-sm">Source Account</label>
+                                <Select v-model="editForm.account_id" :options="props.accounts" optionLabel="name" optionValue="id" placeholder="Select an account" size="small">
+                                    <template #option="{ option }">
+                                        <div class="flex w-full items-center justify-between gap-3">
+                                            <div class="flex flex-col">
+                                                <span class="text-sm font-medium">{{ option.name }}</span>
+                                                <span class="text-xs text-gray-400 capitalize">{{ option.type }} account</span>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-sm font-medium">{{ option.balance }}</span>
+                                                <span class="text-xs text-gray-400">{{ option.currency }}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template #value="{ value }">
+                                        <div v-if="value" class="flex w-full items-center justify-between">
+                                            <span>{{ accounts.find((account) => account.id === value)?.name }}</span>
+                                            <span class="text-xs text-gray-400">
+                                                {{ accounts.find((account) => account.id === value)?.balance }}
+                                                {{ accounts.find((account) => account.id === value)?.currency }}
+                                            </span>
+                                        </div>
+                                        <span v-else class="text-gray-400">Select an account</span>
+                                    </template>
+                                </Select>
+                                <small v-if="errors.account_id" class="text-xs text-red-500">{{ errors.account_id }}</small>
                             </div>
-                        </template>
-                    </SelectButton>
 
-                    <small v-if="errors.type" class="mt-1 text-xs text-red-500">{{ errors.type }}</small>
-
-                    <!-- Account + Category -->
-                    <div class="mt-6 grid grid-cols-2 gap-6">
-                        <!-- Account -->
-                        <div class="flex flex-col">
-                            <label class="font-medium text-gray-500">Source Account</label>
-
-                            <Select
-                                v-model="editForm.account_id"
-                                :options="props.accounts"
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Select an account"
-                                class="mt-2"
-                                size="small"
-                            >
-                                <template #option="{ option }">
-                                    <div class="flex w-full items-center justify-between gap-4">
-                                        <div class="flex flex-col">
+                            <!-- Category -->
+                            <div class="flex flex-col gap-1">
+                                <label class="font-medium text-gray-500 text-sm">Category</label>
+                                <Select v-model="editForm.category_id" :options="props.categories" optionLabel="name" optionValue="id" placeholder="Select a category" class="!text-sm" size="small" filter filterPlaceholder="Search category..." showClear :pt="{ pcFilter: { root: { class: '!text-sm !h-8 !py-1 !px-2' } } }">
+                                    <template #option="{ option }">
+                                        <div class="flex w-full items-center justify-between gap-3">
                                             <span class="text-sm font-medium">{{ option.name }}</span>
-                                            <span class="text-xs text-gray-400 capitalize">{{ option.type }} account</span>
                                         </div>
-
-                                        <div class="flex flex-col items-end">
-                                            <span class="text-sm font-medium">{{ option.balance }}</span>
-                                            <span class="text-xs text-gray-400">{{ option.currency }}</span>
+                                    </template>
+                                    <template #value="{ value }">
+                                        <div v-if="value" class="flex w-full items-center">
+                                            <span>{{ props.categories.find((category) => category.id === value)?.name }}</span>
                                         </div>
-                                    </div>
-                                </template>
+                                        <span v-else class="text-gray-400">Select a category</span>
+                                    </template>
+                                </Select>
+                                <small v-if="errors.category_id" class="text-xs text-red-500">{{ errors.category_id }}</small>
+                            </div>
 
-                                <!-- Selected Account -->
-                                <template #value="{ value }">
-                                    <div v-if="value" class="flex w-full items-center justify-between">
-                                        <span>
-                                            {{ accounts.find((account) => account.id === value,)?.name }}
-                                        </span>
-                                        <span class="text-xs text-gray-400">
-                                            {{ accounts.find((account) => account.id === value,)?.balance }}
-                                            {{ accounts.find((account) => account.id === value,)?.currency }}
-                                        </span>
-                                    </div>
+                            <!-- Amount -->
+                            <div class="flex flex-col gap-1">
+                                <label class="font-medium text-gray-500 text-sm">Amount</label>
+                                <InputNumber v-model="editForm.amount" size="small" :class="{ 'p-invalid': errors.amount }" placeholder="0.00" mode="decimal" :min="0" :minFractionDigits="0" :maxFractionDigits="2" :useGrouping="true" locale="en-IN" />
+                                <small v-if="errors.amount" class="text-xs text-red-500">{{ errors.amount }}</small>
+                            </div>
 
-                                    <span v-else class="text-gray-400">
-                                        Select an account
-                                    </span>
-                                </template>
-                            </Select>
-
-                            <small v-if="errors.account_id" class="mt-1 text-xs text-red-500">
-                                {{ errors.account_id }}
-                            </small>
+                            <!-- Date -->
+                            <div class="flex flex-col gap-1">
+                                <label class="font-medium text-gray-500 text-sm">Transaction Date</label>
+                                <DatePicker v-model="editForm.transaction_date" placeholder="dd/mm/yyyy" size="small" dateFormat="dd/mm/yy" v-mask="'99/99/9999'" showIcon showButtonBar />
+                                <small v-if="errors.transaction_date" class="text-xs text-red-500">{{ errors.transaction_date }}</small>
+                            </div>
                         </div>
 
-                        <!-- Category -->
-                        <div class="flex flex-col">
-                            <label class="font-medium text-gray-500">Category</label>
-
-                            <Select
-                                v-model="editForm.category_id"
-                                :options="props.categories"
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Select a category"
-                                class="mt-2 !text-sm"
-                                size="small"
-                                filter
-                                filterPlaceholder="Search category..."
-                                showClear
-                                :pt="{
-                                    pcFilter: {
-                                        root: {
-                                            class: '!text-sm !h-8 !py-1 !px-2',
-                                        },
-                                    },
-                                }"
-                            >
-                                <template #option="{ option }">
-                                    <div class="flex w-full items-center justify-between gap-4">
-                                        <span class="text-sm font-medium">{{ option.name }}</span>
-                                    </div>
-                                </template>
-
-                                <!-- Selected Category -->
-                                <template #value="{ value }">
-                                    <div v-if="value" class="flex w-full items-center">
-                                        <span>
-                                            {{ props.categories.find((category) => category.id === value,)?.name }}
-                                        </span>
-                                    </div>
-
-                                    <span v-else class="text-gray-400">
-                                        Select a category
-                                    </span>
-                                </template>
-                            </Select>
-
-                            <small v-if="errors.category_id" class="mt-1 text-xs text-red-500">
-                                {{ errors.category_id }}
-                            </small>
+                        <!-- Note -->
+                        <div class="flex flex-col gap-1">
+                            <label class="font-medium text-gray-500 text-sm">Note</label>
+                            <Textarea v-model="editForm.note" placeholder="Write a description" autoResize rows="3" class="text-sm!" />
                         </div>
 
-                        <!-- Amount -->
-                        <div class="flex flex-col">
-                            <label class="font-medium text-gray-500">Amount</label>
-
-                            <InputNumber
-                                v-model="editForm.amount"
-                                size="small"
-                                class="mt-2"
-                                :class="{
-                                    'p-invalid': errors.amount,
-                                }"
-                                placeholder="0.00"
-                                mode="decimal"
-                                :min="0"
-                                :minFractionDigits="0"
-                                :maxFractionDigits="2"
-                                :useGrouping="true"
-                                locale="en-IN"
-                            />
-
-                            <small v-if="errors.amount" class="mt-1 text-xs text-red-500">
-                                {{ errors.amount }}
-                            </small>
+                        <!-- Reference -->
+                        <div class="flex flex-col gap-1">
+                            <label class="font-medium text-gray-500 text-sm">Reference</label>
+                            <InputText v-model="editForm.reference" placeholder="Transaction Reference" class="text-sm!" size="small" />
                         </div>
 
-                        <!-- Date -->
-                        <div class="flex flex-col">
-                            <label class="font-medium text-gray-500">Transaction Date</label>
-
-                            <DatePicker
-                                v-model="editForm.transaction_date"
-                                placeholder="dd/mm/yyyy"
-                                size="small"
-                                class="mt-2"
-                                dateFormat="dd/mm/yy"
-                                v-mask="'99/99/9999'"
-                                showIcon
-                                showButtonBar
-                            />
-
-                            <small v-if="errors.transaction_date" class="mt-1 text-xs text-red-500">
-                                {{ errors.transaction_date }}
-                            </small>
+                        <!-- Buttons -->
+                        <div class="flex items-center justify-end gap-3">
+                            <Button label="Cancel" class="w-40" size="small" severity="secondary" icon="pi pi-times" type="button" @click="cancel" />
+                            <Button type="submit" label="Save Changes" class="w-40" size="small" icon="pi pi-check" :loading="editForm.processing" />
                         </div>
-                    </div>
-
-                    <!-- Note -->
-                    <div class="mt-6 flex flex-col">
-                        <label class="font-medium text-gray-500"> Note </label>
-
-                        <Textarea
-                            v-model="editForm.note"
-                            placeholder="Write a description"
-                            autoResize
-                            rows="3"
-                            class="mt-2 text-sm!"
-                        />
-                    </div>
-
-                    <!-- Reference -->
-                    <div class="mt-6 flex flex-col">
-                        <label class="font-medium text-gray-500">Reference</label>
-
-                        <InputText
-                            v-model="editForm.reference"
-                            placeholder="Transaction Reference"
-                            class="mt-2 text-sm!"
-                            size="small"
-                        />
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="flex items-center justify-end gap-x-4">
-                        <Button
-                            label="Cancel"
-                            class="mt-6 w-40"
-                            size="small"
-                            severity="secondary"
-                            icon="pi pi-times"
-                            type="button"
-                            @click="cancel"
-                        />
-
-                        <Button
-                            type="submit"
-                            label="Save Changes"
-                            class="mt-6 w-40"
-                            size="small"
-                            icon="pi pi-check"
-                            :loading="editForm.processing"
-                        />
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
-    </template>
-</AppLayout>
+        </template>
+    </AppLayout>
 </template>

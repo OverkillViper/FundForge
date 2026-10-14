@@ -36,7 +36,7 @@ const createCategory = () => {
         v-model:visible="visible"
         modal
         header="Create Category"
-        :style="{ width: '24rem' }"
+        class="w-[22rem] lg:w-[24rem]"
     >
         <div class="flex flex-col gap-4">
             <!-- Category Name Field -->
