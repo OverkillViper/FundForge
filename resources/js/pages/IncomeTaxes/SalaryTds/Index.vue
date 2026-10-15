@@ -125,7 +125,7 @@ const confirmDelete = (tds: SalaryTds) => {
                 optionLabel="label"
                 optionValue="value"
                 size="small"
-                class="w-36"
+                class="w-36 hidden! lg:flex!"
                 @update:modelValue="changeIncomeYear"
             />
 
@@ -138,15 +138,28 @@ const confirmDelete = (tds: SalaryTds) => {
         </template>
 
         <template #content>
-            <div class="mt-6 flex w-1/2 flex-1 mx-auto justify-center">
+            <div class="flex flex-col lg:hidden! gap-2">
+                <div class="text-xs text-gray-500">Income Year</div>
+                <Select
+                    v-model="selectedYear"
+                    :options="incomeYears"
+                    optionLabel="label"
+                    optionValue="value"
+                    size="small"
+                    class="w-36"
+                    fluid
+                    @update:modelValue="changeIncomeYear"
+                />
+            </div>
+            <div class="mt-6 flex lg:w-1/2 flex-1 mx-auto justify-center ">
                 <DataTable
                     :value="props.salaryTds"
                     dataKey="id"
                     size="small"
                     rowHover
-                    class="overflow-hidden! rounded-xl! border border-gray-200! text-sm w-3/4!"
+                    class="overflow-hidden! rounded-xl! border border-gray-200! text-sm w-full lg:w-3/4!"
                 >
-                    <Column header="" :style="{ width: '64px' }">
+                    <Column header="" class="w-1/6">
                         <template #body>
                             <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
                                 <i class="pi pi-receipt text-sm text-primary"></i>
@@ -154,7 +167,7 @@ const confirmDelete = (tds: SalaryTds) => {
                         </template>
                     </Column>
 
-                    <Column header="Month" field="date" sortable>
+                    <Column header="Month" field="date" sortable class="w-2/6">
                         <template #body="{ data }">
                             <div class="flex flex-col">
                                 <span class="font-semibold text-gray-800">
@@ -168,11 +181,12 @@ const confirmDelete = (tds: SalaryTds) => {
                     </Column>
 
                     <Column
-                        header="TDS Amount"
+                        header="TDS"
                         field="amount"
                         sortable
-                        headerClass="text-right!"
-                        style="width: 180px"
+                        headerClass="text-end!"
+                        class="w-2/6"
+                        :pt="{ columnHeaderContent: { class: 'justify-end' } }"
                     >
                         <template #body="{ data }">
                             <div class="flex flex-col items-end">
@@ -186,7 +200,7 @@ const confirmDelete = (tds: SalaryTds) => {
                         </template>
                     </Column>
 
-                    <Column header="" :style="{ width: '110px' }">
+                    <Column header="" class="1/6">
                         <template #body="{ data }">
                             <div class="row-actions flex justify-end gap-0.5">
                                 <Button
@@ -235,7 +249,7 @@ const confirmDelete = (tds: SalaryTds) => {
             <CreateDialog ref="createDialog" />
             <EditDialog ref="editDialog" />
 
-            <ConfirmDialog />
+            <ConfirmDialog class="w-[22rem] lg:w-[28rem]"/>
         </template>
     </AppLayout>
 </template>

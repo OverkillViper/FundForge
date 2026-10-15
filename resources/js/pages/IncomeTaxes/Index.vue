@@ -185,8 +185,8 @@ watch(selectedYear, (year) => {
     </template>
 
     <template #content>
-        <ScrollPanel class="mt-4 h-[720px]">
-            <div class="mx-auto w-2/3 space-y-4 pb-8">
+        <ScrollPanel class="lg:mt-4 h-[690px]">
+            <div class="mx-auto lg:w-2/3 space-y-4 pb-8">
                 <!-- Income Form -->
                 <IncomeForm
                     :selected-income-year="selectedYear"
@@ -197,7 +197,7 @@ watch(selectedYear, (year) => {
                 />
 
                 <!-- Warnings -->
-                <div v-if="totalIncome?.warnings.length" class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
+                <div v-if="totalIncome?.warnings.length" class="rounded-xl border border-amber-200 bg-amber-50 p-3 shadow-sm">
                     <div class="flex items-start gap-3">
                         <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100">
                             <span class="pi pi-exclamation-triangle text-sm text-amber-600"></span>
@@ -215,15 +215,13 @@ watch(selectedYear, (year) => {
                 </div>
 
                 <!-- Tax Return Discount -->
-                <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3">
-                    <div class="flex items-start gap-3">
-                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                            <span class="pi pi-percentage text-sm"></span>
-                        </div>
-                        <div>
-                            <div class="text-sm font-semibold text-gray-800">Tax Return Discount</div>
-                            <div class="mt-0.5 text-xs text-gray-500">A 5% discount will be applied when the return is submitted before September.</div>
-                        </div>
+                <div class="flex lg:items-center justify-between rounded-xl border border-gray-200 bg-white p-3 lg:p-4 gap-3 lg:gap-4">
+                    <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <span class="pi pi-percentage text-sm"></span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-semibold text-gray-800">Tax Return Discount</div>
+                        <div class="mt-0.5 text-xs text-gray-500">A 5% discount will be applied when the return is submitted before September.</div>
                     </div>
                     <ToggleSwitch v-model="toggleDiscount" inputId="switch" />
                 </div>
@@ -235,47 +233,47 @@ watch(selectedYear, (year) => {
                             <div class="text-sm font-semibold text-white">Tax Summary</div>
                             <div class="mt-0.5 text-xs text-gray-300">Overview of your calculated income tax</div>
                         </div>
-                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-primary">
+                        <div class="flex size-8 items-center justify-center rounded-lg bg-gray-100 text-primary">
                             <span class="pi pi-chart-bar text-sm"></span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-5 divide-x divide-primary-200">
-                        <div class="px-3 first:pl-0">
+                    <div class="grid lg:grid-cols-5 lg:divide-x divide-primary-200 gap-2">
+                        <div class="lg:px-3 first:pl-0">
                             <div class="text-[10px] uppercase tracking-wider text-gray-200">Taxable Income</div>
-                            <div class="mt-1 text-lg font-medium text-gray-100">
+                            <div class="lg:mt-1 text-lg font-medium text-gray-100">
                                 <template v-if="totalIncome?.taxable_total">{{ formatCurrency(totalIncome.taxable_total.toFixed(0)) }} <span class="text-xs font-medium text-gray-200">BDT</span></template>
                                 <template v-else>N/A</template>
                             </div>
                         </div>
 
-                        <div class="px-3">
+                        <div class="lg:px-3">
                             <div class="text-[10px] uppercase tracking-wider text-gray-200">Tax Liability</div>
-                            <div class="mt-1 text-lg font-medium text-gray-100">
+                            <div class="lg:mt-1 text-lg font-medium text-gray-100">
                                 <template v-if="tax?.tax_liability">{{ formatCurrency(tax.tax_liability.toFixed(0)) }} <span class="text-xs font-medium text-gray-400">BDT</span></template>
                                 <template v-else>N/A</template>
                             </div>
                         </div>
 
-                        <div class="px-3">
+                        <div class="lg:px-3">
                             <div class="text-[10px] uppercase tracking-wider text-gray-200">Tax Rebate</div>
-                            <div class="mt-1 text-lg font-medium text-emerald-300">
+                            <div class="lg:mt-1 text-lg font-medium text-emerald-300">
                                 <template v-if="rebate?.rebate">{{ formatCurrency(rebate.rebate.toFixed(0)) }} <span class="text-xs font-medium text-gray-400">BDT</span></template>
                                 <template v-else>N/A</template>
                             </div>
                         </div>
 
-                        <div class="px-3">
+                        <div class="lg:px-3">
                             <div class="text-[10px] uppercase tracking-wider text-gray-200">TDS</div>
-                            <div class="mt-1 text-lg font-medium text-gray-100">
+                            <div class="lg:mt-1 text-lg font-medium text-gray-100">
                                 <template v-if="finalTax">{{ formatCurrency(finalTax.total_tds.toFixed(0)) }} <span class="text-xs font-medium text-gray-400">BDT</span></template>
                                 <template v-else>N/A</template>
                             </div>
                         </div>
 
-                        <div class="px-3 last:pr-0">
+                        <div class="lg:px-3 last:pr-0">
                             <div class="text-[10px] uppercase tracking-wider text-gray-200">{{ finalTax?.tax_refundable === 0 ? 'Tax Payable' : 'Tax Refundable' }}</div>
-                            <div class="mt-1 text-lg font-medium" :class="finalTax?.tax_refundable === 0 ? 'text-white' : 'text-emerald-600'">
+                            <div class="lg:mt-1 text-lg font-medium" :class="finalTax?.tax_refundable === 0 ? 'text-white' : 'text-emerald-600'">
                                 <template v-if="finalTax">
                                     {{ toggleDiscount ? formatCurrency(finalTax.final_tax_after_discount.toFixed(0)) : formatCurrency(finalTax.final_tax.toFixed(0)) }}
                                     <span class="text-xs font-medium text-gray-400">BDT</span>

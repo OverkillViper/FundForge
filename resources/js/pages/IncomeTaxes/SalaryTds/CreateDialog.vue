@@ -59,7 +59,7 @@ defineExpose({
         v-model:visible="visible"
         modal
         header="Create Salary TDS Record"
-        :style="{ width: '28rem' }"
+        class="w-[22rem] lg:w-[28rem]"
         :closable="!form.processing"
         :closeOnEscape="!form.processing"
     >

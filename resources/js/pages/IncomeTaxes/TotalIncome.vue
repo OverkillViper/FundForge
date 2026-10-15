@@ -38,9 +38,9 @@ const hasWarnings = computed(() => {
             </div>
         </div>
 
-        <div v-if="!totalIncome" class="flex items-center justify-center gap-3 px-5 py-8 text-sm text-gray-500">
+        <div v-if="!totalIncome" class="flex items-center lg:justify-center gap-3 p-3 lg:p-4 text-sm text-gray-500">
             <span class="pi pi-exclamation-triangle text-amber-500"></span>
-            <span>Save the income tax information to calculate total income.</span>
+            <span class="text-xs">Save the income information to calculate total taxable income.</span>
         </div>
 
         <div v-else class="p-5 text-sm">
