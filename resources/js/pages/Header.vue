@@ -13,6 +13,7 @@ interface User {
 
 const props = defineProps<{
     collapsed: boolean;
+    mobileSidebarOpen: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -74,7 +75,7 @@ const greeting = computed(() => {
         >
             <span
                 class="text-lg! transition-transform duration-300"
-                :class="props.collapsed ? 'icon-panel-left-open' : 'icon-panel-left-close'"
+                :class="props.collapsed || !props.mobileSidebarOpen ? 'icon-panel-left-open' : 'icon-panel-left-close'"
             ></span>
         </button>
 

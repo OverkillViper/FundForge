@@ -25,14 +25,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 
-Route::get('/debug-scheme', function (Request $request) {
-    return response()->json([
-        'secure' => $request->isSecure(),
-        'scheme' => $request->getScheme(),
-        'request_url' => $request->url(),
-        'generated_url' => url('/dashboard'),
-        'app_url' => config('app.url'),
-    ]);
-});
-
 Route::get('/transactions/debug', [TransactionController::class, 'debug'])->name('transactions.debug');

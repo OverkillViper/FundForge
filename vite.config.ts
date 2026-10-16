@@ -6,6 +6,10 @@ import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig } from 'vite';
 
+const isCodespaces = Boolean(process.env.CODESPACE_NAME);
+const devHost = '192.168.0.198';
+const codespacesHost = isCodespaces ? `${process.env.CODESPACE_NAME}-5173.app.github.dev` : null;
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -31,16 +35,24 @@ export default defineConfig({
             formVariants: true,
         }),
     ],
+    // Development server settings only; production uses compiled assets.
     server: {
         host: '0.0.0.0',
         port: 5173,
         strictPort: true,
-        cors: true,
-        hmr: {
-            host: process.env.CODESPACE_NAME ? `${process.env.CODESPACE_NAME}-5173.app.github.dev` : 'localhost',
-            protocol: 'wss',
+        cors: {
+            origin: [
+                'http://192.168.0.198:8000',
+                'http://localhost:8000',
+                ...(codespacesHost ? [`https://${codespacesHost}`] : []),
+            ],
         },
-        origin: process.env.CODESPACE_NAME ? `https://${process.env.CODESPACE_NAME}-5173.app.github.dev` : 'http://localhost:5173',
+        origin: isCodespaces ? `https://${codespacesHost}` : `http://${devHost}:5173`,
+        ws: {
+            host: isCodespaces ? codespacesHost! : devHost,
+            protocol: isCodespaces ? 'wss' : 'ws',
+            clientPort: isCodespaces ? 443 : 5173,
+        },
         watch: {
             ignored: [
                 '**/.agents/**',

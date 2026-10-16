@@ -79,7 +79,7 @@ const deleteAccount = () => {
 </script>
 
 <template>
-<AppLayout pageTitle="Accounts">
+<AppLayout pageTitle="Accounts" skeleton-type="grid">
     <template #toolbar>
         <Button
             label="New Account"
