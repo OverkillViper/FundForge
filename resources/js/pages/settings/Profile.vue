@@ -30,7 +30,7 @@ const user = computed(() => page.props.auth.user);
 <AppLayout pageTitle="Manage Profile">
     <template #content>
         <ScrollPanel class="mt-4 h-[720px] w-full">
-            <div class="mx-auto max-w-5xl space-y-5 pb-8">
+            <div class="mx-auto max-w-5xl space-y-4 pb-8">
                 <div class="px-1">
                     <h1 class="text-lg font-semibold text-gray-900">Profile</h1>
                     <p class="mt-1 text-sm text-gray-500">Manage your personal information and account details.</p>
@@ -38,7 +38,7 @@ const user = computed(() => page.props.auth.user);
 
                 <!-- Profile Information -->
                 <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                    <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
+                    <div class="flex items-center gap-3 border-b border-gray-100 p-3 lg:p-4">
                         <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                             <i class="pi pi-user text-sm"></i>
                         </div>
@@ -53,8 +53,8 @@ const user = computed(() => page.props.auth.user);
                         v-bind="ProfileController.update.form()"
                         v-slot="{ errors, processing }"
                     >
-                        <div class="grid grid-cols-2 gap-4 p-5">
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-3 lg:p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label
                                     for="name"
                                     class="text-[10px] font-semibold uppercase tracking-wider text-gray-400"
@@ -79,7 +79,7 @@ const user = computed(() => page.props.auth.user);
                                 <InputError class="mt-2" :message="errors.name" />
                             </div>
 
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label
                                     for="email"
                                     class="text-[10px] font-semibold uppercase tracking-wider text-gray-400"
@@ -151,7 +151,7 @@ const user = computed(() => page.props.auth.user);
 
                 <!-- Account -->
                 <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                    <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
+                    <div class="flex items-center gap-3 border-b border-gray-100 p-3 lg:p-4">
                         <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
                             <i class="pi pi-shield text-sm"></i>
                         </div>
@@ -162,10 +162,10 @@ const user = computed(() => page.props.auth.user);
                         </div>
                     </div>
 
-                    <div class="p-5">
-                        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/60 p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-gray-500">
+                    <div class="p-3 lg:p-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
+                            <div class="flex lg:items-center gap-3">
+                                <div class="flex size-9 items-center justify-center rounded-lg bg-white text-gray-500">
                                     <span class="pi pi-lock text-sm"></span>
                                 </div>
 
@@ -179,7 +179,7 @@ const user = computed(() => page.props.auth.user);
 
                             <Link
                                 href="/settings/security"
-                                class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
+                                class="mt-2 lg:mt-0 flex justify-between items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
                             >
                                 <span>Manage</span>
                                 <i class="pi pi-arrow-right text-[10px]"></i>
@@ -190,8 +190,8 @@ const user = computed(() => page.props.auth.user);
 
                 <!-- Danger Zone -->
                 <section class="overflow-hidden rounded-2xl border border-red-200 bg-white">
-                    <div class="flex items-center gap-3 border-b border-red-100 px-5 py-4">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                    <div class="flex items-center gap-3 border-b border-red-100 p-3 lg:p-4">
+                        <div class="flex size-9 items-center justify-center rounded-lg bg-red-50 text-red-600">
                             <i class="pi pi-exclamation-triangle text-sm"></i>
                         </div>
 
@@ -201,7 +201,7 @@ const user = computed(() => page.props.auth.user);
                         </div>
                     </div>
 
-                    <div class="p-5">
+                    <div class="p-3 lg:p-4">
                         <DeleteUser />
                     </div>
                 </section>

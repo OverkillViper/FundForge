@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\IncomeTaxController::store
-* @see app/Http/Controllers/IncomeTaxController.php:174
+* @see app/Http/Controllers/IncomeTaxController.php:175
 * @route '/income-taxes'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\IncomeTaxController::store
-* @see app/Http/Controllers/IncomeTaxController.php:174
+* @see app/Http/Controllers/IncomeTaxController.php:175
 * @route '/income-taxes'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\IncomeTaxController::store
-* @see app/Http/Controllers/IncomeTaxController.php:174
+* @see app/Http/Controllers/IncomeTaxController.php:175
 * @route '/income-taxes'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\IncomeTaxController::store
-* @see app/Http/Controllers/IncomeTaxController.php:174
+* @see app/Http/Controllers/IncomeTaxController.php:175
 * @route '/income-taxes'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\IncomeTaxController::store
-* @see app/Http/Controllers/IncomeTaxController.php:174
+* @see app/Http/Controllers/IncomeTaxController.php:175
 * @route '/income-taxes'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

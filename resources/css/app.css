@@ -447,4 +447,12 @@
     .app-toolbar .p-button .p-button-label {
         display: none;
     }
+
+    .sync-button .p-button .p-button-label {
+        display: none;
+    }
+}
+
+.p-select-option.p-select-option-selected {
+    color: #fff !important;
 }

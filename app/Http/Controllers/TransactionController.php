@@ -122,13 +122,64 @@ class TransactionController extends Controller
      */
     public function index(Request $request): Response
     {
-        $transactions = Transaction::query()
-            ->where('user_id', auth()->id())
+        $user = $request->user();
+
+        $filters = [
+            'type' => $request->input('type', ''),
+            'account_id' => $request->input('account_id', ''),
+            'date' => $request->input('date', ''),
+            'date_from' => $request->input('date_from', ''),
+            'date_to' => $request->input('date_to', ''),
+            'amount_min' => $request->input('amount_min', ''),
+            'amount_max' => $request->input('amount_max', ''),
+            'category_id' => $request->input('category_id', ''),
+        ];
+
+        $query = Transaction::query()
+            ->where('user_id', $user->id)
             ->with([
                 'account:id,name,currency',
                 'category:id,name',
                 'dpsPayment.dps.investment',
-            ])
+            ]);
+
+        if (in_array($filters['type'], ['income', 'expense', 'investment', 'lending', 'borrowing'], true)) {
+            $query->where('type', $filters['type']);
+        }
+
+        if ($filters['account_id'] !== '' && ctype_digit((string) $filters['account_id'])) {
+            $query->whereHas('account', fn ($accountQuery) => $accountQuery
+                ->where('user_id', $user->id)
+                ->whereKey((int) $filters['account_id']));
+        }
+
+        if ($filters['category_id'] !== '' && ctype_digit((string) $filters['category_id'])) {
+            $query->whereHas('category', fn ($categoryQuery) => $categoryQuery
+                ->where('user_id', $user->id)
+                ->whereKey((int) $filters['category_id']));
+        }
+
+        if ($filters['date'] !== '' && strtotime($filters['date']) !== false) {
+            $query->whereDate('transaction_date', $filters['date']);
+        } else {
+            if ($filters['date_from'] !== '' && strtotime($filters['date_from']) !== false) {
+                $query->whereDate('transaction_date', '>=', $filters['date_from']);
+            }
+
+            if ($filters['date_to'] !== '' && strtotime($filters['date_to']) !== false) {
+                $query->whereDate('transaction_date', '<=', $filters['date_to']);
+            }
+        }
+
+        if ($filters['amount_min'] !== '' && is_numeric($filters['amount_min']) && (float) $filters['amount_min'] >= 0) {
+            $query->where('amount', '>=', (float) $filters['amount_min']);
+        }
+
+        if ($filters['amount_max'] !== '' && is_numeric($filters['amount_max']) && (float) $filters['amount_max'] >= 0) {
+            $query->where('amount', '<=', (float) $filters['amount_max']);
+        }
+
+        $transactions = $query
             ->latest('transaction_date')
             ->latest('id')
             ->paginate(20)
@@ -136,6 +187,15 @@ class TransactionController extends Controller
 
         return Inertia::render('Transactions/Index', [
             'transactions' => $transactions,
+            'accounts' => $user->accounts()
+                ->select('id', 'name', 'currency')
+                ->orderBy('name')
+                ->get(),
+            'categories' => $user->categories()
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get(),
+            'filters' => $filters,
         ]);
     }
 

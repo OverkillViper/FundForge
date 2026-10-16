@@ -38,7 +38,7 @@ const props = defineProps<{
 
 <template>
     <div class="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
+        <div class="flex items-center gap-3 border-b border-gray-100 p-3 lg:p-4">
             <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                 <span class="pi pi-percentage text-sm"></span>
             </div>
@@ -53,7 +53,7 @@ const props = defineProps<{
             <span class="text-xs">Save the income information to calculate rebates.</span>
         </div>
 
-        <div v-else class="p-5 text-sm">
+        <div v-else class="p-3 lg:p-4 text-sm">
             <!-- Investment Breakdown -->
             <div class="mb-3">
                 <div class="text-xs font-semibold uppercase tracking-wider text-gray-400">Investment Breakdown</div>
@@ -109,7 +109,7 @@ const props = defineProps<{
             </div>
 
             <!-- Rebate Inputs -->
-            <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-3">
                 <div class="rounded-xl bg-gray-50 px-4 py-3 border">
                     <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Taxable Income</div>
                     <div class="mt-1 text-base font-bold text-gray-900">{{ formatCurrency(rebate.taxable_income) }} <span class="text-xs font-medium text-gray-400">BDT</span></div>
@@ -128,46 +128,55 @@ const props = defineProps<{
                 <div class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Rebate Limits</div>
 
                 <div class="grid grid-cols-5 border-b border-gray-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                    <div class="col-span-2">Particulars</div>
-                    <div class="col-span-2">Calculation</div>
+                    <div class="col-span-4 lg:col-span-2">Particulars</div>
+                    <div class="col-span-2 hidden lg:block">Calculation</div>
                     <div class="text-right">Limit</div>
                 </div>
 
                 <div class="grid grid-cols-5 items-center border-b border-gray-100 py-3">
-                    <div class="col-span-2 font-medium text-gray-700">(a) Taxable Income Rebate Limit</div>
-                    <div class="col-span-2 flex items-center gap-2 text-gray-500">
+                    <div class="col-span-3 lg:col-span-2 font-medium text-gray-700 flex items-center gap-x-1 lg:gap-x-2">
+                        <div class="size-4 bg-gray-200 flex items-center justify-center rounded-sm font-semibold text-[10px]">A</div>
+                        <span>Taxable Income</span>
+                    </div>
+                    <div class="order-3 lg:order-2 col-span-4 lg:col-span-2 flex items-center gap-2 text-gray-500 ms-5 lg:ms-0">
                         {{ formatCurrency(rebate.taxable_income) }}
                         <span class="pi pi-times text-[9px]"></span>
                         <span>3%</span>
                     </div>
-                    <div class="text-right font-medium text-gray-800">{{ formatCurrency(rebate.taxable_income_rebate_limit) }} BDT</div>
+                    <div class="col-span-2 lg:col-span-1 order-2 lg:order-3 text-right font-medium text-gray-800">{{ formatCurrency(rebate.taxable_income_rebate_limit) }} BDT</div>
                 </div>
 
                 <div class="grid grid-cols-5 items-center border-b border-gray-100 py-3">
-                    <div class="col-span-2 font-medium text-gray-700">(b) Investment Rebate Limit</div>
-                    <div v-if="eligibleInvestment" class="col-span-2 flex items-center gap-2 text-gray-500">
+                    <div class="col-span-3 lg:col-span-2 font-medium text-gray-700 flex items-center gap-x-1 lg:gap-x-2">
+                        <div class="size-4 bg-gray-200 flex items-center justify-center rounded-sm font-semibold text-[10px]">B</div>
+                        <span>Investment</span>
+                    </div>
+                    <div v-if="eligibleInvestment" class="order-3 lg:order-2 col-span-4 lg:col-span-2 flex items-center gap-2 text-gray-500 ms-5 lg:ms-0">
                         {{ formatCurrency(eligibleInvestment.eligible_total) }}
                         <span class="pi pi-times text-[9px]"></span>
                         <span>10%</span>
                     </div>
-                    <div v-else class="col-span-2 text-gray-400">N/A</div>
-                    <div class="text-right font-medium text-gray-800">{{ formatCurrency(rebate.investment_rebate_limit) }} BDT</div>
+                    <div v-else class="order-3 lg:order-2 col-span-4 lg:col-span-2 text-gray-400">N/A</div>
+                    <div class="col-span-2 lg:col-span-1 order-2 lg:order-3 text-right font-medium text-gray-800">{{ formatCurrency(rebate.investment_rebate_limit) }} BDT</div>
                 </div>
 
                 <div class="grid grid-cols-5 items-center border-b border-gray-100 py-3">
-                    <div class="col-span-2 font-medium text-gray-700">(c) Maximum Rebate Limit</div>
-                    <div class="col-span-2 text-gray-500">Maximum allowed rebate</div>
-                    <div class="text-right font-medium text-gray-800">{{ formatCurrency(rebate.max_rebate_cap) }} BDT</div>
+                    <div class="col-span-3 lg:col-span-2 font-medium text-gray-700 flex items-center gap-x-1 lg:gap-x-2">
+                        <div class="size-4 bg-gray-200 flex items-center justify-center rounded-sm font-semibold text-[10px]">C</div>
+                        <span>Maximum Rebate</span>
+                    </div>
+                    <div class="order-3 lg:order-2 col-span-4 lg:col-span-2 text-gray-500 ms-5 lg:ms-0">{{ formatCurrency(rebate.max_rebate_cap) }} BDT</div>
+                    <div class="col-span-2 lg:col-span-1 order-2 lg:order-3 text-right font-medium text-gray-800">{{ formatCurrency(rebate.max_rebate_cap) }} BDT</div>
                 </div>
             </div>
 
             <!-- Final Rebate -->
-            <div class="mt-3 flex items-center justify-between rounded-xl bg-emerald-50 px-4 py-4">
+            <div class="mt-3 flex flex-col lg:flex-row lg:items-center lg:justify-between rounded-xl bg-emerald-50 p-4">
                 <div>
                     <div class="text-xs font-semibold uppercase tracking-wider text-emerald-700">Applicable Tax Rebate</div>
                     <div class="mt-0.5 text-xs text-emerald-600">Limited by {{ rebate.limiting_factor.replaceAll('_', ' ') }}</div>
                 </div>
-                <div class="text-xl font-semibold text-emerald-700">{{ formatCurrency(rebate.rebate) }} <span class="text-xs font-medium text-emerald-500">BDT</span></div>
+                <div class="text-xl font-semibold text-emerald-700 mt-2 lg:mt-0">{{ formatCurrency(rebate.rebate) }} <span class="text-xs font-medium text-emerald-500">BDT</span></div>
             </div>
         </div>
     </div>

@@ -81,7 +81,8 @@ class IncomeTaxController extends Controller
             $taxableIncome = (float) $totalIncome['taxable_total'];
 
             $tax = $this->incomeTaxCalculator->calculate(
-                taxableIncome: $taxableIncome
+                taxableIncome: $taxableIncome,
+                userId: $user->id,
             );
         }
 

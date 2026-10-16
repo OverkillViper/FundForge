@@ -196,7 +196,7 @@ const syncAccount = (account: Account) => {
             <ScrollPanel class="mt-4 h-[720px] w-full">
                 <div class="mx-auto max-w-5xl space-y-5 pb-8">
                     <!-- Page Header -->
-                    <div class="flex items-start justify-between gap-4 px-1">
+                    <div class="flex flex-col lg:flex-row items-start justify-between gap-3 lg:p-4 px-1">
                         <div>
                             <h1 class="text-lg font-semibold text-gray-900">Settings</h1>
                             <p class="mt-1 text-xs text-gray-500">
@@ -215,18 +215,18 @@ const syncAccount = (account: Account) => {
 
                     <!-- General Tax Settings -->
                     <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                        <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <div class="flex items-center gap-3 border-b border-gray-100 p-3 lg:p-4">
+                            <div class="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                 <i class="pi pi-sliders-h text-sm"></i>
                             </div>
                             <div>
                                 <div class="text-sm font-semibold text-gray-900">Tax Settings</div>
-                                <div class="mt-0.5 text-xs text-gray-500">General values used throughout your tax calculations.</div>
+                                <div class="mt-0.5 text-[10px] lg:text-xs text-gray-500">General values used throughout your tax calculations.</div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 p-5">
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 p-3 lg:p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Salary Effective Month</label>
                                 <p class="mb-3 mt-1 text-xs text-gray-500">Month from which you get your incremented salary.</p>
                                 <Select
@@ -240,7 +240,7 @@ const syncAccount = (account: Account) => {
                                 />
                             </div>
 
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Provident Fund Contribution Rate</label>
                                 <p class="mb-3 mt-1 text-xs text-gray-500">Percentage of your basic salary considered as PF contribution</p>
                                 <InputNumber
@@ -255,7 +255,7 @@ const syncAccount = (account: Account) => {
                                 />
                             </div>
 
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Rebate Percentage</label>
                                 <p class="mb-3 mt-1 text-xs text-gray-500">Percentage of eligible investment used for rebate calculation.</p>
                                 <InputNumber
@@ -270,7 +270,7 @@ const syncAccount = (account: Account) => {
                                 />
                             </div>
 
-                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                            <div class="rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">DPS Investment Cap</label>
                                 <p class="mb-3 mt-1 text-xs text-gray-500">Maximum DPS investment considered eligible for rebate.</p>
                                 <InputNumber
@@ -284,7 +284,7 @@ const syncAccount = (account: Account) => {
                                 />
                             </div>
 
-                            <div class="col-span-2 rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+                            <div class="lg:col-span-2 rounded-xl border border-gray-100 bg-gray-50/60 p-3 lg:p-4">
                                 <label class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Maximum Rebate Cap</label>
                                 <p class="mb-3 mt-1 text-xs text-gray-500">Maximum rebate that can be applied during tax calculation.</p>
                                 <InputNumber
@@ -299,7 +299,7 @@ const syncAccount = (account: Account) => {
                             </div>
                         </div>
 
-                        <div class="flex justify-end border-t border-gray-100 bg-gray-50/50 px-5 py-3">
+                        <div class="flex justify-end border-t border-gray-100 bg-gray-50/50 p-3 lg:p-4">
                             <Button
                                 label="Save Settings"
                                 icon="pi pi-check"
@@ -312,14 +312,14 @@ const syncAccount = (account: Account) => {
 
                     <!-- Savings Certificate Tax Brackets -->
                     <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                        <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between border-b border-gray-100 p-3 lg:p-4">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                                     <i class="pi pi-percentage text-sm"></i>
                                 </div>
                                 <div>
                                     <div class="text-sm font-semibold text-gray-900">Savings Certificate Tax Brackets</div>
-                                    <div class="mt-0.5 text-xs text-gray-500">Tax rates based on cumulative savings certificate investment.</div>
+                                    <div class="mt-0.5 text-[10px] lg:text-xs text-gray-500">Tax rates based on cumulative savings certificate investment.</div>
                                 </div>
                             </div>
 
@@ -328,35 +328,36 @@ const syncAccount = (account: Account) => {
                                 icon="pi pi-plus"
                                 outlined
                                 size="small"
+                                class="mt-3 lg:mt-0"
                                 @click="addSavingsCertificateBracket"
                             />
                         </div>
 
-                        <div class="p-5">
-                            <div class="grid grid-cols-12 border-b border-gray-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                                <div class="col-span-6">Minimum Investment</div>
-                                <div class="col-span-4">Tax Rate</div>
-                                <div class="col-span-2 text-right">Action</div>
+                        <div class="p-3 lg:p-4">
+                            <div class="grid grid-cols-6 lg:grid-cols-12 border-b border-gray-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                                <div class="col-span-3 lg:col-span-6">Minimum Investment</div>
+                                <div class="col-span-2 lg:col-span-4">Tax Rate</div>
+                                <div class="col-span-1 lg:col-span-2 text-right">Action</div>
                             </div>
 
                             <div
                                 v-for="(bracket, index) in savingsCertificateForm.brackets"
                                 :key="bracket.id ?? index"
-                                class="grid grid-cols-12 items-center gap-3 border-b border-gray-100 py-3 last:border-b-0"
+                                class="grid grid-cols-6 lg:grid-cols-12 items-center gap-3 border-b border-gray-100 py-3 last:border-b-0"
                             >
-                                <div class="col-span-6">
+                                <div class="col-span-3 lg:col-span-6">
                                     <InputNumber
                                         v-model="bracket.minimum_investment"
                                         prefix="৳ "
                                         :min="0"
                                         :minFractionDigits="0"
                                         :maxFractionDigits="2"
-                                        class="w-full"
                                         size="small"
+                                        fluid
                                     />
                                 </div>
 
-                                <div class="col-span-4">
+                                <div class="col-span-2 lg:col-span-4">
                                     <InputNumber
                                         v-model="bracket.tax_percent"
                                         suffix="%"
@@ -364,12 +365,12 @@ const syncAccount = (account: Account) => {
                                         :max="100"
                                         :minFractionDigits="0"
                                         :maxFractionDigits="2"
-                                        class="w-full"
                                         size="small"
+                                        fluid
                                     />
                                 </div>
 
-                                <div class="col-span-2 flex justify-end">
+                                <div class="col-span-1 lg:col-span-2 flex justify-end">
                                     <Button
                                         icon="pi pi-trash"
                                         severity="danger"
@@ -389,7 +390,7 @@ const syncAccount = (account: Account) => {
                             </div>
                         </div>
 
-                        <div class="flex justify-end border-t border-gray-100 bg-gray-50/50 px-5 py-3">
+                        <div class="flex justify-end border-t border-gray-100 bg-gray-50/50 p-3 lg:p-4">
                             <Button
                                 label="Save Tax Brackets"
                                 icon="pi pi-check"
@@ -402,7 +403,7 @@ const syncAccount = (account: Account) => {
 
                     <!-- Income Tax Slabs -->
                     <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                        <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between border-b border-gray-100 p-3 lg:p-4">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <i class="pi pi-chart-line text-sm"></i>
@@ -417,26 +418,27 @@ const syncAccount = (account: Account) => {
                                 label="Add Slab"
                                 icon="pi pi-plus"
                                 outlined
+                                class="mt-3 lg:mt-0"
                                 size="small"
                                 @click="addIncomeTaxSlab"
                             />
                         </div>
 
-                        <div class="p-5">
-                            <div class="grid grid-cols-12 border-b border-gray-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                                <div class="col-span-6">Income Portion</div>
-                                <div class="col-span-4">Rate</div>
-                                <div class="col-span-2 text-right">Action</div>
+                        <div class="p-3 lg:p-4">
+                            <div class="grid grid-cols-6 lg:grid-cols-12 border-b border-gray-100 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                                <div class="col-span-3 lg:col-span-6">Income Portion</div>
+                                <div class="col-span-2 lg:col-span-4">Rate</div>
+                                <div class="col-span-1 lg:col-span-2 text-right">Action</div>
                             </div>
 
                             <div
                                 v-for="(slab, index) in incomeTaxForm.slabs"
                                 :key="slab.id ?? index"
-                                class="grid grid-cols-12 items-center gap-3 border-b border-gray-100 py-3 last:border-b-0"
+                                class="grid grid-cols-6 lg:grid-cols-12 items-center gap-3 border-b border-gray-100 py-3 last:border-b-0"
                             >
-                                <div class="col-span-6">
+                                <div class="col-span-3 lg:col-span-6">
                                     <div class="flex items-center gap-3">
-                                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-500">
+                                        <div class="hidden lg:flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-500">
                                             <span class="pi pi-wallet text-xs"></span>
                                         </div>
 
@@ -448,23 +450,26 @@ const syncAccount = (account: Account) => {
                                             <InputNumber
                                                 v-if="slab.income_to !== null"
                                                 :modelValue="getSlabAmount(slab)"
-                                                @update:modelValue="value => slab.income_to = slab.income_from + (value ?? 0)"
+                                                @update:modelValue="value => {
+                                                    if (value !== null) slab.income_to = slab.income_from + value;
+                                                }"
                                                 prefix="৳ "
                                                 :min="0"
                                                 :minFractionDigits="0"
                                                 :maxFractionDigits="2"
-                                                class="w-full"
+                                                fluid
                                                 size="small"
                                             />
 
                                             <div v-else class="flex h-8 items-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm text-gray-600">
-                                                <span>Above ৳ {{ slab.income_from.toLocaleString() }}</span>
+                                                <span class="hidden lg:block">Above ৳ {{ slab.income_from.toLocaleString() }}</span>
+                                                <span class="lg:hidden">Remaining income</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-span-4">
+                                <div class="col-span-2 lg:col-span-4">
                                     <div class="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                                         Tax Rate
                                     </div>
@@ -475,12 +480,12 @@ const syncAccount = (account: Account) => {
                                         :max="100"
                                         :minFractionDigits="0"
                                         :maxFractionDigits="2"
-                                        class="w-full"
+                                        fluid
                                         size="small"
                                     />
                                 </div>
 
-                                <div class="col-span-2 flex justify-end">
+                                <div class="col-span-1 lg:col-span-2 flex justify-end">
                                     <Button
                                         icon="pi pi-trash"
                                         severity="danger"
@@ -513,7 +518,7 @@ const syncAccount = (account: Account) => {
 
                     <!-- Account Balance Synchronization -->
                     <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-5 py-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:p-4 border-b border-gray-100 p-3 lg:p-4">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <i class="pi pi-sync text-sm"></i>
@@ -534,10 +539,11 @@ const syncAccount = (account: Account) => {
                                 :loading="syncingAllAccounts"
                                 :disabled="syncingAccountIds.length > 0"
                                 @click="syncAllAccounts"
+                                class="mt-3 lg:mt-0"
                             />
                         </div>
 
-                        <div class="p-5">
+                        <div class="p-3 lg:p-4">
                             <div class="mb-4 flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50/70 p-3">
                                 <i class="pi pi-info-circle mt-0.5 text-xs text-amber-600"></i>
                                 <p class="text-xs leading-5 text-amber-800">
@@ -557,7 +563,7 @@ const syncAccount = (account: Account) => {
                                 <div
                                     v-for="account in accounts"
                                     :key="account.id"
-                                    class="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                                    class="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 sync-button"
                                 >
                                     <div class="flex min-w-0 items-center gap-3">
                                         <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-500">
@@ -604,7 +610,7 @@ const syncAccount = (account: Account) => {
                 :dismissableMask="!restoringDefaults"
             >
                 <div class="space-y-4">
-                    <div class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <div class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 lg:p-4">
                         <i class="pi pi-exclamation-triangle mt-0.5 text-amber-600"></i>
 
                         <div class="text-sm text-amber-900">

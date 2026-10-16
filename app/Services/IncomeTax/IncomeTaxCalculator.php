@@ -12,16 +12,6 @@ class IncomeTaxCalculator
      * Calculate gross income tax liability using
      * progressive current-year tax slabs.
      *
-     * Example:
-     *
-     * Taxable income = 960,170
-     *
-     * First 400,000      @ 0%  = 0
-     * Next 300,000       @ 10% = 30,000
-     * Remaining 260,170  @ 15% = 39,025.50
-     *
-     * Total tax = 69,025.50
-     *
      * @return array{
      *     taxable_income: float,
      *     tax_liability: float,
@@ -34,102 +24,60 @@ class IncomeTaxCalculator
      *     }>
      * }
      */
-    public function calculate(
-        float $taxableIncome
-    ): array {
+    public function calculate(float $taxableIncome, int $userId): array
+    {
         if ($taxableIncome < 0) {
-            throw new InvalidArgumentException(
-                'Taxable income cannot be negative.'
-            );
+            throw new InvalidArgumentException('Taxable income cannot be negative.');
         }
 
-        $slabs = $this->getSlabs();
+        $slabs = $this->getSlabs($userId);
 
         if ($slabs->isEmpty()) {
-            throw new InvalidArgumentException(
-                'No income tax slabs have been configured.'
-            );
+            throw new InvalidArgumentException('No income tax slabs have been configured.');
         }
 
-        $remainingIncome = $taxableIncome;
         $totalTax = 0.0;
         $breakdown = [];
 
         foreach ($slabs as $slab) {
-            if ($remainingIncome <= 0) {
+            $incomeFrom = (float) $slab->income_from;
+            $incomeTo = $slab->income_to !== null ? (float) $slab->income_to : null;
+
+            if ($taxableIncome <= $incomeFrom) {
                 break;
             }
 
-            $incomeFrom = (float) $slab->income_from;
-
-            $incomeTo = $slab->income_to !== null
-                ? (float) $slab->income_to
-                : null;
-
-            /*
-             * Determine how much of the remaining income
-             * belongs to this slab.
-             */
-            if ($incomeTo === null) {
-                $slabAmount = $remainingIncome;
-            } else {
-                $slabAmount = min(
-                    $remainingIncome,
-                    $incomeTo - $incomeFrom
-                );
-            }
+            $slabAmount = $incomeTo === null
+                ? $taxableIncome - $incomeFrom
+                : min($taxableIncome, $incomeTo) - $incomeFrom;
 
             if ($slabAmount <= 0) {
                 continue;
             }
 
             $taxPercent = (float) $slab->tax_percent;
-
-            $taxAmount = round(
-                $slabAmount * ($taxPercent / 100),
-                2
-            );
+            $taxAmount = round($slabAmount * ($taxPercent / 100), 2);
 
             $totalTax += $taxAmount;
-            $remainingIncome -= $slabAmount;
 
             $breakdown[] = [
                 'income_from' => $incomeFrom,
-
                 'income_to' => $incomeTo,
-
-                'taxable_amount' => round(
-                    $slabAmount,
-                    2
-                ),
-
+                'taxable_amount' => round($slabAmount, 2),
                 'tax_percent' => $taxPercent,
-
                 'tax_amount' => $taxAmount,
             ];
         }
 
-        /*
-         * The final slab should have income_to = NULL,
-         * meaning that it covers all remaining income.
-         */
-        if ($remainingIncome > 0.005) {
-            throw new InvalidArgumentException(
-                'Income tax slabs do not cover the complete taxable income.'
-            );
+        $lastSlab = $slabs->last();
+
+        if ($lastSlab->income_to !== null && $taxableIncome > (float) $lastSlab->income_to) {
+            throw new InvalidArgumentException('Income tax slabs do not cover the complete taxable income.');
         }
 
         return [
-            'taxable_income' => round(
-                $taxableIncome,
-                2
-            ),
-
-            'tax_liability' => round(
-                $totalTax,
-                2
-            ),
-
+            'taxable_income' => round($taxableIncome, 2),
+            'tax_liability' => round($totalTax, 2),
             'breakdown' => $breakdown,
         ];
     }
@@ -141,9 +89,10 @@ class IncomeTaxCalculator
      * They represent the tax rules currently configured
      * in the application.
      */
-    private function getSlabs(): Collection
+    private function getSlabs(int $userId): Collection
     {
         return IncomeTaxSlab::query()
+            ->where('user_id', $userId)
             ->orderBy('income_from')
             ->get();
     }
