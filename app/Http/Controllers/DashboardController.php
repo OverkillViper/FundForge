@@ -29,6 +29,9 @@ class DashboardController extends Controller
             : $lastMonth;
 
         $allAccounts = $user->accounts()
+            ->withCount(['transactions as usage_count' => fn ($query) => $query->whereIn('type', ['expense', 'income'])])
+            ->orderByDesc('usage_count')
+            ->orderBy('name')
             ->get([
                 'id',
                 'name',
@@ -38,6 +41,7 @@ class DashboardController extends Controller
                 'opening_balance',
                 'is_active',
             ]);
+
         $accounts = $allAccounts
             ->where('is_active', true)
             ->values();
@@ -134,7 +138,6 @@ class DashboardController extends Controller
         $totalBalance = (float) $accounts->sum('balance');
 
         $topAccounts = $accounts
-            ->sortByDesc('balance')
             ->take(2)
             ->values()
             ->map(fn ($account) => [
