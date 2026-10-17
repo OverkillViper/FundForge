@@ -30,5 +30,5 @@ Homestead.json
 .phpactor.json
 auth.json
 
-/resources/js/actions/
-/resources/js/routes/
+resources/js/actions/
+resources/js/routes/
