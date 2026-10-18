@@ -52,6 +52,7 @@ const getDestinationSkeleton = (url: URL): { enabled: boolean; type: 'grid' | 'l
 
     // Never show skeletons for Settings pages.
     if (matchesPath(path, '/settings')) return { enabled: false, type: 'mixed' };
+    if (matchesPath(path, '/transactions')) return { enabled: false, type: 'mixed' };
 
     // Specific nested routes must be checked before their parent resource routes.
     if (path === '/transactions/categories')          return { enabled: true, type: 'grid'  };
@@ -62,7 +63,6 @@ const getDestinationSkeleton = (url: URL): { enabled: boolean; type: 'grid' | 'l
 
     const routes: [string, 'grid' | 'list' | 'mixed'][] = [
         ['/dashboard', 'mixed'],
-        ['/transactions', 'list'],
         ['/accounts', 'grid'],
         ['/budgets', 'grid'],
         ['/transfers', 'list'],

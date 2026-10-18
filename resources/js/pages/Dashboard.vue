@@ -7,6 +7,8 @@ import ExpenseCategory from './Dashboard/ExpenseCategory.vue';
 import RecentTransactions from './Dashboard/RecentTransactions.vue';
 import Obligations from './Dashboard/Obligations.vue';
 import Budget from './Dashboard/Budget.vue';
+import { ref } from 'vue';
+import ExpenseChart from './Dashboard/ExpenseChart.vue';
 
 defineOptions({
     layout: {
@@ -18,6 +20,13 @@ defineOptions({
         ],
     },
 });
+
+interface ExpenseChart {
+    daily: { label: string; amount: number }[];
+    monthly: { label: string; amount: number }[];
+}
+
+const activeWidget = ref<'transactions' | 'expenses'>('transactions');
 
 interface User {
     id: number;
@@ -134,6 +143,7 @@ const props = defineProps<{
     transactionSummary: TransactionSummary;
     expenseCategories: ExpenseCategory;
     recentTransactions: Transaction[];
+    expenseChart: ExpenseChart;
     budgets: Budgets;
     obligations: Obligation;
 }>();
@@ -168,7 +178,21 @@ const props = defineProps<{
             <TotalBalance :total-balance="totalBalance"/>
             <TransactionSummary :transaction-summary="transactionSummary"/>
             <ExpenseCategory :expense-categories="expenseCategories"/>
-            <RecentTransactions class="col-span-2" :recent-transactions="recentTransactions"/>
+            <div class="col-span-2 min-w-0 flex">
+                <RecentTransactions
+                    v-if="activeWidget === 'transactions'"
+                    :recent-transactions="recentTransactions"
+                    @switch-widget="activeWidget = 'expenses'"
+                    class="flex-1"
+                />
+                <ExpenseChart
+                    v-else
+                    :daily="expenseChart.daily"
+                    :monthly="expenseChart.monthly"
+                    @switch-widget="activeWidget = 'transactions'"
+                    class="flex-1"
+                />
+            </div>
             <div class="flex flex-col gap-y-3">
                 <Budget :budgets="budgets"/>
                 <Obligations :obligations="obligations"/>

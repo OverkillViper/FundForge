@@ -65,7 +65,7 @@ const progressPercentage = computed(() =>
 </script>
 
 <template>
-    <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <div class="rounded-2xl border border-gray-200 bg-white p-4">
         <!-- Header -->
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -173,6 +173,12 @@ const progressPercentage = computed(() =>
                         class="rounded-md bg-rose-50 px-1.5 py-0.5 text-[10px] font-semibold text-rose-600"
                     >
                         Budget Exceeded
+                    </span>
+                    <span
+                        v-else
+                        class="rounded-md bg-green-50 px-1.5 py-0.5 text-[10px] font-semibold text-green-600"
+                    >
+                        Good
                     </span>
                 </div>
 

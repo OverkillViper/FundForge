@@ -146,7 +146,7 @@ const changeText = (percentage: number | null) => {
             <div class="flex items-start justify-between">
                 <div>
                     <div class="text-xs font-medium text-gray-500">Total Savings</div>
-                    <div class="mt-0.5 text-[10px] text-gray-400">Income after expenses</div>
+                    <div class="mt-0.5 text-[10px] text-gray-400">This month</div>
                 </div>
 
                 <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">

@@ -127,7 +127,39 @@ class DashboardController extends Controller
             'recentTransactions' => $this->getRecentTransactions($user, $allAccounts),
             'budgets' => $this->getBudgets($budgets, $transactions, $today),
             'obligations' => $this->getObligations($obligations),
+            'expenseChart' => $this->getExpenseChart($transactions, $today),
         ]);
+    }
+
+    private function getExpenseChart(EloquentCollection $transactions, Carbon $today): array
+    {
+        $expenses = $transactions
+            ->where('type', 'expense')
+            ->filter(fn ($transaction) => $transaction->reference !== 'Investment Payment');
+
+        $dailyTotals = $expenses
+            ->filter(fn ($transaction) => $transaction->transaction_date->month === $today->month)
+            ->groupBy(fn ($transaction) => $transaction->transaction_date->day)
+            ->map(fn ($items) => (float) $items->sum('amount'));
+
+        $monthlyTotals = $expenses
+            ->groupBy(fn ($transaction) => $transaction->transaction_date->month)
+            ->map(fn ($items) => (float) $items->sum('amount'));
+
+        return [
+            'daily' => collect(range(1, $today->daysInMonth))
+                ->map(fn ($day) => [
+                    'label' => (string) $day,
+                    'amount' => round((float) ($dailyTotals[$day] ?? 0), 2),
+                ])
+                ->all(),
+            'monthly' => collect(range(1, 12))
+                ->map(fn ($month) => [
+                    'label' => Carbon::create($today->year, $month, 1)->format('M'),
+                    'amount' => round((float) ($monthlyTotals[$month] ?? 0), 2),
+                ])
+                ->all(),
+        ];
     }
 
     private function getTotalBalance(

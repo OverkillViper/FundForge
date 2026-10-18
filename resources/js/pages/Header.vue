@@ -65,6 +65,14 @@ const greeting = computed(() => {
 
     return 'Good Evening';
 });
+
+const sidebarIcon = computed(() => {
+    if (window.matchMedia('(min-width: 1024px)').matches) {
+        return props.collapsed ? 'icon-panel-left-open' : 'icon-panel-left-close';
+    } else {
+        return props.mobileSidebarOpen ? 'icon-panel-left-open' : 'icon-panel-left-close';
+    }
+})
 </script>
 
 <template>
@@ -75,7 +83,7 @@ const greeting = computed(() => {
         >
             <span
                 class="text-lg! transition-transform duration-300"
-                :class="props.collapsed || !props.mobileSidebarOpen ? 'icon-panel-left-open' : 'icon-panel-left-close'"
+                :class="sidebarIcon"
             ></span>
         </button>
 

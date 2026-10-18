@@ -33,13 +33,13 @@ const toggleBalance = () => {
 </script>
 
 <template>
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 flex flex-col">
+    <div class="rounded-2xl border border-gray-200 bg-white p-4 flex flex-col">
         <!-- Balance Header -->
         <div class="flex items-start justify-between gap-x-2">
             <div class="flex-1">
                 <div class="text-xs font-medium text-gray-500">Total Balance</div>
                 <div class="flex gap-x-2 mt-2 lg:text-2xl font-medium tracking-tight text-gray-600" :class="showBalance ? 'items-baseline' : 'items-center'">
-                    <span v-if="showBalance">{{ formatCurrency(totalBalance.balance) }}</span>
+                    <span v-if="showBalance" class="lg:text-2xl font-berlin">{{ formatCurrency(totalBalance.balance) }}</span>
                     <span v-else class="text-xs lg:text-2xl flex gap-x-1 text-gray-400 transition hover:text-gray-600" @click="showBalance = true">
                         <span v-for="i in 8" class="icon-asterisk"></span>
                     </span>

@@ -16,7 +16,7 @@ const formattedAmount = (amount: number) => amount.toLocaleString('en-IN');
 </script>
 
 <template>
-    <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <div class="rounded-2xl border border-gray-200 bg-white p-4">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
