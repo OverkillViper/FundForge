@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:php8.4-bookworm AS builder
+FROM dunglas/frankenphp:php8.4.27-bookworm AS builder
 
 WORKDIR /app
 
