@@ -2,8 +2,10 @@
 
 **Laravel and VueJS based finance management web application.**
 
-<img src="/resources/images/landing.png" width="79.5%" />
-<img src="/resources/images/landing_mobile.png" width="18%" />
+<p align="center">
+  <img src="/resources/images/landing.png" width="79.5%" />
+  <img src="/resources/images/landing_mobile.png" width="18%" />
+</p>
 
 FundForge is a personal finance management web application built with **Laravel 13, PostgreSQL, Vue 3, Inertia.js, Tailwind CSS v4, and PrimeVue.** Its goal is to bring everyday money management, investments, budgeting, and income-tax calculations (based on Bangladesh income-tax laws) into one place.
 
